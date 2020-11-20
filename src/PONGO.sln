@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30523.141
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PONGO", "PONGO.vcxproj", "{0F63BA54-CB2F-4FD2-B099-B0098B9BBB0B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0F63BA54-CB2F-4FD2-B099-B0098B9BBB0B}.Debug|x86.ActiveCfg = Debug|Win32
+		{0F63BA54-CB2F-4FD2-B099-B0098B9BBB0B}.Debug|x86.Build.0 = Debug|Win32
+		{0F63BA54-CB2F-4FD2-B099-B0098B9BBB0B}.Release|x86.ActiveCfg = Release|Win32
+		{0F63BA54-CB2F-4FD2-B099-B0098B9BBB0B}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0E694467-D6F8-46D5-98D2-1F8F38F654EC}
+	EndGlobalSection
+EndGlobal
