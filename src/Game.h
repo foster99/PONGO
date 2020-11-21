@@ -28,7 +28,6 @@ public:
 
 	Game() {}
 	
-	
 	static Game &instance()
 	{
 		static Game G;
@@ -39,7 +38,6 @@ public:
 	void init();
 	bool update(int deltaTime);
 	void render();
-
 
 	// GAME STATUS CONTROL
 	Mode currMode();
@@ -89,5 +87,27 @@ private:
 
 
 #endif // _GAME_INCLUDE
+
+/*
+ 
+	CODIFICACION DE RAQUETAS:
+
+	3   0123456789
+	4   |       | 
+	5	| ####  |		-->	H: 5 0 8
+		|       |
+		|       |
+
+
+	HORIZONTAL SLIDE:
+	I	J0	J1
+
+	VERTICAL SLIDE:
+	J	I0	I1
+
+*/
+
+
+
 
 

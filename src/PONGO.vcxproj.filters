@@ -19,9 +19,6 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="TileMap.cpp">
-      <Filter>Source Files\TileMap</Filter>
-    </ClCompile>
     <ClCompile Include="Level.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
@@ -44,9 +41,6 @@
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="TileMap.h">
-      <Filter>Header Files\TileMap</Filter>
     </ClInclude>
     <ClInclude Include="Level.h">
       <Filter>Header Files\Scene</Filter>
@@ -80,11 +74,8 @@
     <Filter Include="Source Files\Scene">
       <UniqueIdentifier>{d45c1a3d-4fc5-41aa-bf87-c03349d159ec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\TileMap">
-      <UniqueIdentifier>{01b9b8af-eb8f-4eaa-b5ff-d8ab088433dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\TileMap">
-      <UniqueIdentifier>{0809e3eb-467f-4a9c-be2d-0147acf01ef7}</UniqueIdentifier>
+    <Filter Include="Resor">
+      <UniqueIdentifier>{813d53b5-cbd7-4e3b-be7c-ddc9e3d97e00}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

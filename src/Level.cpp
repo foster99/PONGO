@@ -1,3 +1,5 @@
+#include <fstream>
+#include <sstream>
 #include <iostream>
 #include <vector>
 #include "Level.h"
@@ -144,6 +146,58 @@ void Level::prepareArrays(ShaderProgram &program)
 	texCoordLocation[1] = program.bindVertexAttribute("texCoord", 2, 5*sizeof(float), (void *)(3*sizeof(float)));
 }
 
+void Level::loadTileMap()
+{
+	// CALCULAR EL PATH
+	string levelFilePath;
+	if (levelID < 10)	levelFilePath = "levels/LEVEL_0" + to_string(levelID) + ".txt";
+	else				levelFilePath = "levels/LEVEL_"  + to_string(levelID) + ".txt";
+
+	// INICIALIZAR EL LECTOR
+	ifstream fin;
+	fin.open(levelFilePath.c_str());
+	if (!fin.is_open())
+		throw "Could not load the file.";
+
+
+	string line;
+	stringstream sstream;
+
+	getline(fin, line);
+	if (line.compare(0, 7, "LEVEL") != 0)
+		throw "This is not load the file.";
+
+	getline(fin, line);
+
+	// LOAD HORIZONTAL TILES
+
+
+
+	// INICIALIZAR Y LEER TILE MAP
+	char tile;
+	map = vector<vector<Tile>>(mapSizeInTiles.y, vector<Tile>(mapSizeInTiles.x));
+
+	for (int i = 0; i < mapSizeInTiles.y; i++)
+	{
+		for (int j = 0; j < mapSizeInTiles.x; j++)
+		{
+			fin.get(tile);
+			loadTile(tile, i, j);
+		}
+
+		fin.get(tile);
+
+		#ifndef _WIN32
+			fin.get(tile);
+		#endif
+	}
+	fin.close();
+}
+
+void Level::loadTile(char tile, int i, int j)
+{
+
+}
 
 
 

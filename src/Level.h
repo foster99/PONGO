@@ -2,11 +2,16 @@
 #define _LEVEL_INCLUDE
 
 
+#include <vector>
 #include <string>
 #include <glm/glm.hpp>
 #include "Texture.h"
 #include "ShaderProgram.h"
 
+class Tile {
+private:
+	int a;
+};
 
 using namespace std;
 
@@ -18,22 +23,39 @@ class Level
 {
 
 public:
-	// Levels can only be created inside an OpenGL context
+
+	// Constructors
 	static Level *createLevel(const glm::vec3 &levelSize, ShaderProgram &program, const string &floorFile, const string &wallFile);
-
 	Level(const glm::vec3 &levelSize, ShaderProgram &program, const string &floorFile, const string &wallFile);
+	
+	// Destructors
 	~Level();
-
-	void render() const;
 	void free();
 
-private:
-	void prepareArrays(ShaderProgram &program);
+	// Rendering
+	void render() const;
 
 private:
+
+	void prepareArrays(ShaderProgram &program);
+	void loadTileMap();
+	void loadTile(char tile, int i, int j);
+
+private:
+
+	// TileMap
+	glm::vec2 tileSize;
+	glm::vec2 mapSizeInTiles;
+	glm::vec2 mapSizeInPixels;
+	vector<vector<Tile>> map;
+
+	// OpenGL stuff
 	GLuint vao[2];
 	GLuint vbo[2];
 	GLint posLocation[2], texCoordLocation[2];
+
+	// World stuff
+	int levelID;
 	glm::vec3 size;
 	Texture floor, wall;
 

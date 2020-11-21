@@ -26,6 +26,9 @@ void Shader::initFromSource(const ShaderType type, const string &source)
 	case FRAGMENT_SHADER:
 		shaderId = glCreateShader(GL_FRAGMENT_SHADER);
 		break;
+	case GEOMETRY_SHADER:
+		shaderId = glCreateShader(GL_GEOMETRY_SHADER);
+		break;
 	}
 	if(shaderId == 0)
 		return;

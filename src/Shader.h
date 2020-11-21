@@ -10,7 +10,7 @@
 using namespace std;
 
 
-enum ShaderType { VERTEX_SHADER, FRAGMENT_SHADER };
+enum ShaderType { VERTEX_SHADER, FRAGMENT_SHADER, GEOMETRY_SHADER};
 
 
 // This class is able to load to OpenGL a vertex or fragment shader and compile it.

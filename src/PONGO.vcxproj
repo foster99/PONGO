@@ -18,7 +18,6 @@
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="TileMap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
@@ -29,7 +28,6 @@
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TileMap.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0F63BA54-CB2F-4FD2-B099-B0098B9BBB0B}</ProjectGuid>

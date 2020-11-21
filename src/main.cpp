@@ -2,13 +2,14 @@
 #include <GL/glut.h>
 #include "Game.h"
 
-
 //Remove console (only works in Visual Studio)
 #pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
 
 
 #define TIME_PER_FRAME 1000.f / 60.f // Approx. 60 fps
 
+#define WINDOW_WIDTH 640
+#define WINDOW_HEIGHT 480
 
 static int prevTime;
 static Game game; // This object represents our whole game
@@ -80,14 +81,13 @@ static void idleCallback()
 	}
 }
 
-
 int main(int argc, char **argv)
 {
 	// GLUT initialization
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(640, 480);
+	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	glutCreateWindow(argv[0]);
 	glutDisplayFunc(drawCallback);
