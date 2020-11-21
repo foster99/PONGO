@@ -7,13 +7,26 @@
 #include <glm/glm.hpp>
 #include "Texture.h"
 #include "ShaderProgram.h"
+using namespace std;
 
-class Tile {
-private:
-	int a;
+
+
+class Tile	{ private: int a; };
+
+class Slide
+{
+	typedef int direction;
+
+public:
+	Slide(direction d, int fixed, int initial, int final) {
+
+	}
+	static constexpr direction Horizontal = 0;
+	static constexpr direction Vertical = 0;
+
+private: int a;
 };
 
-using namespace std;
 
 
 // Class Level renders a very simple room with textures
@@ -44,9 +57,10 @@ private:
 private:
 
 	// TileMap
-	glm::vec2 tileSize;
+	int tileSize;
+	glm::vec2 chunkSize;
 	glm::vec2 mapSizeInTiles;
-	glm::vec2 mapSizeInPixels;
+	glm::vec2 mapSizeInChunks;
 	vector<vector<Tile>> map;
 
 	// OpenGL stuff
@@ -58,6 +72,9 @@ private:
 	int levelID;
 	glm::vec3 size;
 	Texture floor, wall;
+
+	// Entities
+	vector<Slide> slides;
 
 };
 

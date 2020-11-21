@@ -24,6 +24,9 @@ Level::Level(const glm::vec3 &levelSize, ShaderProgram &program, const string &f
 	if(!wall.loadFromFile(wallFile.c_str(), TEXTURE_PIXEL_FORMAT_RGB))
 		cout << "Could not load wall texture!!!" << endl;
 	prepareArrays(program);
+	
+	levelID = 1;
+	loadTileMap();
 }
 
 Level::~Level()
@@ -146,6 +149,12 @@ void Level::prepareArrays(ShaderProgram &program)
 	texCoordLocation[1] = program.bindVertexAttribute("texCoord", 2, 5*sizeof(float), (void *)(3*sizeof(float)));
 }
 
+bool diff(const std::string& line1, const std::string& line2)
+{
+	int length = line2.length();
+	return line1.compare(0, length, line2) != 0;
+}
+
 void Level::loadTileMap()
 {
 	// CALCULAR EL PATH
@@ -153,30 +162,82 @@ void Level::loadTileMap()
 	if (levelID < 10)	levelFilePath = "levels/LEVEL_0" + to_string(levelID) + ".txt";
 	else				levelFilePath = "levels/LEVEL_"  + to_string(levelID) + ".txt";
 
+
+
 	// INICIALIZAR EL LECTOR
 	ifstream fin;
-	fin.open(levelFilePath.c_str());
-	if (!fin.is_open())
-		throw "Could not load the file.";
-
-
 	string line;
 	stringstream sstream;
+	int i, j, i0, i1, j0, j1;
+	fin.open(levelFilePath.c_str());
+	if (!fin.is_open())	throw "Could not load the file.";
+
+
+
+	// START LOADING LEVEL
+	getline(fin, line);
+	if (diff(line, "LEVEL")) throw "LEVEL NOT FOUND";
+	getline(fin, line);	// Blank line
+
+
+
+	// LOAD HORIZONTAL SLIDES
+	getline(fin, line);	// Blank line
+	getline(fin, line);
+	if (diff(line, "START  - HORIZONTAL SLIDES"))
+		throw std::string("Error parsing " + line).c_str();
+	
+	getline(fin, line);
+	while (diff(line, "END    - HORIZONTAL SLIDES"))
+	{
+		sstream.str(line);
+		sstream >> i >> j0 >> j1;
+		//slides.push_back(Slide(Slide::Horizontal, i, j0, j1));
+		getline(fin, line);
+	}
+
+
+
+	// LOAD VERTICAL SLIDES
+	getline(fin, line); // Blank line
+	getline(fin, line);
+	if (diff(line, "START  - VERTICAL SLIDES"))
+		throw std::string("Error parsing " + line).c_str();
 
 	getline(fin, line);
-	if (line.compare(0, 7, "LEVEL") != 0)
-		throw "This is not load the file.";
+	while (diff(line, "END    - VERTICAL SLIDES"))
+	{
+		sstream.str(line);
+		sstream >> j >> i0 >> i1;
+		//slides.push_back(Slide(Slide::Vertical, j, i0, i1));
+		getline(fin, line);
+	}
+	
+
+	// LOAD LEVEL PARAMETERS
+	getline(fin, line);	// Blank line
+	getline(fin, line);
+	if (diff(line, "START  - TILEMAP"))
+		throw std::string("Error parsing " + line).c_str();
+	getline(fin, line);
+	sstream.str(line);
+	sstream >> tileSize;
 
 	getline(fin, line);
+	sstream.str(line);
+	sstream >> chunkSize.y >> chunkSize.x;
 
-	// LOAD HORIZONTAL TILES
+	getline(fin, line);
+	sstream.str(line);
+	sstream >> mapSizeInChunks.y >> mapSizeInChunks.x;
 
-
+	mapSizeInTiles = mapSizeInChunks * chunkSize;
 
 	// INICIALIZAR Y LEER TILE MAP
 	char tile;
 	map = vector<vector<Tile>>(mapSizeInTiles.y, vector<Tile>(mapSizeInTiles.x));
-
+	
+	getline(fin, line); // Blank line
 	for (int i = 0; i < mapSizeInTiles.y; i++)
 	{
 		for (int j = 0; j < mapSizeInTiles.x; j++)
@@ -191,6 +252,12 @@ void Level::loadTileMap()
 			fin.get(tile);
 		#endif
 	}
+
+	getline(fin, line); // Blank line
+	getline(fin, line);
+	if (diff(line, "END    - TILEMAP"))
+		throw std::string("Error parsing " + line).c_str();
+
 	fin.close();
 }
 
