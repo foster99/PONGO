@@ -5,28 +5,71 @@
 
 void Game::init()
 {
-	bPlay = true;
 	glClearColor(0.f, 0.f, 0.f, 1.0f);
-	scene.init();
+
+	modeHist.push(startMenu);
+
+	// TODO: LOAD SOUNDS
+
+	// SCENE INITIALIZATION
+	
+	startMenuScene.init();
+	optionsScene.init();
+	gameScene.init();
 }
 
 bool Game::update(int deltaTime)
 {
-	scene.update(deltaTime);
-	
-	return bPlay;
+	// get GOD MODE
+
+	switch (currMode())
+	{
+	case startMenu:
+		startMenuScene.update(deltaTime);
+		break;
+
+	case playing:
+		gameScene.update(deltaTime);
+		break;
+
+	case options:
+		optionsScene.update(deltaTime);
+		break;
+
+	case exitGame: break;
+	}
+
+	return currMode() != exitGame;
 }
 
 void Game::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	scene.render();
+	
+	switch (currMode())
+	{
+	case startMenu:
+		startMenuScene.render();
+		break;
+
+	case playing:
+		gameScene.render();
+		break;
+
+	case options:
+		optionsScene.render();
+		break;
+
+	case exitGame: break;
+	}
 }
+
+
+
+// Input callback methods
 
 void Game::keyPressed(int key)
 {
-	if(key == 27) // Escape code
-		bPlay = false;
 
 	// Camera selection
 	switch (key - '0')
@@ -37,11 +80,24 @@ void Game::keyPressed(int key)
 	case Scene::fixedCamera_03:
 	case Scene::fixedCamera_04:
 	case Scene::fixedCamera_05:
-		scene.setCamera(key - '0');
+		switch (currMode())
+		{
+		case startMenu:	startMenuScene.setCamera(key - '0');	break;
+		case playing:	gameScene.setCamera(key - '0');			break;
+		case options:	optionsScene.setCamera(key - '0');		break;
+		}
 		break;
 
-	default:
-		break;
+	default: break;
+	}
+
+
+	switch (currMode())
+	{
+	case startMenu:		keyPressed_StartMenu(key, false);	break;
+	case playing:		keyPressed_playing(key, false);		break;
+	case options:		keyPressed_options(key, false);		break;
+	default:												break;
 	}
 
 	keys[key] = true;
@@ -54,6 +110,14 @@ void Game::keyReleased(int key)
 
 void Game::specialKeyPressed(int key)
 {
+	switch (currMode())
+	{
+	case startMenu:		keyPressed_StartMenu(key, true);	break;
+	case playing:		keyPressed_playing(key, true);		break;
+	case options:		keyPressed_options(key, true);		break;
+	default:												break;
+	}
+
 	specialKeys[key] = true;
 }
 
@@ -74,6 +138,95 @@ void Game::mouseRelease(int button)
 {
 }
 
+
+
+// Key pressed management (for each MODE)
+
+void Game::keyPressed_StartMenu(int key, bool specialKey)
+{
+	if (!specialKey)
+	{
+		switch (key)
+		{
+		case ESC:	setMode(options);	break;
+		case 'e':	setMode(exitGame);	break;
+		case ENTER:
+		case ' ':	setMode(playing);	break;
+		default:						break;
+		}
+	}
+	else if (specialKey)
+	{
+		switch (key)
+		{
+		case GLUT_KEY_UP:	// nextMode();		break
+		case GLUT_KEY_DOWN:	// previousMode();	break;
+		default:								break;
+		}
+	}
+}
+
+void Game::keyPressed_playing(int key, bool specialKey)
+{
+	if (!specialKey)
+	{
+		switch (key)
+		{
+		case ESC:	setMode(options);		break;
+		case 'G':
+		case 'g':	toggleGodMode();		break;
+		case ' ':	/* invertir la pelota en el juego */ break;
+		default:	break;
+		}
+	}
+	else if (specialKey)
+	{
+		switch (key)
+		{
+		case GLUT_KEY_UP:	// nextMode();		break
+		case GLUT_KEY_DOWN:	// previousMode();	break;
+		default:								break;
+		}
+	}
+}
+
+void Game::keyPressed_options(int key, bool specialKey)
+{
+	if (!specialKey)
+	{
+		switch (key)
+		{
+		case ESC:				rollbackMode();		break;
+		case 'e':				setMode(startMenu);	break;
+		case ENTER:
+			//switch (optionsScene.getCurrTex())
+			//{
+			//case 0:	setMode(credits);		break;
+			//case 1:	setMode(instructions);	break;
+			//case 2:	setMode(startMenu);		break;
+			//default:						break;
+			//}
+			//
+			// <Play options sounds>
+			break;
+		default:	break;
+		}
+	}
+	else if (specialKey)
+	{
+		switch (key)
+		{
+		case GLUT_KEY_UP:	// nextMode();		break
+		case GLUT_KEY_DOWN:	// previousMode();	break;
+		default:								break;
+		}
+	}
+}
+
+
+
+// Key getters
+
 bool Game::getKey(int key) const
 {
 	return keys[key];
@@ -86,5 +239,58 @@ bool Game::getSpecialKey(int key) const
 
 
 
+// GOD MODE FUNCTIONS
+
+bool Game::isInGodMode()
+{
+	return gameIsInGodMode;
+}
+
+void Game::toggleGodMode()
+{
+	gameIsInGodMode = !gameIsInGodMode;
+}
 
 
+
+// SCENE SET UP FUNCTIONS
+
+void Game::setUp_playing(int level)
+{
+	/*SET UP OPTIONS SCENE*/
+}
+
+void Game::setUp_options()
+{
+	/*SET UP OPTIONS SCENE*/
+}
+
+void Game::setUp_StartMenu()
+{
+	/*SET UP OPTIONS SCENE*/
+}
+
+
+
+// GAME STATUS CONTROL
+
+Mode Game::currMode()
+{
+	return modeHist.top();
+}
+
+void Game::setMode(Mode newMode)
+{
+	if (currMode() == startMenu && newMode == playing) {}
+		// aqui falta empesar el juego
+
+	if (newMode == startMenu)
+		modeHist = {};
+
+	modeHist.push(newMode);
+}
+
+void Game::rollbackMode()
+{
+	if (!modeHist.empty()) modeHist.pop();
+}
