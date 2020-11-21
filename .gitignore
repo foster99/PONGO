@@ -9,3 +9,8 @@ src/Release
 *.pdb
 *.ipdb
 *.iobj
+*.exe
+/libs/irrKlang-1.6.0/bin/linux-gcc
+/libs/irrKlang-1.6.0/bin/macosx-gcc
+/libs/irrKlang-1.6.0/examples
+/libs/irrKlang-1.6.0/examples.net
