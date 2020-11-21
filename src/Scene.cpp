@@ -24,9 +24,13 @@ Scene::~Scene()
 void Scene::init()
 {
 	initShaders();
+
+	cam = new Camera();
+	cam->initMenu(4);
+
 	level = Level::createLevel(glm::vec3(16, 4, 32), texProgram, "images/floor.png", "images/wall.png");
 	projection = glm::perspective(45.f / 180.f * PI, float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 100.f);
-	selectedCamera = defaultCamera;
+	cam->setCurrentMenu(defaultCamera);
 
 	currentTime = 0.0f;
 }
@@ -34,35 +38,14 @@ void Scene::init()
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
-	updateCamera();
+	cam->update();
 }
 
 void Scene::render()
 {
 	glm::mat4 modelview;
 
-	switch (selectedCamera)
-	{
-		//            glm::lookAt(     position,           target,                worldUp);
-	case defaultCamera:
-		modelview = glm::mat4(1.f);
-		break;
-	case fpsCamera:
-		modelview = glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0));
-		break;
-	case fixedCamera_02:
-		modelview = glm::lookAt(glm::vec3(10, 16, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
-		break;
-	case fixedCamera_03:
-		modelview = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
-		break;
-	case fixedCamera_04:
-		modelview = glm::lookAt(glm::vec3(10, 20, 20), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
-		break;
-	case fixedCamera_05:
-		modelview = glm::lookAt(glm::vec3(10, 45, 43), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
-		break;
-	}
+	modelview = cam->getModelView();
 
 	texProgram.use();
 	texProgram.setUniformMatrix4f("projection", projection);
@@ -101,11 +84,7 @@ void Scene::initShaders()
 	fShader.free();
 }
 
-void Scene::updateCamera() {
-
-}
-
 void Scene::setCamera(camera c) {
-	selectedCamera = c;
+	cam->setCurrentMenu(c);
 }
 

@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include "ShaderProgram.h"
 #include "Level.h"
+#include "Camera.h"
 
 
 #define CAMERA_WIDTH 640
@@ -48,7 +49,7 @@ public: // CONST EXPR DECLARATIONS
 private:
 	
 	camera selectedCamera;
-	
+	Camera* cam;
 	Level *level;
 	ShaderProgram texProgram;
 	float currentTime;

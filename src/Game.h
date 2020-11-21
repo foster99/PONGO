@@ -3,6 +3,9 @@
 
 #include <stack>
 
+#include <GL/glew.h>
+#include <GL/glut.h>
+
 #include "Sound.h"
 #include "Scene.h"
 
