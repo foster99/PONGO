@@ -1,0 +1,33 @@
+LEVEL
+
+
+START  - HORIZONTAL SLIDES
+1 2 -3                      -- ROW  COL_0  ROW_1
+END    - HORIZONTAL SLIDES
+
+START  - VERTICAL SLIDES
+1 2 -3                      -- COL  ROW_0  ROW_1
+END    - VERTICAL SLIDES
+
+START  - TILEMAP
+10                   ##  TILE SIZE IN PIXELS
+15 20                ## CHUNK SIZE IN TILES
+1 1                  ##   MAP SIZE IN CHUNKS
+
+E###################
+####################
+####################
+####################
+####################
+####################
+####################
+####################
+####################
+####################
+####################
+####################
+####################
+####################
+###################X
+
+END    - TILEMAP

@@ -1,7 +1,7 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include "Game.h"
-
+#include <iostream>
 
 void Game::init()
 {
@@ -13,9 +13,15 @@ void Game::init()
 
 	// SCENE INITIALIZATION
 	
-	startMenuScene.init();
-	optionsScene.init();
-	gameScene.init();
+	try {
+		startMenuScene.init();
+		optionsScene.init();
+		gameScene.init();
+	}
+	catch (const char* msg)
+	{
+		int i = 0; // jaja mira lo que hay en el mensaje xddddd. 
+	}
 }
 
 bool Game::update(int deltaTime)

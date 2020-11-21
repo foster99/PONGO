@@ -83,5 +83,13 @@
     <Filter Include="Resor">
       <UniqueIdentifier>{813d53b5-cbd7-4e3b-be7c-ddc9e3d97e00}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Levels">
+      <UniqueIdentifier>{3fbbced6-5c70-48af-9f23-ef51ac92a9a1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="levels\LEVEL_01.txt">
+      <Filter>Levels</Filter>
+    </Text>
   </ItemGroup>
 </Project>
