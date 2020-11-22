@@ -10,22 +10,33 @@ using namespace std;
 class Camera
 {
 public:
-	void initMenu(int i);
+
+	Camera();
+
+	void initMenu(int numberOfMenus);
 	void update();
 	
 	void toogleFreeCamera();
+	void setFreeCamera(bool b);
 	void setCurrentMenu(int men);
 	void addMouseAngles(float mx, float my);
 
-	glm::mat4 getView();
+	bool isFree();
+	glm::mat4 getViewMatrix();
 
 private:
 
-	bool freeCamera, changedAngles;
-	glm::vec3 freeCameraPosition;
+	// Free Camera
+	bool freeCamera;
+	const float cameraMovingSpeed = 0.2;
 	glm::vec3 freeCameraTarget;
-	glm::vec2 rotAngles;
-	glm::vec4 dispW, dispS, dispA, dispD;
+	glm::vec3 freeCameraPosition;
+	glm::vec3 direction;
+	glm::vec3 right;
+	glm::vec3 up;
+	glm::vec2 alpha;
+	void updateFreeCamera();
+
 
 	// MENU ELEMENTS
 	vector<glm::vec3> menuTargets;

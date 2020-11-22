@@ -29,6 +29,9 @@ private:
 
 public:
 
+	static constexpr int WINDOW_WIDTH = 1920;
+	static constexpr int WINDOW_HEIGHT = 1080;
+
 	Game() {}
 	
 	static Game &instance()
@@ -68,9 +71,6 @@ public:
 	// GodMode Public Functions
 	bool isInGodMode();
 
-	static constexpr int WINDOW_WIDTH = 640;
-	static constexpr int WINDOW_HEIGHT = 480;
-
 private:
 
 	// GodMode Private Variables/Functions
@@ -87,7 +87,7 @@ private:
 	void setUp_StartMenu();
 
 	int mouseX, mouseY;
-
+	void updateFreeCamera();
 
 	bool keys[256], specialKeys[256]; 
 

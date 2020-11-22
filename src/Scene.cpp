@@ -21,7 +21,6 @@ Scene::~Scene()
 		delete level;
 }
 
-
 void Scene::init()
 {
 	initShaders();
@@ -30,8 +29,8 @@ void Scene::init()
 	cam->initMenu(4);
 
 	level = Level::createLevel(glm::vec3(16, 4, 32), texProgram, "images/floor.png", "images/wall.png");
-	projection = glm::perspective(45.f / 180.f * PI, float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 100.f);
-	cam->setCurrentMenu(defaultCamera);
+	projection = glm::perspective(75.f / 180.f * PI, float(Game::instance().WINDOW_WIDTH) / float(Game::instance().WINDOW_HEIGHT), 0.1f, 100.f);
+	cam->setCurrentMenu(fixedCamera_01);
 
 	currentTime = 0.0f;
 }
@@ -46,7 +45,7 @@ void Scene::render()
 {
 	glm::mat4 modelview;
 
-	modelview = cam->getView();
+	modelview = cam->getViewMatrix();
 
 	texProgram.use();
 	texProgram.setUniformMatrix4f("projection", projection);
@@ -85,11 +84,24 @@ void Scene::initShaders()
 	fShader.free();
 }
 
-void Scene::setCamera(camera c) {
-	cam->setCurrentMenu(c);
+void Scene::setCamera(camera c)
+{
+	if (c == Scene::fpsCamera)
+	{
+		cam->setFreeCamera(true);
+		return;
+	}
+	
+	cam->setFreeCamera(false);
+	cam->setCurrentMenu(c - 1);
 }
 
-void Scene::setMouseAngles(int deltaTime, int x, int y)
+bool Scene::cameraIsFree()
+{
+	return cam->isFree();
+}
+
+void Scene::setMouseAngles(int x, int y)
 {
 	//  (float)deltaTime
 	float horizontalAngle = mouseSpeed * float(Game::instance().WINDOW_WIDTH / 2 - x);

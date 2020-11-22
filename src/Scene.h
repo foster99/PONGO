@@ -8,10 +8,6 @@
 #include "Camera.h"
 
 
-#define CAMERA_WIDTH 640
-#define CAMERA_HEIGHT 480
-
-
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
 
@@ -29,7 +25,8 @@ public:
 	void render();
 
 	void setCamera(camera c);
-	void setMouseAngles(int deltaTime, int x, int y);
+	bool cameraIsFree();
+	void setMouseAngles(int x, int y);
 
 private:
 	void initShaders();
@@ -37,8 +34,8 @@ private:
 
 public: // CONST EXPR DECLARATIONS
 
-	static constexpr camera defaultCamera  = 0;
-	static constexpr camera fpsCamera	   = 1;
+	static constexpr camera fpsCamera	   = 0;
+	static constexpr camera fixedCamera_01 = 1;
 	static constexpr camera fixedCamera_02 = 2;
 	static constexpr camera fixedCamera_03 = 3;
 	static constexpr camera fixedCamera_04 = 4;

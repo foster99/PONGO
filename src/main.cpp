@@ -6,10 +6,7 @@
 #pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
 
 
-#define TIME_PER_FRAME 1000.f / 60.f // Approx. 60 fps
-
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
+#define TIME_PER_FRAME 1000.f / 144.f // Approx. 60 fps
 
 static int prevTime;
 static Game game; // This object represents our whole game
@@ -87,7 +84,7 @@ int main(int argc, char **argv)
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+	glutInitWindowSize(Game::instance().WINDOW_WIDTH, Game::instance().WINDOW_HEIGHT);
 
 	glutCreateWindow(argv[0]);
 	glutDisplayFunc(drawCallback);

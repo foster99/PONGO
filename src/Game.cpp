@@ -12,7 +12,7 @@ void Game::init()
 	// TODO: LOAD SOUNDS
 
 	// SCENE INITIALIZATION
-	
+
 	try {
 		startMenuScene.init();
 		optionsScene.init();
@@ -28,6 +28,8 @@ bool Game::update(int deltaTime)
 {
 	// get GOD MODE
 
+	updateFreeCamera();
+
 	switch (currMode())
 	{
 	case startMenu:
@@ -35,10 +37,6 @@ bool Game::update(int deltaTime)
 		break;
 
 	case playing:
-		gameScene.setMouseAngles(deltaTime, mouseX, mouseY);
-		glutWarpPointer(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
-		mouseX = WINDOW_WIDTH / 2;
-		mouseY = WINDOW_HEIGHT / 2;
 		gameScene.update(deltaTime);
 		break;
 
@@ -84,8 +82,8 @@ void Game::keyPressed(int key)
 	// Camera selection
 	switch (key - '0')
 	{
-	case Scene::defaultCamera:
 	case Scene::fpsCamera:
+	case Scene::fixedCamera_01:
 	case Scene::fixedCamera_02:
 	case Scene::fixedCamera_03:
 	case Scene::fixedCamera_04:
@@ -280,6 +278,26 @@ void Game::setUp_options()
 void Game::setUp_StartMenu()
 {
 	/*SET UP OPTIONS SCENE*/
+}
+
+void Game::updateFreeCamera()
+{
+	Scene* scene;
+
+	switch (currMode())
+	{
+	case startMenu: scene = &startMenuScene;	break;
+	case playing:	scene = &gameScene;			break;
+	case options:	scene = &optionsScene;		break;
+	}
+
+	if (scene->cameraIsFree())
+	{
+		scene->setMouseAngles(mouseX, mouseY);
+		glutWarpPointer(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+		mouseX = WINDOW_WIDTH / 2;
+		mouseY = WINDOW_HEIGHT / 2;
+	}
 }
 
 

@@ -7,12 +7,33 @@ float degToRad(float alpha) {
 	return alpha * (PI / 180.f);
 }
 
-void Camera::initMenu(int split)
+Camera::Camera()
 {
-	menuTargets = vector<glm::vec3>(split);
+	// MENU ELEMENTS
+	menuTargets = vector<glm::vec3>(0);
+	menuPosition = glm::vec3(0);
+	currentMenu = 0;
+
+	// PLAYING ELEMENTS
+	playingTargets = vector<glm::vec3>(0);
+	playingPosition = vector<glm::vec3>(0);
+	
+	// FREE CAMERA INITS
+	freeCameraPosition = glm::vec3(0);
+	freeCameraTarget = glm::vec3(0);
+	direction = glm::vec3(0, 0, -1);;
+	right = glm::vec3(1, 0, 0);;
+	up = glm::vec3(0, 1, 0);
+	alpha = glm::vec2(0);
+	freeCamera = false;
+}
+
+void Camera::initMenu(int numberOfMenus)
+{
+	menuTargets = vector<glm::vec3>(numberOfMenus);
 	menuPosition = glm::vec3(0,0,0);
 
-	float step = 360.f / split;
+	float step = 360.f / numberOfMenus;
 	
 	menuTargets[0]= glm::vec3(0, 0, -1);
 	glm::vec4 prevPoint = glm::vec4(0, 0, -1, 1);
@@ -20,7 +41,8 @@ void Camera::initMenu(int split)
 
 	rotMat = glm::rotate(degToRad(step), glm::vec3(0, 1, 0));
 
-	for (int i = 1; i < split; ++i) {
+	for (int i = 1; i < numberOfMenus; ++i)
+	{
 		glm::vec4 actPoint = rotMat * prevPoint;
 
 		menuTargets[i]= glm::vec3(actPoint.x, actPoint.y, actPoint.z);
@@ -29,70 +51,26 @@ void Camera::initMenu(int split)
 	}
 
 	currentMenu = 0;
-	
-	// MAY CHANGE
+
 	freeCameraPosition = menuPosition;
 	freeCameraTarget = menuTargets[0];
-	freeCamera = true;
-	rotAngles = glm::vec2(0);
-	dispW = glm::vec4(0, 0, -0.2, 1);
-	dispS = glm::vec4(0, 0, 0.2, 1);
-	dispA = glm::vec4(-0.2, 0, 0, 1);
-	dispD = glm::vec4(0.2, 0, 0, 1);
 }
 
 void Camera::update()
 {
-	if (freeCamera) {
-		glm::mat4 moverPutoPunto = glm::mat4(1);
-		if (changedAngles) {
-			
-			moverPutoPunto = glm::translate(moverPutoPunto, -freeCameraPosition);
-			moverPutoPunto = glm::rotate(moverPutoPunto, rotAngles.x, glm::vec3(0, 1, 0));
-			//moverPutoPunto = glm::rotate(moverPutoPunto, rotAngles.y, glm::vec3(1, 0, 0));
-			moverPutoPunto = glm::translate(moverPutoPunto, freeCameraPosition);
+	if (freeCamera)
+		updateFreeCamera();
 
-			glm::vec4 aux = moverPutoPunto * glm::vec4(freeCameraTarget, 1);
-			freeCameraTarget = glm::vec3(aux);
-			changedAngles = false;
-		}
-
-		if (Game::instance().getKey('w')) {
-			if (changedAngles)
-				dispW = moverPutoPunto * dispW;
-
-			freeCameraPosition += glm::vec3(dispW);
-			freeCameraTarget += glm::vec3(dispW);
-		}
-		else if (Game::instance().getKey('s')) {
-			if (changedAngles)
-				dispS = moverPutoPunto * dispS;
-
-			freeCameraPosition += glm::vec3(dispS);
-			freeCameraTarget += glm::vec3(dispS);
-		}
-
-		if (Game::instance().getKey('a')) {
-			if (changedAngles)
-				dispA = moverPutoPunto * dispA;
-
-			freeCameraPosition += glm::vec3(dispA);
-			freeCameraTarget += glm::vec3(dispA);
-		}
-		else if (Game::instance().getKey('d')) {
-			if (changedAngles)
-				dispD = moverPutoPunto * dispD;
-
-			freeCameraPosition += glm::vec3(dispD);
-			freeCameraTarget += glm::vec3(dispD);
-		}
-			
-	}
 }
 
 void Camera::toogleFreeCamera()
 {
 	freeCamera = !freeCamera;
+}
+
+void Camera::setFreeCamera(bool b)
+{
+	freeCamera = b;
 }
 
 void Camera::setCurrentMenu(int men)
@@ -103,15 +81,48 @@ void Camera::setCurrentMenu(int men)
 
 void Camera::addMouseAngles(float mx, float my)
 {
-	rotAngles = glm::vec2(mx, my);
-	changedAngles = true;
+	alpha += glm::vec2(mx, my);
 }
 
-glm::mat4 Camera::getView()
+void Camera::updateFreeCamera()
+{
+	// Direction Vector
+	direction = glm::vec3(cos(alpha.y) * sin(alpha.x),
+		sin(alpha.y),
+		cos(alpha.y) * cos(alpha.x));
+
+	// Right vector
+	right = glm::vec3(sin(alpha.x - 3.14f / 2.0f),
+		0,
+		cos(alpha.x - 3.14f / 2.0f));
+	// Up vector
+	up = glm::cross(right, direction);
+
+	// Position Update
+	if (Game::instance().getKey('w'))
+		freeCameraPosition += direction * cameraMovingSpeed;
+	if (Game::instance().getKey('s'))
+		freeCameraPosition -= direction * cameraMovingSpeed;
+	if (Game::instance().getKey('a'))
+		freeCameraPosition -= right * cameraMovingSpeed;
+	if (Game::instance().getKey('d'))
+		freeCameraPosition += right * cameraMovingSpeed;
+
+	// Compute Target Point
+	freeCameraTarget = freeCameraPosition + direction;
+}
+
+bool Camera::isFree()
+{
+	return freeCamera;
+}
+
+glm::mat4 Camera::getViewMatrix()
 {
 	//     glm::lookAt(     position,           target,                worldUp);
+
 	if (freeCamera)
-		return glm::lookAt(freeCameraPosition, freeCameraTarget, glm::vec3(0, 1, 0));
+		return glm::lookAt(freeCameraPosition, freeCameraTarget, up);
 	
 	return glm::lookAt(menuPosition, menuTargets[currentMenu], glm::vec3(0, 1, 0));
 }
