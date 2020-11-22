@@ -3,6 +3,7 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtc/matrix_transform.hpp>
 #include "Scene.h"
+#include "Game.h"
 
 // FOWOSTER SALU2
 
@@ -45,7 +46,7 @@ void Scene::render()
 {
 	glm::mat4 modelview;
 
-	modelview = cam->getModelView();
+	modelview = cam->getView();
 
 	texProgram.use();
 	texProgram.setUniformMatrix4f("projection", projection);
@@ -86,5 +87,14 @@ void Scene::initShaders()
 
 void Scene::setCamera(camera c) {
 	cam->setCurrentMenu(c);
+}
+
+void Scene::setMouseAngles(int deltaTime, int x, int y)
+{
+	//  (float)deltaTime
+	float horizontalAngle = mouseSpeed * float(Game::instance().WINDOW_WIDTH / 2 - x);
+	float verticalAngle = mouseSpeed * float(Game::instance().WINDOW_HEIGHT / 2 - y);
+
+	cam->addMouseAngles(horizontalAngle, verticalAngle);
 }
 

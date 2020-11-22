@@ -35,6 +35,10 @@ bool Game::update(int deltaTime)
 		break;
 
 	case playing:
+		gameScene.setMouseAngles(deltaTime, mouseX, mouseY);
+		glutWarpPointer(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+		mouseX = WINDOW_WIDTH / 2;
+		mouseY = WINDOW_HEIGHT / 2;
 		gameScene.update(deltaTime);
 		break;
 
@@ -134,6 +138,8 @@ void Game::specialKeyReleased(int key)
 
 void Game::mouseMove(int x, int y)
 {
+	mouseX = x;
+	mouseY = y;
 }
 
 void Game::mousePress(int button)
