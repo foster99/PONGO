@@ -34,27 +34,57 @@ void Camera::initMenu(int split)
 	freeCameraPosition = menuPosition;
 	freeCameraTarget = menuTargets[0];
 	freeCamera = true;
+	rotAngles = glm::vec2(0);
+	dispW = glm::vec4(0, 0, -0.2, 1);
+	dispS = glm::vec4(0, 0, 0.2, 1);
+	dispA = glm::vec4(-0.2, 0, 0, 1);
+	dispD = glm::vec4(0.2, 0, 0, 1);
 }
 
 void Camera::update()
 {
 	if (freeCamera) {
+		glm::mat4 moverPutoPunto = glm::mat4(1);
+		if (changedAngles) {
+			
+			moverPutoPunto = glm::translate(moverPutoPunto, -freeCameraPosition);
+			moverPutoPunto = glm::rotate(moverPutoPunto, rotAngles.x, glm::vec3(0, 1, 0));
+			//moverPutoPunto = glm::rotate(moverPutoPunto, rotAngles.y, glm::vec3(1, 0, 0));
+			moverPutoPunto = glm::translate(moverPutoPunto, freeCameraPosition);
+
+			glm::vec4 aux = moverPutoPunto * glm::vec4(freeCameraTarget, 1);
+			freeCameraTarget = glm::vec3(aux);
+			changedAngles = false;
+		}
+
 		if (Game::instance().getKey('w')) {
-			freeCameraPosition += glm::vec3(0, 0, -0.2);
-			freeCameraTarget += glm::vec3(0, 0, -0.2);
+			if (changedAngles)
+				dispW = moverPutoPunto * dispW;
+
+			freeCameraPosition += glm::vec3(dispW);
+			freeCameraTarget += glm::vec3(dispW);
 		}
 		else if (Game::instance().getKey('s')) {
-			freeCameraPosition += glm::vec3(0, 0, 0.2);
-			freeCameraTarget += glm::vec3(0, 0, 0.2);
+			if (changedAngles)
+				dispS = moverPutoPunto * dispS;
+
+			freeCameraPosition += glm::vec3(dispS);
+			freeCameraTarget += glm::vec3(dispS);
 		}
 
 		if (Game::instance().getKey('a')) {
-			freeCameraPosition += glm::vec3(-0.2, 0, 0);
-			freeCameraTarget += glm::vec3(-0.2, 0, 0);
+			if (changedAngles)
+				dispA = moverPutoPunto * dispA;
+
+			freeCameraPosition += glm::vec3(dispA);
+			freeCameraTarget += glm::vec3(dispA);
 		}
 		else if (Game::instance().getKey('d')) {
-			freeCameraPosition += glm::vec3(0.2, 0, 0);
-			freeCameraTarget += glm::vec3(0.2, 0, 0);
+			if (changedAngles)
+				dispD = moverPutoPunto * dispD;
+
+			freeCameraPosition += glm::vec3(dispD);
+			freeCameraTarget += glm::vec3(dispD);
 		}
 			
 	}
@@ -71,10 +101,16 @@ void Camera::setCurrentMenu(int men)
 		currentMenu = men;
 }
 
-glm::mat4 Camera::getModelView()
+void Camera::addMouseAngles(float mx, float my)
+{
+	rotAngles = glm::vec2(mx, my);
+	changedAngles = true;
+}
+
+glm::mat4 Camera::getView()
 {
 	//     glm::lookAt(     position,           target,                worldUp);
-	if(freeCamera)
+	if (freeCamera)
 		return glm::lookAt(freeCameraPosition, freeCameraTarget, glm::vec3(0, 1, 0));
 	
 	return glm::lookAt(menuPosition, menuTargets[currentMenu], glm::vec3(0, 1, 0));

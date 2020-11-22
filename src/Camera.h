@@ -15,15 +15,18 @@ public:
 	
 	void toogleFreeCamera();
 	void setCurrentMenu(int men);
+	void addMouseAngles(float mx, float my);
 
-	glm::mat4 getModelView();
+	glm::mat4 getView();
 
 private:
 
-	bool freeCamera;
+	bool freeCamera, changedAngles;
 	glm::vec3 freeCameraPosition;
 	glm::vec3 freeCameraTarget;
-	
+	glm::vec2 rotAngles;
+	glm::vec4 dispW, dispS, dispA, dispD;
+
 	// MENU ELEMENTS
 	vector<glm::vec3> menuTargets;
 	glm::vec3 menuPosition;
@@ -32,6 +35,7 @@ private:
 	// PLAYING ELEMENTS
 	vector<glm::vec3> playingTargets;
 	vector<glm::vec3> playingPosition;
+
 };
 
 #endif

@@ -68,6 +68,9 @@ public:
 	// GodMode Public Functions
 	bool isInGodMode();
 
+	static constexpr int WINDOW_WIDTH = 640;
+	static constexpr int WINDOW_HEIGHT = 480;
+
 private:
 
 	// GodMode Private Variables/Functions
@@ -82,6 +85,8 @@ private:
 	void setUp_playing(int level);
 	void setUp_options();
 	void setUp_StartMenu();
+
+	int mouseX, mouseY;
 
 
 	bool keys[256], specialKeys[256]; 

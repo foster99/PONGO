@@ -28,6 +28,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="AssimpModel.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderProgram.h">
@@ -52,6 +55,12 @@
       <Filter>Header Files\Base</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpModel.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
       <Filter>Header Files\Scene</Filter>
     </ClInclude>
   </ItemGroup>

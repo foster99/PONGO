@@ -29,7 +29,7 @@ public:
 	void render();
 
 	void setCamera(camera c);
-	void updateCamera();
+	void setMouseAngles(int deltaTime, int x, int y);
 
 private:
 	void initShaders();
@@ -44,6 +44,7 @@ public: // CONST EXPR DECLARATIONS
 	static constexpr camera fixedCamera_04 = 4;
 	static constexpr camera fixedCamera_05 = 5;
 
+	static constexpr float mouseSpeed = 0.005;
 
 
 private:
