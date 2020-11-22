@@ -28,6 +28,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Source Files\Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderProgram.h">
@@ -53,6 +56,9 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Header Files\Entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -80,11 +86,14 @@
     <Filter Include="Source Files\Scene">
       <UniqueIdentifier>{d45c1a3d-4fc5-41aa-bf87-c03349d159ec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resor">
-      <UniqueIdentifier>{813d53b5-cbd7-4e3b-be7c-ddc9e3d97e00}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Levels">
       <UniqueIdentifier>{3fbbced6-5c70-48af-9f23-ef51ac92a9a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Entity">
+      <UniqueIdentifier>{7068489f-9879-4b22-94da-a6f6086753d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Entity">
+      <UniqueIdentifier>{33fcb46c-13a8-41ba-99a6-3cd6b671eb4e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
