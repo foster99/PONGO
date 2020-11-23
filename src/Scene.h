@@ -1,58 +1,62 @@
 #ifndef _SCENE_INCLUDE
 #define _SCENE_INCLUDE
 
-
+#define GLM_FORCE_RADIANS
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
 #include "ShaderProgram.h"
 #include "Level.h"
 #include "Camera.h"
-
+#include "AssimpModel.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
 
-typedef int camera;
 
 class Scene
 {
-
 public:
-	Scene();
-	~Scene();
 
-	void init();
-	void update(int deltaTime);
-	void render();
-
-	void setCamera(camera c);
-	bool cameraIsFree();
-	void setMouseAngles(int x, int y);
-
-private:
-	void initShaders();
-
-
-public: // CONST EXPR DECLARATIONS
-
-	static constexpr camera fpsCamera	   = 0;
+	typedef AssimpModel Model;
+	typedef int camera;
+	static constexpr camera fpsCamera = 0;
 	static constexpr camera fixedCamera_01 = 1;
 	static constexpr camera fixedCamera_02 = 2;
 	static constexpr camera fixedCamera_03 = 3;
 	static constexpr camera fixedCamera_04 = 4;
 	static constexpr camera fixedCamera_05 = 5;
-
 	static constexpr float mouseSpeed = 0.005;
 
+	Scene();
+	~Scene();
 
-private:
-	
-	camera selectedCamera;
-	Camera* cam;
-	Level *level;
-	ShaderProgram texProgram;
+	virtual void init();
+	virtual void update(int deltaTime);
+	virtual void render() = 0;
+
+	// Camera Methods
+	bool cameraIsFree();
+	void setCamera(camera c);
+	void setMouseAngles(int x, int y);
+
+protected:
+
 	float currentTime;
-	glm::mat4 projection, modelview;
 
+	// Camera
+	Camera* cam;
+	camera selectedCamera;
+	
+	// Shaders
+	ShaderProgram texProgram;
+	void initShaders();
+
+	// Rendering
+	glm::mat4 view;
+	glm::mat4 projection;
+
+	// 3D
+	Level* level;
 };
 
 

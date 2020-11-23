@@ -1,24 +1,28 @@
 #include <iostream>
 #include <cmath>
-#define GLM_FORCE_RADIANS
-#include <glm/gtc/matrix_transform.hpp>
 #include "Scene.h"
 #include "Game.h"
-
-// FOWOSTER SALU2
 
 #define PI 3.14159f
 
 
 Scene::Scene()
 {
-	level = NULL;
+	this->level = nullptr;
+	this->cam = nullptr;
+	this->selectedCamera = 0;
+	this->currentTime = 0.f;
+	this->view = glm::mat4(1);
+	this->projection = glm::mat4(1);
 }
 
 Scene::~Scene()
 {
 	if(level != NULL)
 		delete level;
+
+	if (cam != NULL)
+		delete cam;
 }
 
 void Scene::init()
@@ -27,12 +31,11 @@ void Scene::init()
 
 	cam = new Camera();
 	cam->initMenu(4);
-
-	level = Level::createLevel(glm::vec3(16, 4, 32), texProgram, "images/floor.png", "images/wall.png");
-	projection = glm::perspective(75.f / 180.f * PI, float(Game::instance().WINDOW_WIDTH) / float(Game::instance().WINDOW_HEIGHT), 0.1f, 100.f);
 	cam->setCurrentMenu(fixedCamera_01);
-
+	
 	currentTime = 0.0f;
+	level		= Level::createLevel(glm::vec3(16, 4, 32), texProgram, "images/floor.png", "images/wall.png");
+	projection	= glm::perspective(75.f / 180.f * PI, float(Game::instance().WINDOW_WIDTH) / float(Game::instance().WINDOW_HEIGHT), 0.1f, 100.f);
 }
 
 void Scene::update(int deltaTime)
@@ -41,18 +44,9 @@ void Scene::update(int deltaTime)
 	cam->update();
 }
 
-void Scene::render()
-{
-	glm::mat4 modelview;
 
-	modelview = cam->getViewMatrix();
 
-	texProgram.use();
-	texProgram.setUniformMatrix4f("projection", projection);
-	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
-	texProgram.setUniformMatrix4f("modelview", modelview);
-	level->render();
-}
+// SHADER METHODS
 
 void Scene::initShaders()
 {
@@ -83,6 +77,11 @@ void Scene::initShaders()
 	vShader.free();
 	fShader.free();
 }
+
+
+
+
+// CAMERA METHODS
 
 void Scene::setCamera(camera c)
 {

@@ -7,28 +7,17 @@
 #include <GL/glut.h>
 
 #include "Sound.h"
-#include "Scene.h"
+#include "MenuScene.h"
+#include "GameScene.h"
 
 typedef unsigned short Mode;
 
 // Game is a singleton (a class with a single instance) that represents our whole application
 class Game
 {
-
-private:
-
-	// GAME STATUS CONTROL VARIABLES
-	stack<Mode> modeHist;				// Defines the mode history (startmenu, playing, credits, ...)
-	static constexpr Mode exitGame		= Mode(0);
-	static constexpr Mode startMenu		= Mode(1);
-	static constexpr Mode playing		= Mode(2);
-	static constexpr Mode options		= Mode(3);
-
-	static constexpr int ESC = 27;
-	static constexpr int ENTER = 13;
-
 public:
 
+	typedef unsigned short Mode;
 	static constexpr int WINDOW_WIDTH = 1280;
 	static constexpr int WINDOW_HEIGHT = 720;
 
@@ -73,14 +62,24 @@ public:
 
 private:
 
+	// GAME STATUS CONTROL VARIABLES
+	stack<Mode> modeHist;				// Defines the mode history (startmenu, playing, credits, ...)
+	static constexpr Mode exitGame = Mode(0);
+	static constexpr Mode startMenu = Mode(1);
+	static constexpr Mode playing = Mode(2);
+	static constexpr Mode options = Mode(3);
+
+	static constexpr int ESC = 27;
+	static constexpr int ENTER = 13;
+
 	// GodMode Private Variables/Functions
 	bool gameIsInGodMode;
 	void toggleGodMode();
 
 	// Scenes
-	Scene gameScene;
-	Scene optionsScene;
-	Scene startMenuScene;
+	GameScene gameScene;
+	MenuScene optionsScene;
+	MenuScene startMenuScene;
 
 	void setUp_playing(int level);
 	void setUp_options();
