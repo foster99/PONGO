@@ -60,6 +60,15 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="AssimpModel.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Header Files\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\Entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">

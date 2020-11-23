@@ -6,7 +6,7 @@
 #pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
 
 
-#define TIME_PER_FRAME 1000.f / 144.f // Approx. 60 fps
+#define TIME_PER_FRAME 1000.f / 60.f // Approx. 60 fps
 
 static int prevTime;
 static Game game; // This object represents our whole game

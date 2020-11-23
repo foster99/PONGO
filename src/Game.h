@@ -29,8 +29,8 @@ private:
 
 public:
 
-	static constexpr int WINDOW_WIDTH = 1920;
-	static constexpr int WINDOW_HEIGHT = 1080;
+	static constexpr int WINDOW_WIDTH = 1280;
+	static constexpr int WINDOW_HEIGHT = 720;
 
 	Game() {}
 	
