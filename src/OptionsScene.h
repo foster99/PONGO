@@ -1,9 +1,12 @@
-#ifndef _MENUSCENE_INCLUDE
-#define _MENUSCENE_INCLUDE
+#ifndef _OPTIONSSCENE_INCLUDE
+#define _OPTIONSSCENE_INCLUDE
 
 #include "Scene.h"
 
-class MenuScene : public Scene
+using namespace std;
+using namespace glm;
+
+class OptionsScene : public Scene
 {
 public:
 
@@ -15,6 +18,5 @@ private:
 
 	ShaderProgram* menuShaderProgram;
 	Model* model;
-	Model* model2;
 };
 #endif

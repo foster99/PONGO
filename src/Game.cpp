@@ -6,7 +6,7 @@
 void Game::init()
 {
 	glClearColor(0.f, 0.f, 0.f, 1.0f);
-
+	glEnable(GL_DEPTH_TEST);
 	modeHist.push(startMenu);
 
 	// TODO: LOAD SOUNDS
@@ -186,6 +186,7 @@ void Game::keyPressed_playing(int key, bool specialKey)
 		case 'G':
 		case 'g':	toggleGodMode();		break;
 		case ' ':	/* invertir la pelota en el juego */ break;
+		case 'm':	gameScene.addCube(); break;
 		default:	break;
 		}
 	}

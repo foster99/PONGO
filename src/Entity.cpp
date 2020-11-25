@@ -1,10 +1,36 @@
 #include "Entity.h"
 
+Entity::~Entity()
+{
+    if (model != nullptr)
+        delete model;
+}
+
+Entity::Entity()
+    : Entity(nullptr)
+{
+    // Empty Code
+}
+
+Entity::Entity(Model* model)
+{
+    this->model     = model;
+}
+
+void Entity::init()
+{
+
+}
+
+void Entity::render()
+{
+    model->render(*(program));
+}
+
 std::pair<bool, glm::vec2> Entity::collisionPoint(const Entity& e1, const Entity& e2)
 {
     // get center point circle first 
-    glm::vec2 center = e1.center;
-
+    //glm::vec2 center = e1.center;
 
     //// get difference vector between both centers
     //glm::vec2 difference = e1.center - e2.center;
@@ -14,7 +40,6 @@ std::pair<bool, glm::vec2> Entity::collisionPoint(const Entity& e1, const Entity
     //// retrieve vector between center circle and closest point AABB and check if length <= radius
     //difference = closest - e1.center;
     //return glm::length(difference) < e1.Radius;
-
 
     return std::pair<bool, glm::vec2>();
 }

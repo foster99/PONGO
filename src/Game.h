@@ -9,6 +9,7 @@
 #include "Sound.h"
 #include "MenuScene.h"
 #include "GameScene.h"
+#include "OptionsScene.h"
 
 typedef unsigned short Mode;
 
@@ -21,7 +22,13 @@ public:
 	static constexpr int WINDOW_WIDTH = 1280;
 	static constexpr int WINDOW_HEIGHT = 720;
 
-	Game() {}
+	Game() :
+		gameIsInGodMode(false),
+		keys(),
+		specialKeys(),
+		mouseX(0),
+		mouseY(0)
+	{}
 	
 	static Game &instance()
 	{
@@ -77,9 +84,9 @@ private:
 	void toggleGodMode();
 
 	// Scenes
-	GameScene gameScene;
-	MenuScene optionsScene;
-	MenuScene startMenuScene;
+	GameScene		gameScene;
+	OptionsScene	optionsScene;
+	MenuScene		startMenuScene;
 
 	void setUp_playing(int level);
 	void setUp_options();

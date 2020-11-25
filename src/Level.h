@@ -5,6 +5,9 @@
 #include <vector>
 #include <string>
 #include <glm/glm.hpp>
+
+#include "World.h"
+#include "Ball.h"
 #include "Texture.h"
 #include "ShaderProgram.h"
 using namespace std;
@@ -13,60 +16,39 @@ using namespace std;
 
 class Tile	{ private: int a; };
 
-class Slide
-{
-	typedef int direction;
-
-public:
-	Slide(direction d, int fixed, int initial, int final) {
-
-	}
-	static constexpr direction Horizontal = 0;
-	static constexpr direction Vertical = 0;
-
-private: int a;
-};
+class Slide : public Entity {};
 
 
+// ARREGLAR COMPILACION + AJUSTAR CLASE LEVEL A LA HERENCIA
 
 // Class Level renders a very simple room with textures
 
 
-class Level
+class Level : public World
 {
-
 public:
 
 	// Constructors
-	static Level *createLevel(const glm::vec3 &levelSize, ShaderProgram &program, const string &floorFile, const string &wallFile);
-	Level(const glm::vec3 &levelSize, ShaderProgram &program, const string &floorFile, const string &wallFile);
+	Level(int id = 1);
 	
 	// Destructors
 	~Level();
-	void free();
+	void free() override;
 
 	// Rendering
-	void render() const;
-
-private:
-
-	void prepareArrays(ShaderProgram &program);
-	void loadTileMap();
-	void loadTile(char tile, int i, int j);
+	void render() const override;
 
 private:
 
 	// TileMap
+	void loadTileMap();
+	void loadTile(char tile, int i, int j);
+
 	int tileSize;
 	glm::vec2 chunkSize;
 	glm::vec2 mapSizeInTiles;
 	glm::vec2 mapSizeInChunks;
 	vector<vector<Tile>> map;
-
-	// OpenGL stuff
-	GLuint vao[2];
-	GLuint vbo[2];
-	GLint posLocation[2], texCoordLocation[2];
 
 	// World stuff
 	int levelID;
@@ -74,8 +56,8 @@ private:
 	Texture floor, wall;
 
 	// Entities
-	vector<Slide> slides;
-
+	Ball* ball;
+	vector<Slide*> slides;
 };
 
 

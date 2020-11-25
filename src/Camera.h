@@ -5,6 +5,7 @@
 #include <glm/gtx/transform.hpp>
 #include <vector>
 using namespace std;
+using namespace glm;
 
 
 class Camera
@@ -21,31 +22,34 @@ public:
 	void setCurrentMenu(int men);
 	void addMouseAngles(float mx, float my);
 
+	vec3 getFreeCameraNormalicedTarget();
+	vec3 getCameraPosition();
+
 	bool isFree();
-	glm::mat4 getViewMatrix();
+	mat4 getViewMatrix();
 
 private:
 
 	// Free Camera
 	bool freeCamera;
 	const float cameraMovingSpeed = 0.2;
-	glm::vec3 freeCameraTarget;
-	glm::vec3 freeCameraPosition;
-	glm::vec3 direction;
-	glm::vec3 right;
-	glm::vec3 up;
-	glm::vec2 alpha;
+	vec3 freeCameraTarget;
+	vec3 freeCameraPosition;
+	vec3 direction;
+	vec3 right;
+	vec3 up;
+	vec2 alpha;
 	void updateFreeCamera();
 
 
 	// MENU ELEMENTS
-	vector<glm::vec3> menuTargets;
-	glm::vec3 menuPosition;
+	vector<vec3> menuTargets;
+	vec3 menuPosition;
 	int currentMenu;
 
 	// PLAYING ELEMENTS
-	vector<glm::vec3> playingTargets;
-	vector<glm::vec3> playingPosition;
+	vector<vec3> playingTargets;
+	vector<vec3> playingPosition;
 
 };
 

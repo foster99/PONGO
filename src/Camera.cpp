@@ -3,8 +3,14 @@
 
 #define PI 3.14159f
 
-float degToRad(float alpha) {
+float degToRad(float alpha)
+{
 	return alpha * (PI / 180.f);
+}
+
+glm::vec2 degToRad(float alpha1, float alpha2)
+{
+	return glm::vec2(alpha1 * (PI / 180.f), alpha2 * (PI / 180.f));
 }
 
 Camera::Camera()
@@ -21,10 +27,10 @@ Camera::Camera()
 	// FREE CAMERA INITS
 	freeCameraPosition = glm::vec3(0);
 	freeCameraTarget = glm::vec3(0);
-	direction = glm::vec3(0, 0, -1);;
-	right = glm::vec3(1, 0, 0);;
-	up = glm::vec3(0, 1, 0);
-	alpha = glm::vec2(0);
+	direction = glm::vec3(0);
+	right = glm::vec3(0);
+	up = glm::vec3(0);
+	alpha = degToRad(0, -90);
 	freeCamera = false;
 }
 
@@ -82,6 +88,16 @@ void Camera::setCurrentMenu(int men)
 void Camera::addMouseAngles(float mx, float my)
 {
 	alpha += glm::vec2(mx, my);
+}
+
+vec3 Camera::getFreeCameraNormalicedTarget()
+{
+	return freeCameraPosition + direction * 0.2f;
+}
+
+vec3 Camera::getCameraPosition()
+{
+	return freeCameraPosition;
 }
 
 void Camera::updateFreeCamera()

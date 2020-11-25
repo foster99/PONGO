@@ -11,9 +11,13 @@ public:
 	void render() override;
 	void update(int deltaTime) override;
 
+	void addCube();
+
 private:
 
-
+	ShaderProgram* gameShaderProgram;
+	vector<Model*> models;
+	Level* level;
 };
 #endif
 
