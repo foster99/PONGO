@@ -16,7 +16,7 @@ using namespace std;
 
 class Tile	{ private: int a; };
 
-class Slide : public Entity {};
+//class Slide : public Entity {};
 
 
 // ARREGLAR COMPILACION + AJUSTAR CLASE LEVEL A LA HERENCIA

@@ -51,7 +51,7 @@ void MenuScene::render()
 	defaultShaderProgram->setUniformMatrix3f("normalmatrix", normalMatrix);
 
 		// render
-	//model->render(*(defaultShaderProgram));
+	//odel->render(*(defaultShaderProgram));
 }
 
 void MenuScene::update(int deltaTime)
