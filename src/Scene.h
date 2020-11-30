@@ -31,7 +31,7 @@ public:
 	static constexpr camera fixedCamera_03 = 3;
 	static constexpr camera fixedCamera_04 = 4;
 	static constexpr camera fixedCamera_05 = 5;
-	static constexpr float  mouseSpeed     = 0.005;
+	static constexpr float  mouseSpeed     = 0.005f;
 
 	Scene();
 	~Scene();

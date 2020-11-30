@@ -39,6 +39,8 @@ public:
 protected:
 	
 	ShaderProgram* defaultWorldShaderProgram;
+	mat4& viewMatrix;
+	mat4& projMatrix;
 
 private:
 
@@ -53,8 +55,7 @@ private:
 	GLuint vbo[2];
 	GLint posLocation[2], texCoordLocation[2];
 
-	mat4& viewMatrix;
-	mat4& projMatrix;
+
 
 	// World stuff
 	vec3 worldSize;

@@ -4,9 +4,8 @@
 #include <vector>
 #include "Level.h"
 
-
 using namespace std;
-
+using namespace glm;
 
 
 Level::Level(int id)
@@ -14,6 +13,8 @@ Level::Level(int id)
 {
 	this->World::World();
 
+	loadShaders();
+	loadModels();
 	loadTileMap();
 }
 
@@ -29,11 +30,59 @@ void Level::free()
 
 void Level::render() const
 {
-	this->World::render();
+	//this->World::render();
 
-	// render TileMap
+	renderTileMap();
 	// render Ball
 	// render Slides
+}
+
+void Level::renderTileMap() const
+{
+	Model* model;
+	ShaderProgram* shader;
+	bool skip = false;
+
+	for (const vector<Tile>& row : map)
+	{
+		for (const Tile& tile : row)
+		{
+			if (tile.isUndefined()) continue;
+
+			switch (tile.type)
+			{
+			case Tile::cube:
+				shader	= cubeShader;
+				model	= cubeModel;
+				break;
+
+			default:
+				shader	= nullptr;
+				model	= nullptr;
+				break;
+			}
+
+			// Compute ModelMatrix
+			mat4 modelMatrix = mat4(1.0f);
+			modelMatrix = translate(modelMatrix, vec3(ivec2(tileSize * tile.coords.x, tileSize * -tile.coords.y), 0.f));
+			modelMatrix = scale(modelMatrix, glm::vec3(float(tileSize) / model->getHeight()));
+			modelMatrix = translate(modelMatrix, -model->getCenter());
+			
+			// Compute NormalMatrix
+			mat3 normalMatrix = transpose(inverse(mat3(viewMatrix * modelMatrix)));
+			
+			// Set uniforms
+			shader->use();
+			shader->setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
+			shader->setUniformMatrix4f("projection", projMatrix);
+			shader->setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
+			shader->setUniformMatrix3f("normalmatrix", normalMatrix);
+			
+			// Render
+			model->render(*shader);
+		}
+	}
+
 }
 
 
@@ -112,6 +161,9 @@ void Level::loadTileMap()
 	getline(fin, line);
 	sstream.str(line);
 	sstream >> tileSize;
+	
+	//Tile::tileSize = tileSize;
+
 
 	getline(fin, line);
 	sstream.str(line);
@@ -151,10 +203,33 @@ void Level::loadTileMap()
 	fin.close();
 }
 
-void Level::loadTile(char tile, int i, int j)
+void Level::loadTile(char type, int i, int j)
 {
-	// falta codigo
-	//map[i][j] = Tile();
+	Tile& tile = map[i][j];
+
+	switch (type)
+	{
+
+	case Tile::cube:		tile = Tile(ivec2(i, j), type, true, false);	break;
+	case Tile::undefined:	tile = Tile(ivec2(i, j), type, false, false);	break;
+
+	default: break;
+	}
+}
+
+void Level::loadModels()
+{
+	cubeModel = new Model();
+	cubeModel->loadFromFile("models/cube.obj", *cubeShader);
+}
+
+#include "Scene.h"
+
+void Level::loadShaders()
+{
+	cubeShader = new ShaderProgram();
+	Scene::loadShaders("cubeShader", cubeShader);
+
 }
 
 

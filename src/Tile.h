@@ -6,22 +6,32 @@
 using namespace std;
 using namespace glm;
 
+typedef AssimpModel Model;
+
 class Tile
 {
 public:
+
+	static constexpr char undefined	= ' ';
+	static constexpr char cube	= '#';
+	static constexpr char spike = '*';
+	static constexpr char rope	= 'R';
+	static constexpr char start	= 'S';
+	static constexpr char end	= 'E';
+
 	
 	Tile();
 
-	Tile(	vec2 coords,
+	Tile(	ivec2 coords,
 			char type,
 			bool solid,
 			bool deadly);
 
-	vec2	coords;
+	ivec2	coords;
 	char	type;
 	bool	solid;
 	bool	deadly;
 
-
+	bool isUndefined() const;
 };
 #endif

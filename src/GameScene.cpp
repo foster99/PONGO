@@ -9,8 +9,7 @@ void GameScene::init()
 	for (Model* model : models)
 		model->loadFromFile("models/sphere.obj", (*defaultShaderProgram));
 
-	//model2 = new Model();
-	//model2->loadFromFile("models/PLAY.obj", (*defaultShaderProgram));
+	level = new Level(1);
 }
 
 void GameScene::render()
@@ -26,7 +25,7 @@ void GameScene::render()
 
 	world->setViewMatrix(viewMatrix);
 	world->setProjMatrix(projection);
-	world->render();
+	//world->render();
 
 	float ratio;
 	for (Model* model : models)
@@ -54,6 +53,10 @@ void GameScene::render()
 		model->render(*defaultShaderProgram);
 		transl = transl + vec3(ratio,0,0);
 	}
+
+	level->setViewMatrix(viewMatrix);
+	level->setProjMatrix(projection);
+	level->Level::render();
 }
 
 void GameScene::update(int deltaTime)
