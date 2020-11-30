@@ -50,6 +50,7 @@
       <Filter>Source Files\3D\World</Filter>
     </ClCompile>
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="Slide.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderProgram.h">
@@ -100,7 +101,6 @@
     <ClInclude Include="Level.h">
       <Filter>Header Files\3D\World</Filter>
     </ClInclude>
-    <ClInclude Include="Tile.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
