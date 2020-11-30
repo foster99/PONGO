@@ -154,6 +154,7 @@ void Level::loadTileMap()
 void Level::loadTile(char tile, int i, int j)
 {
 	// falta codigo
+	//map[i][j] = Tile();
 }
 
 

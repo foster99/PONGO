@@ -71,10 +71,10 @@ private:
 
 	// GAME STATUS CONTROL VARIABLES
 	stack<Mode> modeHist;				// Defines the mode history (startmenu, playing, credits, ...)
-	static constexpr Mode exitGame = Mode(0);
+	static constexpr Mode exitGame	= Mode(0);
 	static constexpr Mode startMenu = Mode(1);
-	static constexpr Mode playing = Mode(2);
-	static constexpr Mode options = Mode(3);
+	static constexpr Mode playing	= Mode(2);
+	static constexpr Mode options	= Mode(3);
 
 	static constexpr int ESC = 27;
 	static constexpr int ENTER = 13;

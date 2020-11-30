@@ -11,10 +11,19 @@ public:
 	void render() override;
 	void update(int deltaTime) override;
 
+	void nextMenu();
+	void prevMenu();
+
 private:
 
 	ShaderProgram* menuShaderProgram;
-	Model* model;
-	Model* model2;
+
+	Model* PONGO;
+	Model* PRESS;
+	Model* SPACE;
+	Model* TO;
+	Model* PLAY;
+	Model* UPC;
+	Model* FIB;
 };
 #endif

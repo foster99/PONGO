@@ -37,9 +37,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Painting</Filter>
     </ClCompile>
-    <ClCompile Include="Level.cpp">
-      <Filter>Source Files\3D</Filter>
-    </ClCompile>
     <ClCompile Include="AssimpModel.cpp">
       <Filter>Source Files\3D</Filter>
     </ClCompile>
@@ -47,8 +44,12 @@
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
     <ClCompile Include="World.cpp">
-      <Filter>Source Files\3D</Filter>
+      <Filter>Source Files\3D\World</Filter>
     </ClCompile>
+    <ClCompile Include="Level.cpp">
+      <Filter>Source Files\3D\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderProgram.h">
@@ -81,9 +82,6 @@
     <ClInclude Include="MenuScene.h">
       <Filter>Header Files\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Level.h">
-      <Filter>Header Files\3D</Filter>
-    </ClInclude>
     <ClInclude Include="AssimpModel.h">
       <Filter>Header Files\3D</Filter>
     </ClInclude>
@@ -97,8 +95,12 @@
       <Filter>Header Files\3D\Entity</Filter>
     </ClInclude>
     <ClInclude Include="World.h">
-      <Filter>Header Files\3D</Filter>
+      <Filter>Header Files\3D\World</Filter>
     </ClInclude>
+    <ClInclude Include="Level.h">
+      <Filter>Header Files\3D\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -139,6 +141,12 @@
     </Filter>
     <Filter Include="Header Files\3D\Entity">
       <UniqueIdentifier>{7068489f-9879-4b22-94da-a6f6086753d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\3D\World">
+      <UniqueIdentifier>{bf902eca-e78d-4cb4-8ab5-f9b360f8b3ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\3D\World">
+      <UniqueIdentifier>{d6d045ae-8ce1-4e35-873c-5ff63e105223}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

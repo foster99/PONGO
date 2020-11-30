@@ -1,6 +1,8 @@
 #include "World.h"
 #include "Scene.h"
 
+#define PI 3.14159f
+
 World::World(const glm::vec3& worldSize)
 	: viewMatrix(mat4(1)), projMatrix(mat4(1))
 {
@@ -9,6 +11,7 @@ World::World(const glm::vec3& worldSize)
 
 	Scene::loadShaders("texture", defaultWorldShaderProgram);
 
+	loadModels();
 	loadTexures();
 	prepareArrays();
 }
@@ -55,7 +58,7 @@ void World::render() const
 	modelMatrix = mat4(1.0f);
 	//modelMatrix = translate(modelMatrix, vec3(0.f, 0.5f * fabs(sinf(3.f * currentTime / 1000.f)), 0.f));
 	//modelMatrix = translate(modelMatrix, vec3(0.f, 0.f, -5.f));
-	//modelMatrix = rotate(modelMatrix, currentTime / 1000.f, vec3(0.f, 1.f, 0.f));
+	modelMatrix = rotate(modelMatrix, PI/2.f, vec3(0.f, 1.f, 0.f));
 	modelMatrix = scale(modelMatrix, scaleFactor * worldSize);
 	modelMatrix = translate(modelMatrix, -environment_model->getCenter());
 
@@ -92,21 +95,21 @@ void World::render() const
 
 	// SUPUESTAMENTE, LOS QUADS XD
 
-	glEnable(GL_TEXTURE_2D);
+	//glEnable(GL_TEXTURE_2D);
 
-	floor.use();
-	glBindVertexArray(vao[0]);
-	glEnableVertexAttribArray(posLocation[0]);
-	glEnableVertexAttribArray(texCoordLocation[0]);
-	glDrawArrays(GL_QUADS, 0, 4);
+	//floor.use();
+	//glBindVertexArray(vao[0]);
+	//glEnableVertexAttribArray(posLocation[0]);
+	//glEnableVertexAttribArray(texCoordLocation[0]);
+	//glDrawArrays(GL_QUADS, 0, 4);
 
-	wall.use();
-	glBindVertexArray(vao[1]);
-	glEnableVertexAttribArray(posLocation[1]);
-	glEnableVertexAttribArray(texCoordLocation[1]);
-	glDrawArrays(GL_QUADS, 0, 4 * 4);
+	//wall.use();
+	//glBindVertexArray(vao[1]);
+	//glEnableVertexAttribArray(posLocation[1]);
+	//glEnableVertexAttribArray(texCoordLocation[1]);
+	//glDrawArrays(GL_QUADS, 0, 4 * 4);
 
-	glDisable(GL_TEXTURE_2D);
+	//glDisable(GL_TEXTURE_2D);
 }
 
 ShaderProgram* World::getShader()

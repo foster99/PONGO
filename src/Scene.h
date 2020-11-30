@@ -16,6 +16,8 @@ using namespace glm;
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
 
+#define PI 3.14159f
+
 
 class Scene
 {

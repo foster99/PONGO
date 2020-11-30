@@ -14,9 +14,13 @@ public:
 	void render() override;
 	void update(int deltaTime) override;
 
+	void nextMenu();
+	void prevMenu();
+
 private:
 
 	ShaderProgram* menuShaderProgram;
-	Model* model;
+	Model* GAME_PAUSED;
+	Model* EXIT_GAME;
 };
 #endif

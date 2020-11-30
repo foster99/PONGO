@@ -169,9 +169,9 @@ void Game::keyPressed_StartMenu(int key, bool specialKey)
 	{
 		switch (key)
 		{
-		case GLUT_KEY_UP:	// nextMode();		break
-		case GLUT_KEY_DOWN:	// previousMode();	break;
-		default:								break;
+		case GLUT_KEY_RIGHT:	startMenuScene.nextMenu();	break;
+		case GLUT_KEY_LEFT:		startMenuScene.prevMenu();	break;
+		default:											break;
 		}
 	}
 }
@@ -227,9 +227,9 @@ void Game::keyPressed_options(int key, bool specialKey)
 	{
 		switch (key)
 		{
-		case GLUT_KEY_UP:	// nextMode();		break
-		case GLUT_KEY_DOWN:	// previousMode();	break;
-		default:								break;
+		case GLUT_KEY_RIGHT:	optionsScene.nextMenu();	break;
+		case GLUT_KEY_LEFT:		optionsScene.prevMenu();	break;
+		default:											break;
 		}
 	}
 }

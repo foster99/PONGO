@@ -181,7 +181,7 @@ void Scene::setCamera(camera c)
 	}
 	
 	cam->setFreeCamera(false);
-	cam->setCurrentMenu(c - 1);
+	cam->setCurrentMenu(c);
 }
 
 bool Scene::cameraIsFree()

@@ -22,6 +22,9 @@ public:
 	void setCurrentMenu(int men);
 	void addMouseAngles(float mx, float my);
 
+	void nextMenu();
+	void prevMenu();
+
 	vec3 getFreeCameraNormalicedTarget();
 	vec3 getCameraPosition();
 

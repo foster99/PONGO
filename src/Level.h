@@ -6,15 +6,13 @@
 #include <string>
 #include <glm/glm.hpp>
 
+#include "Tile.h"
 #include "World.h"
 #include "Ball.h"
 #include "Texture.h"
 #include "ShaderProgram.h"
 using namespace std;
 
-
-
-class Tile	{ private: int a; };
 
 class Slide : public Entity {};
 

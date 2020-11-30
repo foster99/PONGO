@@ -81,13 +81,25 @@ void Camera::setFreeCamera(bool b)
 
 void Camera::setCurrentMenu(int men)
 {
-	if(menuTargets.size() > men)
-		currentMenu = men;
+	if(menuTargets.size() >= men)
+		currentMenu = men - 1;
 }
 
 void Camera::addMouseAngles(float mx, float my)
 {
 	alpha += glm::vec2(mx, my);
+}
+
+void Camera::nextMenu()
+{
+	currentMenu++;
+	currentMenu %= menuTargets.size();
+}
+
+void Camera::prevMenu()
+{
+	currentMenu--;
+	currentMenu %= menuTargets.size();
 }
 
 vec3 Camera::getFreeCameraNormalicedTarget()
