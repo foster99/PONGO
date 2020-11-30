@@ -10,6 +10,8 @@ class Tile
 {
 public:
 	
+	Tile();
+
 	Tile(	vec2 coords,
 			char type,
 			bool solid,

@@ -13,9 +13,6 @@
 #include "ShaderProgram.h"
 using namespace std;
 
-
-class Tile	{ private: int a; };
-
 class Slide : public Entity {};
 
 
