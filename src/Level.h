@@ -36,6 +36,8 @@ public:
 	void render() const override;
 	void renderTileMap() const;
 
+	int getTileSize();
+
 private:
 
 	// TileMap

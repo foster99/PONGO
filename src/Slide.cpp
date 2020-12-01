@@ -18,15 +18,17 @@ void Slide::init()
 	// SI FALTA ALGO ABAIX
 	chasing = false;
 
-	speed = 2;
-	//pos = vec3(3, 3, 0);
-	modI = modJ = 1;
+	speed = 0.5;
+	currentPos = ogPos = vec3(-5, 5, 0);
 }
 
 void Slide::update(int deltaTime)
 {
 	// UPDATES O_o
-
+	if (orientation == vertical)
+		updateVertical(deltaTime);
+	else
+		updateHorizontal(deltaTime);
 }
 
 void Slide::render()
@@ -41,7 +43,7 @@ void Slide::render()
 	centerModelBase = model->getCenter() - glm::vec3(0.f, -model->getHeight() / 2.f, 0.f);
 
 	modelMatrix = glm::mat4(1.0f);
-	//modelMatrix = translate(modelMatrix, pos);
+	modelMatrix = translate(modelMatrix, currentPos);
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(scaleFactor, scaleFactor, scaleFactor));
 	modelMatrix = glm::translate(modelMatrix, -centerModelBase);
 
@@ -59,15 +61,32 @@ void Slide::render()
 	this->Entity::render();
 }
 
+void Slide::updateVertical(int deltaTime)
+{
+	float len = (size.y * tileSize);
+
+	currentPos.y += speed;
+
+	if (currentPos.y < (ogPos.y - size.y - limits.x*tileSize ) || (currentPos.y + len) > (ogPos.y + len + limits.y * tileSize)) {
+		currentPos.x -= speed;
+		speed *= -1;
+	}
+}
+
+void Slide::updateHorizontal(int deltaTime)
+{
+
+}
+
 void Slide::setSize(int ts, int orient)
 {
 	tileSize = ts;
-	if (orientation == vertical) {
-		size = ivec2(4, 1);
+	if (orient == vertical) {
+		size = ivec2(1, 4);
 		orientation = vertical;
 	}
 	else {
-		size = ivec2(1, 4);
+		size = ivec2(4, 1);
 		orientation = horizontal;
 	}
 }

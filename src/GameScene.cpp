@@ -12,10 +12,12 @@ void GameScene::init()
 	level = new Level(1);
 
 	// TOMEU TESTING
-
 	auxMod = new Model();
 	auxMod->loadFromFile("models/UPC.obj", (*defaultShaderProgram));
 	ent = new Slide(auxMod, defaultShaderProgram);
+	ent->Slide::init();
+	ent->setSize(level->getTileSize(), 0);
+	ent->setLimits(5, 5);
 }
 
 void GameScene::render()
@@ -73,7 +75,7 @@ void GameScene::update(int deltaTime)
 {
 	this->Scene::update(deltaTime);
 
-	ent->update(deltaTime);
+	ent->Slide::update(deltaTime);
 }
 
 void GameScene::addCube()

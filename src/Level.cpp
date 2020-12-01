@@ -85,6 +85,11 @@ void Level::renderTileMap() const
 
 }
 
+int Level::getTileSize()
+{
+	return tileSize;
+}
+
 
 // TileMap
 

@@ -25,11 +25,14 @@ public:
 	static constexpr int horizontal = 1;
 
 private:
-	vec3 pos, posTrackedPlayer;
+	vec3 ogPos, currentPos, posTrackedPlayer;
 	ivec2 size, limits;
-	float speed, modI, modJ;
+	float speed;
 	int tileSize, orientation;
 	bool chasing;
+
+	void updateVertical(int deltaTime);
+	void updateHorizontal(int deltaTime);
 };
 
 #endif
