@@ -10,6 +10,12 @@ void GameScene::init()
 		model->loadFromFile("models/sphere.obj", (*defaultShaderProgram));
 
 	level = new Level(1);
+
+	// TOMEU TESTING
+
+	auxMod = new Model();
+	auxMod->loadFromFile("models/UPC.obj", (*defaultShaderProgram));
+	ent = new Slide(auxMod, defaultShaderProgram);
 }
 
 void GameScene::render()
@@ -54,6 +60,10 @@ void GameScene::render()
 		transl = transl + vec3(ratio,0,0);
 	}
 
+	ent->setViewMatrix(viewMatrix);
+	ent->setProjMatrix(projection);
+	ent->Slide::render();
+
 	level->setViewMatrix(viewMatrix);
 	level->setProjMatrix(projection);
 	level->Level::render();
@@ -62,6 +72,8 @@ void GameScene::render()
 void GameScene::update(int deltaTime)
 {
 	this->Scene::update(deltaTime);
+
+	ent->update(deltaTime);
 }
 
 void GameScene::addCube()

@@ -3,18 +3,21 @@
 Entity::~Entity()
 {
     if (model != nullptr)
-        delete model;
+        delete model; 
+    if (program != nullptr)
+        delete program;
 }
 
 Entity::Entity()
-    : Entity(nullptr)
+    : Entity(nullptr,nullptr)
 {
     // Empty Code
 }
 
-Entity::Entity(Model* model)
+Entity::Entity(Model* model, ShaderProgram* prog)
 {
     this->model     = model;
+    program = prog;
 }
 
 void Entity::init()
@@ -25,6 +28,16 @@ void Entity::init()
 void Entity::render()
 {
     model->render(*(program));
+}
+
+void Entity::setViewMatrix(mat4 view)
+{
+    viewMatrix = view;
+}
+
+void Entity::setProjMatrix(mat4 proj)
+{
+    projection = proj;
 }
 
 std::pair<bool, glm::vec2> Entity::collisionPoint(const Entity& e1, const Entity& e2)

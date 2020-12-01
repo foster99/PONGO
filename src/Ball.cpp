@@ -5,11 +5,9 @@ Ball::~Ball()
 	this->Entity::~Entity();
 }
 
-Ball::Ball(Model* model)
+Ball::Ball(Model* model, ShaderProgram* prog)
 {
-	this->Entity::Entity(model);
-
-	program = new ShaderProgram();
+	this->Entity::Entity(model,prog);
 }
 
 void Ball::init()
