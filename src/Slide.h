@@ -9,7 +9,7 @@ class Slide : public Entity
 {
 public:
 	~Slide();
-	Slide(Model* model, ShaderProgram* prog);
+	Slide(GameScene* scene, Model* model, ShaderProgram* prog);
 
 	void init() override;
 	void update(int deltaTime) override;

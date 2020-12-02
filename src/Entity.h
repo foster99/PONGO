@@ -7,6 +7,7 @@
 using namespace std;
 using namespace glm;
 
+class GameScene;
 typedef AssimpModel Model;
 
 class Entity
@@ -19,6 +20,8 @@ protected:
 
 	Model*			model	= nullptr;
 	ShaderProgram*	program = nullptr;
+	GameScene*		scene	= nullptr;
+
 	mat4 viewMatrix;
 	mat4 projection;
 
@@ -27,7 +30,7 @@ public:
 	~Entity();
 
 	Entity();
-	Entity(Model* model, ShaderProgram* prog);
+	Entity(GameScene* scene, Model* model, ShaderProgram* prog);
 
 	virtual void init();
 	virtual void render();

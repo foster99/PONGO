@@ -6,6 +6,7 @@
 using namespace std;
 using namespace glm;
 
+class GameScene;
 
 class Ball : public Entity
 {
@@ -15,8 +16,10 @@ private:
 
 public:
 
+	vec2 spawnPoint;
+
 	~Ball();
-	Ball(Model* model, ShaderProgram* prog);
+	Ball(GameScene* scene, Model* model, ShaderProgram* prog);
 
 	void init() override;
 	void render() override;
