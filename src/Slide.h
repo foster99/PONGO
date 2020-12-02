@@ -23,17 +23,21 @@ public:
 	void setDirection(vec2 direction);
 
 	// ESPERAR A AVANCES
-	void trackPlayer();
+	bool trackPlayerVertical();
+	bool trackPlayerHorizontal();
 
 	static constexpr int vertical = 0;
 	static constexpr int horizontal = 1;
 
+	static constexpr int chase = 0;
+	static constexpr int escape = 1;
+
 private:
-	vec3 ogPos, currentPos, posTrackedPlayer;
+	vec2 ogPos, playerPos;
 	ivec2 size, limits;
 	float speed;
-	int tileSize, orientation;
-	bool chasing;
+	int tileSize, orientation, mode;
+	bool tracked, initialized;
 
 	void updateVertical(int deltaTime);
 	void updateHorizontal(int deltaTime);

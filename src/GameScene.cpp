@@ -17,7 +17,7 @@ void GameScene::init()
 	auxMod->loadFromFile("models/cube.obj", (*defaultShaderProgram));
 	ent = new Slide(auxMod, defaultShaderProgram);
 	ent->Slide::init();
-	ent->setSize(level->getTileSize(), 0);
+	ent->setSize(level->getTileSize(), 1);
 	ent->setLimits(5, 5);
 }
 
