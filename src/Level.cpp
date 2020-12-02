@@ -64,8 +64,8 @@ void Level::renderTileMap() const
 
 			// Compute ModelMatrix
 			mat4 modelMatrix = mat4(1.0f);
-			modelMatrix = translate(modelMatrix, vec3(ivec2(tileSize * tile.coords.x, tileSize * -tile.coords.y), 0.f));
-			modelMatrix = scale(modelMatrix, glm::vec3(float(tileSize) / model->getHeight()));
+			modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
+			modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
 			modelMatrix = translate(modelMatrix, -model->getCenter());
 			
 			// Compute NormalMatrix
@@ -83,6 +83,44 @@ void Level::renderTileMap() const
 		}
 	}
 
+}
+
+int Level::getTileSize()
+{
+	return tileSize;
+}
+
+ivec2 Level::getChunkSize()
+{
+	return chunkSize;
+}
+
+ivec2 Level::getMapSizeInTiles()
+{
+	return mapSizeInTiles;
+}
+
+ivec2 Level::getMapSizeInChunks()
+{
+	return mapSizeInChunks;
+}
+
+vec2 Level::getTopLeftCornerCoordsOfChunk(int i, int j)
+{
+	 // not implemented yet
+	float tileSize = float(this->getTileSize());
+	vec2 chunkSizeInTiles = vec2(this->getChunkSize());
+	vec2 chunkSizeInPixels = tileSize * chunkSizeInTiles;
+	vec2 chunkCentreDisp = chunkSizeInPixels / 2.f;
+
+	vec2 chunkCoords = vec2(0.f, -(tileSize / 2.f));
+
+	return vec2();
+}
+
+Tile* Level::getFirstTileOfChunk(int k)
+{
+	return firstTileOfChunk[k];
 }
 
 
@@ -161,8 +199,8 @@ void Level::loadTileMap()
 	getline(fin, line);
 	sstream.str(line);
 	sstream >> tileSize;
-	
-	//Tile::tileSize = tileSize;
+
+
 
 
 	getline(fin, line);
@@ -177,15 +215,27 @@ void Level::loadTileMap()
 
 	// INICIALIZAR Y LEER TILE MAP
 	char tile;
-	map = vector<vector<Tile>>(mapSizeInTiles.y, vector<Tile>(mapSizeInTiles.x));
-	
+	map					= vector<vector<Tile>>(mapSizeInTiles.y, vector<Tile>(mapSizeInTiles.x));
+	firstTileOfChunk	= vector<Tile*>(mapSizeInChunks.x * mapSizeInChunks.y);
+
 	getline(fin, line); // Blank line
+
+	Tile* currentTile;
+	int currentChunk = -1;
 	for (int i = 0; i < mapSizeInTiles.y; i++)
 	{
 		for (int j = 0; j < mapSizeInTiles.x; j++)
 		{
 			fin.get(tile);
-			loadTile(tile, i, j);
+
+			currentTile = loadTile(tile, i, j);
+
+
+			if (currentTile->chunk > currentChunk)
+			{
+				currentChunk = currentTile->chunk;
+				firstTileOfChunk[currentChunk] = currentTile;
+			}
 		}
 
 		fin.get(tile);
@@ -203,18 +253,23 @@ void Level::loadTileMap()
 	fin.close();
 }
 
-void Level::loadTile(char type, int i, int j)
+Tile* Level::loadTile(char type, int i, int j)
 {
 	Tile& tile = map[i][j];
+
+	int		chunk	= mapSizeInChunks.x * (i / chunkSize.y) + (j / chunkSize.x);
+	vec2	coords	= float(tileSize) * vec2(float(j) + 0.5f, -(float(i) + 0.5f));
 
 	switch (type)
 	{
 
-	case Tile::cube:		tile = Tile(ivec2(i, j), type, true, false);	break;
-	case Tile::undefined:	tile = Tile(ivec2(i, j), type, false, false);	break;
+	case Tile::cube:		tile = Tile(coords, chunk, type, true, false);	break;
+	case Tile::undefined:	tile = Tile(coords, chunk, type, false, false);	break;
 
 	default: break;
 	}
+
+	return &map[i][j];
 }
 
 void Level::loadModels()

@@ -4,11 +4,12 @@ void GameScene::init()
 {
 	this->Scene::init();
 
-	models.resize(5, new Model());
+	models.resize(1, new Model());
 
 	for (Model* model : models)
 		model->loadFromFile("models/sphere.obj", (*defaultShaderProgram));
 
+	currentChunk = 0;
 	level = new Level(1);
 }
 
@@ -21,6 +22,9 @@ void GameScene::render()
 	glm::mat3 normalMatrix;
 	glm::mat4 viewMatrix = cam->getViewMatrix();
 
+	if (!cam->isFree())
+		viewMatrix = lookAtCurrentChunk();
+
 	renderAxis();
 
 	world->setViewMatrix(viewMatrix);
@@ -32,12 +36,10 @@ void GameScene::render()
 	{
 		ratio = model->getHeight();
 		scaleFactor = ratio / model->getHeight();
-		centerModelBase = model->getCenter() - glm::vec3(0.f, -model->getHeight() / 2.f, 0.f);
 
 		modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::translate(modelMatrix, glm::vec3(0.f, 0.5f * fabs(sinf(3.f * currentTime / 1000.f)), 0.f));
 		modelMatrix = glm::scale(modelMatrix, glm::vec3(scaleFactor, scaleFactor, scaleFactor));
-		modelMatrix = glm::translate(modelMatrix, -centerModelBase);
+		modelMatrix = glm::translate(modelMatrix, -model->getCenter());
 		modelMatrix = glm::translate(modelMatrix, transl);
 
 		// Compute Normal Matrix
@@ -54,6 +56,8 @@ void GameScene::render()
 		transl = transl + vec3(ratio,0,0);
 	}
 
+
+
 	level->setViewMatrix(viewMatrix);
 	level->setProjMatrix(projection);
 	level->Level::render();
@@ -62,6 +66,22 @@ void GameScene::render()
 void GameScene::update(int deltaTime)
 {
 	this->Scene::update(deltaTime);
+
+	// Consultar player y updatear el current chunk
+}
+
+mat4 GameScene::lookAtCurrentChunk()
+{
+	vec2 distanceToChunkCentre, chunkCentre;
+
+							// TileSize * (chunkSize - 1) / 2   ---->  El 1 esta para desplazar medio cubo extra
+	distanceToChunkCentre = float(level->getTileSize()) * (vec2(level->getChunkSize()) - vec2(1.f)) / 2.f;
+	distanceToChunkCentre = vec2(1, -1) * distanceToChunkCentre;
+	chunkCentre           = level->getFirstTileOfChunk(currentChunk)->coords + distanceToChunkCentre;
+
+	float zDisplacement = float(level->getTileSize()) * (float(glm::max(level->getChunkSize().x, level->getChunkSize().y)) + 1.f) / 2.f;
+
+	return lookAt(vec3(chunkCentre, zDisplacement), vec3(chunkCentre, 0.f), vec3(0.f, 1.f, 0.f));
 }
 
 void GameScene::addCube()

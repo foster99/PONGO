@@ -50,9 +50,6 @@ private:
 	vec3 menuPosition;
 	int currentMenu;
 
-	// PLAYING ELEMENTS
-	vector<vec3> playingTargets;
-	vector<vec3> playingPosition;
 
 };
 

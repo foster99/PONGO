@@ -22,12 +22,14 @@ public:
 	
 	Tile();
 
-	Tile(	ivec2 coords,
+	Tile(	vec2 coords,
+			int chunk,
 			char type,
 			bool solid,
 			bool deadly);
 
-	ivec2	coords;
+	vec2	coords;
+	int		chunk;
 	char	type;
 	bool	solid;
 	bool	deadly;

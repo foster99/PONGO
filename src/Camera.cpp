@@ -20,10 +20,6 @@ Camera::Camera()
 	menuPosition = glm::vec3(0);
 	currentMenu = 0;
 
-	// PLAYING ELEMENTS
-	playingTargets = vector<glm::vec3>(0);
-	playingPosition = vector<glm::vec3>(0);
-	
 	// FREE CAMERA INITS
 	freeCameraPosition = glm::vec3(0);
 	freeCameraTarget = glm::vec3(0);
@@ -66,7 +62,6 @@ void Camera::update()
 {
 	if (freeCamera)
 		updateFreeCamera();
-
 }
 
 void Camera::toogleFreeCamera()
@@ -109,7 +104,7 @@ vec3 Camera::getFreeCameraNormalicedTarget()
 
 vec3 Camera::getCameraPosition()
 {
-	return freeCameraPosition;
+		return freeCameraPosition;
 }
 
 void Camera::updateFreeCamera()
@@ -151,6 +146,10 @@ glm::mat4 Camera::getViewMatrix()
 
 	if (freeCamera)
 		return glm::lookAt(freeCameraPosition, freeCameraTarget, up);
+
+	//if (playingCamera)
+	//	return glm::lookAt(playingPositions[currentChunk], playingTargets[currentChunk], glm::vec3(0, 1, 0));
 	
+	// menu Camera
 	return glm::lookAt(menuPosition, menuTargets[currentMenu], glm::vec3(0, 1, 0));
 }

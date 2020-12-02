@@ -2,7 +2,8 @@
 #include "Scene.h"
 
 Tile::Tile() :
-	coords(ivec2(0)),
+	coords(vec2(0)),
+	chunk(0),
 	type(undefined),
 	deadly(false),
 	solid(false)
@@ -11,9 +12,10 @@ Tile::Tile() :
 }
 
 
-Tile::Tile(ivec2 coords, char type, bool solid, bool deadly)
+Tile::Tile(vec2 coords, int chunk, char type, bool solid, bool deadly)
 {
 	this->coords	= coords;
+	this->chunk		= chunk;
 	this->type		= type;
 	this->solid		= solid;
 	this->deadly	= deadly;

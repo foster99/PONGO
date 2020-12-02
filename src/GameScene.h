@@ -11,9 +11,12 @@ public:
 	void render() override;
 	void update(int deltaTime) override;
 
+	mat4 lookAtCurrentChunk();
 	void addCube();
 
 private:
+
+	int currentChunk;
 
 	ShaderProgram* gameShaderProgram;
 	vector<Model*> models;

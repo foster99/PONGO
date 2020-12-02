@@ -36,17 +36,28 @@ public:
 	void render() const override;
 	void renderTileMap() const;
 
+	// TileMap Info
+	int getTileSize();
+	ivec2 getChunkSize();
+	ivec2 getMapSizeInTiles();
+	ivec2 getMapSizeInChunks();
+
+	// Chunks Info
+	Tile* getFirstTileOfChunk(int k);
+	vec2 getTopLeftCornerCoordsOfChunk(int i, int j);
+
 private:
 
 	// TileMap
 	void loadTileMap();
-	void loadTile(char tile, int i, int j);
+	Tile* loadTile(char tile, int i, int j);
 
 	int tileSize;
-	glm::vec2 chunkSize;
-	glm::vec2 mapSizeInTiles;
-	glm::vec2 mapSizeInChunks;
+	ivec2 chunkSize;
+	ivec2 mapSizeInTiles;
+	ivec2 mapSizeInChunks;
 	vector<vector<Tile>> map;
+	vector<Tile*> firstTileOfChunk;
 
 	// Game Models
 	void loadModels();
@@ -63,6 +74,7 @@ private:
 	// Entities
 	Ball* ball;
 	vector<Slide*> slides;
+
 };
 
 
