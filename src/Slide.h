@@ -18,6 +18,10 @@ public:
 	void setSize(int tileSize, int orient);
 	void setLimits(int head, int tail);
 
+	void setPosition(vec2 position);
+	void setSpeed(vec2 speed);
+	void setDirection(vec2 direction);
+
 	// ESPERAR A AVANCES
 	void trackPlayer();
 

@@ -40,9 +40,9 @@ public:
 	vec2 getSpeed();
 	vec2 getDirection();
 
-	void setPosition(vec2 position);
-	void setSpeed(vec2 speed);
-	void setDirection(vec2 direction);
+	virtual void setPosition(vec2 position);
+	virtual void setSpeed(vec2 speed);
+	virtual void setDirection(vec2 direction);
 
 	void setViewMatrix(mat4 view);
 	void setProjMatrix(mat4 proj);

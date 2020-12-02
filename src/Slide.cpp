@@ -44,6 +44,12 @@ void Slide::render()
 
 	modelMatrix = glm::mat4(1.0f);
 	modelMatrix = translate(modelMatrix, currentPos);
+
+	if(orientation == horizontal)
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(4, 1, 1));
+	else
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(1, 4, 1));
+
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(scaleFactor, scaleFactor, scaleFactor));
 	modelMatrix = glm::translate(modelMatrix, -centerModelBase);
 
@@ -94,6 +100,21 @@ void Slide::setSize(int ts, int orient)
 void Slide::setLimits(int head, int tail)
 {
 	limits = ivec2(head, tail);
+}
+
+void Slide::setPosition(vec2 position)
+{
+	this->Entity::setPosition(position);
+}
+
+void Slide::setSpeed(vec2 speed)
+{
+	this->Entity::setSpeed(speed);
+}
+
+void Slide::setDirection(vec2 direction)
+{
+	this->Entity::setDirection(direction);
 }
 
 void Slide::trackPlayer()

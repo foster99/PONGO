@@ -24,5 +24,9 @@ public:
 	void init() override;
 	void render() override;
 	void update(int deltaTime) override;
+
+	void setPosition(vec2 position);
+	void setSpeed(vec2 speed);
+	void setDirection(vec2 direction);
 };
 #endif
