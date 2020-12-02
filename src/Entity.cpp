@@ -1,4 +1,5 @@
 #include "Entity.h"
+#include "GameScene.h"
 
 Entity::~Entity()
 {
@@ -9,15 +10,16 @@ Entity::~Entity()
 }
 
 Entity::Entity()
-    : Entity(nullptr,nullptr)
+    : Entity(nullptr, nullptr,nullptr)
 {
     // Empty Code
 }
 
-Entity::Entity(Model* model, ShaderProgram* prog)
+Entity::Entity(GameScene* scene, Model* model, ShaderProgram* program)
 {
     this->model     = model;
-    program = prog;
+    this->scene     = scene;
+    this->program   = program;
 }
 
 void Entity::init()

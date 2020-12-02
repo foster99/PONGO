@@ -67,11 +67,10 @@ private:
 
 	// World stuff
 	int levelID;
-	glm::vec3 size;
+	vec3 size;
 	Texture floor, wall;
 
 	// Entities
-	Ball* ball;
 	vector<Slide*> slides;
 
 };

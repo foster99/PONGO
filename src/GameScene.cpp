@@ -12,10 +12,12 @@ void GameScene::init()
 	currentChunk = 0;
 	level = new Level(1);
 
+	initBall();
+
 	// TOMEU TESTING
 	auxMod = new Model();
 	auxMod->loadFromFile("models/cube.obj", (*defaultShaderProgram));
-	ent = new Slide(auxMod, defaultShaderProgram);
+	ent = new Slide(this, auxMod, defaultShaderProgram);
 	ent->Slide::init();
 	ent->setSize(level->getTileSize(), 1);
 	ent->setLimits(5, 5);
@@ -101,4 +103,18 @@ void GameScene::addCube()
 	Model* m = new Model();
 	m->loadFromFile("models/sphere.obj", (*defaultShaderProgram));
 	models.push_back(m);
+}
+
+void GameScene::initBall()
+{
+	// Load Shader
+	ballShader = new ShaderProgram();
+	loadShaders("ballShader", ballShader);
+
+	// Load Model
+	ballModel = new Model();
+	ballModel->loadFromFile("models/sphere.obj", (*ballShader));
+
+	// Create Entity
+	ball = new Ball(this, ballModel, ballShader);
 }

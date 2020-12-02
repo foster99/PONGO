@@ -14,6 +14,8 @@ public:
 	mat4 lookAtCurrentChunk();
 	void addCube();
 
+	void initBall();
+
 private:
 
 	int currentChunk;
@@ -21,6 +23,11 @@ private:
 	ShaderProgram* gameShaderProgram;
 	vector<Model*> models;
 	Level* level;
+
+	// FOWOSTER TESTING
+	ShaderProgram*	ballShader;
+	Model*			ballModel;
+	Ball*			ball;
 
 	// TOMEU TESTING
 	Slide* ent;

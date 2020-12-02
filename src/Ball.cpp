@@ -1,20 +1,22 @@
 #include "Ball.h"
+#include "Scene.h"
 
 Ball::~Ball()
 {
 	this->Entity::~Entity();
 }
 
-Ball::Ball(Model* model, ShaderProgram* prog)
+Ball::Ball(GameScene* scene, Model* model, ShaderProgram* prog)
 {
-	this->Entity::Entity(model,prog);
+	this->Entity::Entity(scene, model,prog);
 }
 
 void Ball::init()
 {
 	this->Entity::init();
 
-	// ball inits
+	// estas haciendo el spawnpoint para k la pelota empiece flotando y poder comprobar las colisiones mientras las programas
+	spawnPoint = vec2(0);
 }
 
 void Ball::render()

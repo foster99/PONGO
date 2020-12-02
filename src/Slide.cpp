@@ -6,9 +6,9 @@ Slide::~Slide()
 	this->Entity::~Entity();
 }
 
-Slide::Slide(Model* model, ShaderProgram* prog)
+Slide::Slide(GameScene* scene, Model* model, ShaderProgram* prog)
 {
-	this->Entity::Entity(model,prog);
+	this->Entity::Entity(scene,model,prog);
 }
 
 void Slide::init()
