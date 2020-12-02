@@ -3,13 +3,14 @@
 #include <iostream>
 #include <vector>
 #include "Level.h"
+#include "GameScene.h"
 
 using namespace std;
 using namespace glm;
 
 
-Level::Level(int id)
-	: levelID(id)
+Level::Level(GameScene* scene, int id)
+	: levelID(id), scene(scene)
 {
 	this->World::World();
 

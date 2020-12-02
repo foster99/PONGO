@@ -10,7 +10,7 @@ void GameScene::init()
 		model->loadFromFile("models/sphere.obj", (*defaultShaderProgram));
 
 	currentChunk = 0;
-	level = new Level(1);
+	level = new Level(this, 1);
 
 	initBall();
 

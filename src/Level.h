@@ -18,15 +18,14 @@ using namespace std;
 
 // ARREGLAR COMPILACION + AJUSTAR CLASE LEVEL A LA HERENCIA
 
-// Class Level renders a very simple room with textures
-
+class GameScene;
 
 class Level : public World
 {
 public:
 
 	// Constructors
-	Level(int id = 1);
+	Level(GameScene* scene, int id = 1);
 	
 	// Destructors
 	~Level();
@@ -46,6 +45,8 @@ public:
 	Tile* getFirstTileOfChunk(int k);
 
 private:
+
+	GameScene* scene;
 
 	// TileMap
 	void loadTileMap();
