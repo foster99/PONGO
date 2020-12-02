@@ -16,19 +16,24 @@ void Slide::init()
 	this->Entity::init();
 
 	// SI FALTA ALGO ABAIX
-	chasing = false;
-
+	tracked = false;
+	initialized = false;
 	speed = 0.5;
-	currentPos = ogPos = vec3(-5, 5, 0);
+	position = ogPos = vec2(-5, 5);
 }
 
 void Slide::update(int deltaTime)
 {
-	// UPDATES O_o
-	if (orientation == vertical)
-		updateVertical(deltaTime);
-	else
-		updateHorizontal(deltaTime);
+	// UPDATES EN UN FUTUR QUANT FOWOSTER DIGUI NOMES HAN DE CANVIAR DIRECTION I SPEED
+	// SET POSTITION CANVIARA RESPECTE AQUESTES DADES
+	if (orientation == vertical) {
+		if (!trackPlayerVertical())
+			updateVertical(deltaTime);
+	}
+	else {
+		if (!trackPlayerHorizontal())
+			updateHorizontal(deltaTime);
+	}
 }
 
 void Slide::render()
@@ -43,7 +48,7 @@ void Slide::render()
 	centerModelBase = model->getCenter() - glm::vec3(0.f, -model->getHeight() / 2.f, 0.f);
 
 	modelMatrix = glm::mat4(1.0f);
-	modelMatrix = translate(modelMatrix, currentPos);
+	modelMatrix = translate(modelMatrix, vec3(position,0));
 
 	if(orientation == horizontal)
 		modelMatrix = glm::scale(modelMatrix, glm::vec3(4, 1, 1));
@@ -71,17 +76,24 @@ void Slide::updateVertical(int deltaTime)
 {
 	float len = (size.y * tileSize);
 
-	currentPos.y += speed;
+	position.y += speed * direction.y;
 
-	if (currentPos.y < (ogPos.y - size.y - limits.x*tileSize ) || (currentPos.y + len) > (ogPos.y + len + limits.y * tileSize)) {
-		currentPos.x -= speed;
-		speed *= -1;
+	if (position.y < (ogPos.y - size.y - limits.y * tileSize ) || (position.y + len) > (ogPos.y + len + limits.y * tileSize)) {
+		position.y -= speed * direction.y;
+		direction.y *= -1;
 	}
 }
 
 void Slide::updateHorizontal(int deltaTime)
 {
+	float len = (size.x * tileSize);
 
+	position.x += speed * direction.x;
+
+	if (position.x < (ogPos.x - size.x - limits.x * tileSize) || (position.x + len) >(ogPos.x + len + limits.x * tileSize)) {
+		position.x -= speed * direction.x;
+		direction.x *= -1;
+	}
 }
 
 void Slide::setSize(int ts, int orient)
@@ -90,10 +102,12 @@ void Slide::setSize(int ts, int orient)
 	if (orient == vertical) {
 		size = ivec2(1, 4);
 		orientation = vertical;
+		direction = vec2(0, 1);
 	}
 	else {
 		size = ivec2(4, 1);
 		orientation = horizontal;
+		direction = vec2(1,0);
 	}
 }
 
@@ -105,6 +119,11 @@ void Slide::setLimits(int head, int tail)
 void Slide::setPosition(vec2 position)
 {
 	this->Entity::setPosition(position);
+	
+	if (!initialized) {
+		ogPos = position;
+		initialized = true;
+	}
 }
 
 void Slide::setSpeed(vec2 speed)
@@ -117,7 +136,12 @@ void Slide::setDirection(vec2 direction)
 	this->Entity::setDirection(direction);
 }
 
-void Slide::trackPlayer()
+bool Slide::trackPlayerVertical()
 {
+	return false;
+}
 
+bool Slide::trackPlayerHorizontal()
+{
+	return false;
 }
