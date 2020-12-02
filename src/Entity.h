@@ -13,6 +13,10 @@ class Entity
 {
 protected:
 
+	vec2 position;
+	vec2 speed;
+	vec2 direction;
+
 	Model*			model	= nullptr;
 	ShaderProgram*	program = nullptr;
 	mat4 viewMatrix;
@@ -28,6 +32,14 @@ public:
 	virtual void init();
 	virtual void render();
 	virtual void update(int deltaTime) = 0;
+
+	vec2 getPosition();
+	vec2 getSpeed();
+	vec2 getDirection();
+
+	void setPosition(vec2 position);
+	void setSpeed(vec2 speed);
+	void setDirection(vec2 direction);
 
 	void setViewMatrix(mat4 view);
 	void setProjMatrix(mat4 proj);

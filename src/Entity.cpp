@@ -30,6 +30,37 @@ void Entity::render()
     model->render(*(program));
 }
 
+vec2 Entity::getPosition()
+{
+    return position;
+}
+
+vec2 Entity::getSpeed()
+{
+    return speed;
+}
+
+vec2 Entity::getDirection()
+{
+    return direction;
+}
+
+void Entity::setPosition(vec2 position)
+{
+    this->position = position;
+}
+
+void Entity::setSpeed(vec2 speed)
+{
+    this->speed = speed;
+}
+
+void Entity::setDirection(vec2 direction)
+{
+    this->direction = normalize(direction);
+}
+
+
 void Entity::setViewMatrix(mat4 view)
 {
     viewMatrix = view;
