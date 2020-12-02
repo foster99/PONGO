@@ -44,7 +44,6 @@ public:
 
 	// Chunks Info
 	Tile* getFirstTileOfChunk(int k);
-	vec2 getTopLeftCornerCoordsOfChunk(int i, int j);
 
 private:
 

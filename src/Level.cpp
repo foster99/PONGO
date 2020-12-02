@@ -82,7 +82,6 @@ void Level::renderTileMap() const
 			model->render(*shader);
 		}
 	}
-
 }
 
 int Level::getTileSize()
@@ -103,19 +102,6 @@ ivec2 Level::getMapSizeInTiles()
 ivec2 Level::getMapSizeInChunks()
 {
 	return mapSizeInChunks;
-}
-
-vec2 Level::getTopLeftCornerCoordsOfChunk(int i, int j)
-{
-	 // not implemented yet
-	float tileSize = float(this->getTileSize());
-	vec2 chunkSizeInTiles = vec2(this->getChunkSize());
-	vec2 chunkSizeInPixels = tileSize * chunkSizeInTiles;
-	vec2 chunkCentreDisp = chunkSizeInPixels / 2.f;
-
-	vec2 chunkCoords = vec2(0.f, -(tileSize / 2.f));
-
-	return vec2();
 }
 
 Tile* Level::getFirstTileOfChunk(int k)
