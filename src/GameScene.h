@@ -11,10 +11,14 @@ public:
 	void render() override;
 	void update(int deltaTime) override;
 
+	void checkCollisionsAndUpdateEntitiesPositions();
+
 	mat4 lookAtCurrentChunk();
 	void addCube();
 
 	void initBall();
+
+	Level* getLevel();
 
 private:
 

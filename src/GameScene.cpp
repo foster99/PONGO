@@ -73,6 +73,10 @@ void GameScene::render()
 	level->setViewMatrix(viewMatrix);
 	level->setProjMatrix(projection);
 	level->Level::render();
+
+	ball->setViewMatrix(viewMatrix);
+	ball->setProjMatrix(projection);
+	ball->Ball::render();
 }
 
 void GameScene::update(int deltaTime)
@@ -82,6 +86,13 @@ void GameScene::update(int deltaTime)
 	ent->Slide::update(deltaTime);
 
 	// Consultar player y updatear el current chunk
+
+	checkCollisionsAndUpdateEntitiesPositions();
+}
+
+void GameScene::checkCollisionsAndUpdateEntitiesPositions()
+{
+	// salu2con2
 }
 
 mat4 GameScene::lookAtCurrentChunk()
@@ -117,4 +128,11 @@ void GameScene::initBall()
 
 	// Create Entity
 	ball = new Ball(this, ballModel, ballShader);
+
+	ball->Ball::init();
+}
+
+Level* GameScene::getLevel()
+{
+	return level;
 }
