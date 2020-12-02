@@ -37,9 +37,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Painting</Filter>
     </ClCompile>
-    <ClCompile Include="AssimpModel.cpp">
-      <Filter>Source Files\3D</Filter>
-    </ClCompile>
     <ClCompile Include="OptionsScene.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
@@ -54,6 +51,9 @@
     </ClCompile>
     <ClCompile Include="Tile.cpp">
       <Filter>Source Files\3D\World</Filter>
+    </ClCompile>
+    <ClCompile Include="AssimpModel.cpp">
+      <Filter>Source Files\3D\Entity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -87,14 +87,8 @@
     <ClInclude Include="MenuScene.h">
       <Filter>Header Files\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="AssimpModel.h">
-      <Filter>Header Files\3D</Filter>
-    </ClInclude>
     <ClInclude Include="OptionsScene.h">
       <Filter>Header Files\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Header Files\3D</Filter>
     </ClInclude>
     <ClInclude Include="Ball.h">
       <Filter>Header Files\3D\Entity</Filter>
@@ -110,6 +104,12 @@
     </ClInclude>
     <ClInclude Include="Tile.h">
       <Filter>Header Files\3D\World</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpModel.h">
+      <Filter>Header Files\3D\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\3D\Entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

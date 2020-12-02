@@ -14,7 +14,7 @@ void GameScene::init()
 
 	// TOMEU TESTING
 	auxMod = new Model();
-	auxMod->loadFromFile("models/UPC.obj", (*defaultShaderProgram));
+	auxMod->loadFromFile("models/cube.obj", (*defaultShaderProgram));
 	ent = new Slide(auxMod, defaultShaderProgram);
 	ent->Slide::init();
 	ent->setSize(level->getTileSize(), 0);
