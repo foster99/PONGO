@@ -16,7 +16,7 @@ private:
 public:
 
 	~Ball();
-	Ball(Model* model);
+	Ball(Model* model, ShaderProgram* prog);
 
 	void init() override;
 	void render() override;

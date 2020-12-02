@@ -11,6 +11,14 @@ void GameScene::init()
 
 	currentChunk = 0;
 	level = new Level(1);
+
+	// TOMEU TESTING
+	auxMod = new Model();
+	auxMod->loadFromFile("models/UPC.obj", (*defaultShaderProgram));
+	ent = new Slide(auxMod, defaultShaderProgram);
+	ent->Slide::init();
+	ent->setSize(level->getTileSize(), 0);
+	ent->setLimits(5, 5);
 }
 
 void GameScene::render()
@@ -56,7 +64,9 @@ void GameScene::render()
 		transl = transl + vec3(ratio,0,0);
 	}
 
-
+	ent->setViewMatrix(viewMatrix);
+	ent->setProjMatrix(projection);
+	ent->Slide::render();
 
 	level->setViewMatrix(viewMatrix);
 	level->setProjMatrix(projection);
@@ -66,6 +76,8 @@ void GameScene::render()
 void GameScene::update(int deltaTime)
 {
 	this->Scene::update(deltaTime);
+
+	ent->Slide::update(deltaTime);
 
 	// Consultar player y updatear el current chunk
 }

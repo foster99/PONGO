@@ -9,19 +9,30 @@ class Slide : public Entity
 {
 public:
 	~Slide();
-	Slide(Model* model);
+	Slide(Model* model, ShaderProgram* prog);
 
 	void init() override;
 	void update(int deltaTime) override;
 	void render() override;
 
+	void setSize(int tileSize, int orient);
+	void setLimits(int head, int tail);
+
 	// ESPERAR A AVANCES
 	void trackPlayer();
 
+	static constexpr int vertical = 0;
+	static constexpr int horizontal = 1;
+
 private:
-	vec3 pos, size, posTrackedPlayer;
-	float speed, modI, modJ;
+	vec3 ogPos, currentPos, posTrackedPlayer;
+	ivec2 size, limits;
+	float speed;
+	int tileSize, orientation;
 	bool chasing;
+
+	void updateVertical(int deltaTime);
+	void updateHorizontal(int deltaTime);
 };
 
 #endif

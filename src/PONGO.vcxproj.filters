@@ -49,8 +49,12 @@
     <ClCompile Include="Level.cpp">
       <Filter>Source Files\3D\World</Filter>
     </ClCompile>
-    <ClCompile Include="Tile.cpp" />
-    <ClCompile Include="Slide.cpp" />
+    <ClCompile Include="Slide.cpp">
+      <Filter>Source Files\3D\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Tile.cpp">
+      <Filter>Source Files\3D\World</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderProgram.h">
@@ -99,6 +103,12 @@
       <Filter>Header Files\3D\World</Filter>
     </ClInclude>
     <ClInclude Include="Level.h">
+      <Filter>Header Files\3D\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Slide.h">
+      <Filter>Header Files\3D\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.h">
       <Filter>Header Files\3D\World</Filter>
     </ClInclude>
   </ItemGroup>

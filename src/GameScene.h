@@ -21,6 +21,10 @@ private:
 	ShaderProgram* gameShaderProgram;
 	vector<Model*> models;
 	Level* level;
+
+	// TOMEU TESTING
+	Slide* ent;
+	Model* auxMod;
 };
 #endif
 
