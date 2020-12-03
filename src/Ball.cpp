@@ -68,6 +68,27 @@ void Ball::setDirection(vec2 direction)
 
 vec4 Ball::getBoundingBox()
 {
-	// NOT IMPLEMENTED YET
-	return vec4(0);
+	float displacement = float(scene->getLevel()->getTileSize()) / 2.f;
+
+	vec4 BB(position.x, position.x, position.y, position.y);
+
+	BB[0] -= displacement;
+	BB[1] += displacement;
+	BB[2] += displacement;
+	BB[3] -= displacement;
+
+	return BB;
+}
+
+vector<ivec2> Ball::occupiedTiles()
+{
+	vec4 BB = Ball::getBoundingBox();
+
+	vector<ivec2> coords(4);
+	coords[0] = scene->toTileCoords(vec2(BB[0], BB[2]));
+	coords[1] = scene->toTileCoords(vec2(BB[0], BB[3]));
+	coords[2] = scene->toTileCoords(vec2(BB[1], BB[2]));
+	coords[3] = scene->toTileCoords(vec2(BB[1], BB[3]));
+
+	return coords;
 }

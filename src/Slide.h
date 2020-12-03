@@ -22,6 +22,10 @@ public:
 	void setSpeed(vec2 speed);
 	void setDirection(vec2 direction);
 
+
+	vector<ivec2> occupiedTiles() override;
+	vec4		 getBoundingBox() override;	// vec4 -> xmin, xmax, ymin, ymax
+
 	// ESPERAR A AVANCES
 	bool trackPlayerVertical();
 	bool trackPlayerHorizontal();
