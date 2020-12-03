@@ -36,6 +36,8 @@ public:
 	virtual void render();
 	virtual void update(int deltaTime) = 0;
 
+	virtual vec4 getBoundingBox() = 0;	// vec4 -> xmin, xmax, ymin, ymax
+
 	vec2 getPosition();
 	vec2 getSpeed();
 	vec2 getDirection();

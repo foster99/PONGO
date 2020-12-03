@@ -28,5 +28,7 @@ public:
 	void setPosition(vec2 position);
 	void setSpeed(vec2 speed);
 	void setDirection(vec2 direction);
+
+	vec4 getBoundingBox() override;
 };
 #endif

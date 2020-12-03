@@ -65,3 +65,9 @@ void Ball::setDirection(vec2 direction)
 {
 	this->Entity::setDirection(direction);
 }
+
+vec4 Ball::getBoundingBox()
+{
+	// NOT IMPLEMENTED YET
+	return vec4(0);
+}
