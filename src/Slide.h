@@ -18,9 +18,9 @@ public:
 	void setSize(int tileSize, int orient);
 	void setLimits(int head, int tail);
 
-	void setPosition(vec2 position);
-	void setSpeed(vec2 speed);
-	void setDirection(vec2 direction);
+	void setPosition(vec2 position) override;
+	void setSpeed(vec2 speed) override;
+	void setDirection(vec2 direction) override;
 
 	vec4 getBoundingBox() override;
 
