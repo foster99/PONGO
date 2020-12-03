@@ -74,11 +74,12 @@ void Slide::render()
 
 void Slide::updateVertical(int deltaTime)
 {
-	float len = (size.y * tileSize);
+	float len  = size.y * tileSize;
+	float limY = limits.y * tileSize;
 
 	position.y += speed * direction.y;
 
-	if (position.y < (ogPos.y - size.y - limits.y * tileSize ) || (position.y + len) > (ogPos.y + len + limits.y * tileSize)) {
+	if (position.y < (ogPos.y - size.y - limY ) || (position.y + len) > (ogPos.y + len + limY)) {
 		position.y -= speed * direction.y;
 		direction.y *= -1;
 	}
@@ -86,11 +87,12 @@ void Slide::updateVertical(int deltaTime)
 
 void Slide::updateHorizontal(int deltaTime)
 {
-	float len = (size.x * tileSize);
+	float len  = size.x * tileSize;
+	float limX = limits.x * tileSize;
 
 	position.x += speed * direction.x;
 
-	if (position.x < (ogPos.x - size.x - limits.x * tileSize) || (position.x + len) >(ogPos.x + len + limits.x * tileSize)) {
+	if (position.x < (ogPos.x - size.x - limX) || (position.x + len) >(ogPos.x + len + limX)) {
 		position.x -= speed * direction.x;
 		direction.x *= -1;
 	}
