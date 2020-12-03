@@ -87,12 +87,59 @@ void GameScene::update(int deltaTime)
 
 	// Consultar player y updatear el current chunk
 
-	checkCollisionsAndUpdateEntitiesPositions();
+	checkCollisionsAndUpdateEntitiesPositions(deltaTime);
 }
 
-void GameScene::checkCollisionsAndUpdateEntitiesPositions()
+ivec2 GameScene::toTileCoords(vec2 coords)
 {
-	// salu2con2
+	float tileSize = float(level->getTileSize());
+
+	return ivec2(coords/tileSize) * ivec2(1,-1);
+}
+
+void GameScene::checkCollisionsAndUpdateEntitiesPositions(int deltaTime)
+{	
+	int time, step = 1;
+	for (time = step; time <= deltaTime; time += step)
+	{
+		vec2 newBallPosition = ball->Ball::getPosition() + (float(time/100.f) * ball->Ball::getDirection() * ball->Ball::getSpeed());
+		
+		ball->Ball::setPosition(newBallPosition);
+
+		for (Slide* slide : level->getSlides())
+		{
+			// move slides
+			//
+		}
+
+		bool ballOnSolid = false;
+		for (const vec2& tileCoords : ball->Ball::occupiedTiles())
+		{
+			ballOnSolid = level->getTile(tileCoords)->solid;
+
+			if (ballOnSolid) break;
+		}
+
+		if (ballOnSolid)
+		{
+			ball->rollbackPosition();
+
+			// Poner las direcciones correctamente ekisDE
+			vec2 nextDir = vec2(-1) * ball->getDirection();
+
+			ball->setDirection(nextDir);
+		}
+
+		
+		ball->Ball::occupiedTiles();
+	}
+
+
+	time = time - deltaTime; // Tiempo restante no tratado en el for
+	if (time > 0)
+	{
+		// una iteracion mas
+	}
 }
 
 mat4 GameScene::lookAtCurrentChunk()

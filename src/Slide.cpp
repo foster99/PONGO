@@ -138,6 +138,11 @@ void Slide::setDirection(vec2 direction)
 	this->Entity::setDirection(direction);
 }
 
+vector<ivec2> Slide::occupiedTiles()
+{
+	return vector<ivec2>();
+}
+
 vec4 Slide::getBoundingBox()
 {
 	float lenX = (float)(size.x * tileSize)/2.;

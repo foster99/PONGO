@@ -105,11 +105,11 @@
     <ClInclude Include="Tile.h">
       <Filter>Header Files\3D\World</Filter>
     </ClInclude>
-    <ClInclude Include="AssimpModel.h">
-      <Filter>Header Files\3D\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Header Files\3D\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpModel.h">
+      <Filter>Header Files\3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

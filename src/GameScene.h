@@ -11,7 +11,8 @@ public:
 	void render() override;
 	void update(int deltaTime) override;
 
-	void checkCollisionsAndUpdateEntitiesPositions();
+	ivec2 toTileCoords(vec2 coords);
+	void checkCollisionsAndUpdateEntitiesPositions(int deltaTime);
 
 	mat4 lookAtCurrentChunk();
 	void addCube();

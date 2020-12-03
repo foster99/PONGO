@@ -105,9 +105,24 @@ ivec2 Level::getMapSizeInChunks()
 	return mapSizeInChunks;
 }
 
+Tile* Level::getTile(ivec2 coords)
+{
+	return getTile(coords.y, coords.x);
+}
+
+Tile* Level::getTile(int i, int j)
+{
+	return &map[i][j];
+}
+
 Tile* Level::getFirstTileOfChunk(int k)
 {
 	return firstTileOfChunk[k];
+}
+
+vector<Slide*>& Level::getSlides()
+{
+	return slides;
 }
 
 

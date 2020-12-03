@@ -49,6 +49,7 @@ vec2 Entity::getDirection()
 
 void Entity::setPosition(vec2 position)
 {
+    this->oldPosition = this->position;
     this->position = position;
 }
 
@@ -60,6 +61,11 @@ void Entity::setSpeed(vec2 speed)
 void Entity::setDirection(vec2 direction)
 {
     this->direction = normalize(direction);
+}
+
+void Entity::rollbackPosition()
+{
+    this->position = this->oldPosition;
 }
 
 

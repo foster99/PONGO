@@ -30,5 +30,6 @@ public:
 	void setDirection(vec2 direction);
 
 	vec4 getBoundingBox() override;
+	vector<ivec2> occupiedTiles() override;
 };
 #endif

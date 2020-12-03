@@ -41,8 +41,14 @@ public:
 	ivec2 getMapSizeInTiles();
 	ivec2 getMapSizeInChunks();
 
+	Tile* getTile(ivec2 coords);
+	Tile* getTile(int i, int j);
+
 	// Chunks Info
 	Tile* getFirstTileOfChunk(int k);
+
+	// Slides
+	vector<Slide*>& getSlides();
 
 private:
 

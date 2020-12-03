@@ -24,6 +24,10 @@ public:
 
 	vec4 getBoundingBox() override;
 
+
+	vector<ivec2> occupiedTiles() override;
+	vec4		 getBoundingBox() override;	// vec4 -> xmin, xmax, ymin, ymax
+
 	// ESPERAR A AVANCES
 	bool trackPlayerVertical();
 	bool trackPlayerHorizontal();
