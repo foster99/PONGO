@@ -136,6 +136,14 @@ void Slide::setDirection(vec2 direction)
 	this->Entity::setDirection(direction);
 }
 
+vec4 Slide::getBoundingBox()
+{
+	float lenX = (float)(size.x * tileSize)/2.;
+	float lenY = (float)(size.y * tileSize)/2.;
+
+	return vec4( (position.x-lenX), (position.x+lenX), (position.y-lenY), (position.y+lenY));
+}
+
 bool Slide::trackPlayerVertical()
 {
 	return false;

@@ -22,6 +22,8 @@ public:
 	void setSpeed(vec2 speed);
 	void setDirection(vec2 direction);
 
+	vec4 getBoundingBox() override;
+
 	// ESPERAR A AVANCES
 	bool trackPlayerVertical();
 	bool trackPlayerHorizontal();
