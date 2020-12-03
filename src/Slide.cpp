@@ -143,7 +143,10 @@ vector<ivec2> Slide::occupiedTiles()
 
 vec4 Slide::getBoundingBox()
 {
-	return vec4();
+	float lenX = (float)(size.x * tileSize)/2.;
+	float lenY = (float)(size.y * tileSize)/2.;
+
+	return vec4( (position.x-lenX), (position.x+lenX), (position.y-lenY), (position.y+lenY));
 }
 
 bool Slide::trackPlayerVertical()
