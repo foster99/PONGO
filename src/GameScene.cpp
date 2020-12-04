@@ -145,27 +145,27 @@ void GameScene::checkCollisionsAndUpdateEntitiesPositions(int deltaTime)
 
 		if (onSolid)
 		{	
-			float displacement = 0.02f;
+			vec2 displacement = (float(time / 100.f) * ball->Ball::getSpeed());
 
 			if (downCount > 1 && downCount > leftCount && downCount > rightCount)
 			{
-				ball->Ball::setPosition(ball->Ball::getPosition() + vec2(0.f, displacement));
+				ball->Ball::setPosition(ball->Ball::getPosition() + vec2(0.f, displacement.y));
 				ball->invertDirectionY();
 			}
 			else if (upCount > 1 && upCount > leftCount && upCount > rightCount)
 			{
-				ball->Ball::setPosition(ball->Ball::getPosition() + vec2(0.f, -displacement));
+				ball->Ball::setPosition(ball->Ball::getPosition() + vec2(0.f, -displacement.y));
 				ball->invertDirectionY();
 			}
 
 			if (leftCount > 1 && leftCount > downCount && leftCount > upCount)
 			{
-				ball->Ball::setPosition(ball->Ball::getPosition() + vec2(displacement, 0.f));
+				ball->Ball::setPosition(ball->Ball::getPosition() + vec2(displacement.x, 0.f));
 				ball->invertDirectionX();
 			}
 			else if (rightCount > 1 && rightCount > downCount && rightCount > upCount)
 			{
-				ball->Ball::setPosition(ball->Ball::getPosition() + vec2(-displacement, 0.f));
+				ball->Ball::setPosition(ball->Ball::getPosition() + vec2(-displacement.x, 0.f));
 				ball->invertDirectionX();
 			}
 
@@ -222,6 +222,11 @@ void GameScene::initBall()
 	ball = new Ball(this, ballModel, ballShader);
 
 	ball->Ball::init();
+}
+
+void GameScene::playerPressedSpace()
+{
+	ball->invertDirectionY();
 }
 
 Level* GameScene::getLevel()

@@ -18,7 +18,7 @@ void Ball::init()
 	// estas haciendo el spawnpoint para k la pelota empiece flotando y poder comprobar las colisiones mientras las programas
 	spawnPoint = vec2(0);
 
-	setSpeed(vec2(1.25f));
+	setSpeed(vec2(1.00f));
 	setDirection(vec2(-1.f, 1.f));
 	setPosition(vec2(30.f, -30.f));
 }

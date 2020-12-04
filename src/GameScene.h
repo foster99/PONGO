@@ -38,9 +38,9 @@ public:
 	void addCube();
 
 	void initBall();
+	void playerPressedSpace();
 
 	Level* getLevel();
-
 
 private:
 

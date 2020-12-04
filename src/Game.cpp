@@ -182,11 +182,11 @@ void Game::keyPressed_playing(int key, bool specialKey)
 	{
 		switch (key)
 		{
-		case ESC:	setMode(options);		break;
+		case ESC:	setMode(options);				break;
 		case 'G':
-		case 'g':	toggleGodMode();		break;
-		case ' ':	/* invertir la pelota en el juego */ break;
-		case 'm':	gameScene.addCube(); break;
+		case 'g':	toggleGodMode();				break;
+		case ' ':	gameScene.playerPressedSpace(); break;
+		case 'm':	gameScene.addCube();			break;
 		default:	break;
 		}
 	}
