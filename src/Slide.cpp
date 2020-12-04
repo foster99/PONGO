@@ -19,7 +19,7 @@ void Slide::init()
 	tracked = false;
 	initialized = false;
 	speed = 0.5;
-	position = ogPos = vec2(-5, 5);
+	position = ogPos = vec2(32, -48);
 }
 
 void Slide::update(int deltaTime)
