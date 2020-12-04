@@ -233,3 +233,18 @@ Level* GameScene::getLevel()
 {
 	return level;
 }
+
+vec2 GameScene::getPlayerPos()
+{
+	return ball->getPosition();
+}
+
+vec2 GameScene::getPlayerSpd()
+{
+	return ball->getSpeed();
+}
+
+vec2 GameScene::getPlayerDir()
+{
+	return ball->getDirection();
+}

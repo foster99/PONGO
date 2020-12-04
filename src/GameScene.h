@@ -41,6 +41,9 @@ public:
 	void playerPressedSpace();
 
 	Level* getLevel();
+	vec2 getPlayerPos();
+	vec2 getPlayerSpd();
+	vec2 getPlayerDir();
 
 private:
 

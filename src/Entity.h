@@ -52,6 +52,7 @@ public:
 	virtual void setPositionY(float y);
 	virtual void setSpeed(vec2 speed);
 	virtual void setDirection(vec2 direction);
+
 	void invertDirectionX();
 	void invertDirectionY();
 
