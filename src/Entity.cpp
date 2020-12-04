@@ -47,10 +47,30 @@ vec2 Entity::getDirection()
     return direction;
 }
 
+vec2 Entity::getOldPosition()
+{
+    return vec2(oldPositionX, oldPositionY);
+}
+
+
+
 void Entity::setPosition(vec2 position)
 {
-    this->oldPosition = this->position;
+    this->oldPositionX = this->position.x;
+    this->oldPositionY = this->position.y;
     this->position = position;
+}
+
+void Entity::setPositionX(float new_x)
+{
+    this->oldPositionX = this->position.x;
+    this->position.x = new_x;
+}
+
+void Entity::setPositionY(float new_y)
+{
+    this->oldPositionY = this->position.y;
+    this->position.y = new_y;
 }
 
 void Entity::setSpeed(vec2 speed)
@@ -63,9 +83,32 @@ void Entity::setDirection(vec2 direction)
     this->direction = normalize(direction);
 }
 
+void Entity::invertDirectionX()
+{
+    vec2 currentDirection = this->getDirection();
+    this->setDirection(vec2(-1.f, 1.f) * currentDirection);
+}
+
+void Entity::invertDirectionY()
+{
+    vec2 currentDirection = this->getDirection();
+    this->setDirection(vec2(1.f, -1.f) * currentDirection);
+}
+
 void Entity::rollbackPosition()
 {
-    this->position = this->oldPosition;
+    rollbackPositionX();
+    rollbackPositionY();
+}
+
+void Entity::rollbackPositionX()
+{
+    this->position.x = oldPositionX;
+}
+
+void Entity::rollbackPositionY()
+{
+    this->position.y = oldPositionY;
 }
 
 

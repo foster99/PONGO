@@ -3,6 +3,23 @@
 
 #include "Scene.h"
 
+struct contourPointList
+{
+	vector<vec2> up;
+	vector<vec2> down;
+	vector<vec2> right;
+	vector<vec2> left;
+};
+
+struct contourTileList
+{
+	vector<Tile*> up;
+	vector<Tile*> down;
+	vector<Tile*> right;
+	vector<Tile*> left;
+};
+
+
 class GameScene : public Scene
 {
 public:
@@ -12,12 +29,16 @@ public:
 	void update(int deltaTime) override;
 
 	ivec2 toTileCoords(vec2 coords);
+	ivec2 toTileCoordsNotInverting(vec2 coords);
 	void checkCollisionsAndUpdateEntitiesPositions(int deltaTime);
 
+	void updateCurrentChunk();
 	mat4 lookAtCurrentChunk();
+
 	void addCube();
 
 	void initBall();
+	void playerPressedSpace();
 
 	Level* getLevel();
 
