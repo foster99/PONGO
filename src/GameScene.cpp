@@ -85,8 +85,8 @@ void GameScene::update(int deltaTime)
 
 	ent->Slide::update(deltaTime);
 
-	// Consultar player y updatear el current chunk
-
+	updateCurrentChunk();
+	
 	checkCollisionsAndUpdateEntitiesPositions(deltaTime);
 }
 
@@ -97,13 +97,21 @@ ivec2 GameScene::toTileCoords(vec2 coords)
 	return ivec2(coords/tileSize) * ivec2(1,-1);
 }
 
+ivec2 GameScene::toTileCoordsNotInverting(vec2 coords)
+{
+	float tileSize = float(level->getTileSize());
+
+	return ivec2(coords / tileSize);
+}
+
 void GameScene::checkCollisionsAndUpdateEntitiesPositions(int deltaTime)
 {	
 	int time, step = 1;
+	bool moveBall = true;
 	for (time = step; time <= deltaTime; time += step)
 	{
 		vec2 newBallPosition = ball->Ball::getPosition() + (float(time/100.f) * ball->Ball::getDirection() * ball->Ball::getSpeed());
-		
+
 		ball->Ball::setPosition(newBallPosition);
 
 		for (Slide* slide : level->getSlides())
@@ -112,26 +120,58 @@ void GameScene::checkCollisionsAndUpdateEntitiesPositions(int deltaTime)
 			//
 		}
 
-		bool ballOnSolid = false;
-		for (const vec2& tileCoords : ball->Ball::occupiedTiles())
-		{
-			ballOnSolid = level->getTile(tileCoords)->solid;
+		contourTileList ballContourTileList = ball->listOfContourTiles();
 
-			if (ballOnSolid) break;
+		int upCount = 0, downCount = 0, rightCount = 0, leftCount = 0;
+
+		for (Tile* tile : ballContourTileList.down)
+			if (tile->solid)
+				downCount++; 
+
+		for (Tile* tile : ballContourTileList.up)
+			if (tile->solid)
+				upCount++;
+
+		for (Tile* tile : ballContourTileList.right)
+			if (tile->solid)
+				rightCount++;
+
+		for (Tile* tile : ballContourTileList.left)
+			if (tile->solid)
+				leftCount++;
+
+		int totalCount = upCount + downCount + rightCount + leftCount;
+		bool onSolid = totalCount > 0;
+
+		if (onSolid)
+		{	
+			float displacement = 0.02f;
+
+			if (downCount > 1 && downCount > leftCount && downCount > rightCount)
+			{
+				ball->Ball::setPosition(ball->Ball::getPosition() + vec2(0.f, displacement));
+				ball->invertDirectionY();
+			}
+			else if (upCount > 1 && upCount > leftCount && upCount > rightCount)
+			{
+				ball->Ball::setPosition(ball->Ball::getPosition() + vec2(0.f, -displacement));
+				ball->invertDirectionY();
+			}
+
+			if (leftCount > 1 && leftCount > downCount && leftCount > upCount)
+			{
+				ball->Ball::setPosition(ball->Ball::getPosition() + vec2(displacement, 0.f));
+				ball->invertDirectionX();
+			}
+			else if (rightCount > 1 && rightCount > downCount && rightCount > upCount)
+			{
+				ball->Ball::setPosition(ball->Ball::getPosition() + vec2(-displacement, 0.f));
+				ball->invertDirectionX();
+			}
+
+			
+			moveBall = false;
 		}
-
-		if (ballOnSolid)
-		{
-			ball->rollbackPosition();
-
-			// Poner las direcciones correctamente ekisDE
-			vec2 nextDir = vec2(-1) * ball->getDirection();
-
-			ball->setDirection(nextDir);
-		}
-
-		
-		ball->Ball::occupiedTiles();
 	}
 
 
@@ -140,6 +180,11 @@ void GameScene::checkCollisionsAndUpdateEntitiesPositions(int deltaTime)
 	{
 		// una iteracion mas
 	}
+}
+
+void GameScene::updateCurrentChunk()
+{
+	currentChunk = level->getTile(toTileCoords(ball->getPosition()))->chunk;
 }
 
 mat4 GameScene::lookAtCurrentChunk()
@@ -171,7 +216,7 @@ void GameScene::initBall()
 
 	// Load Model
 	ballModel = new Model();
-	ballModel->loadFromFile("models/sphere.obj", (*ballShader));
+	ballModel->loadFromFile("models/cube.obj", (*ballShader));
 
 	// Create Entity
 	ball = new Ball(this, ballModel, ballShader);

@@ -67,6 +67,8 @@ static void idleCallback()
 {
 	int currentTime = glutGet(GLUT_ELAPSED_TIME);
 	int deltaTime = currentTime - prevTime;
+
+	if (float(deltaTime) > 5.f * TIME_PER_FRAME) deltaTime = TIME_PER_FRAME + 1.f;
 	
 	if(deltaTime > TIME_PER_FRAME)
 	{

@@ -7,6 +7,8 @@ using namespace std;
 using namespace glm;
 
 class GameScene;
+struct contourPointList;
+struct contourTileList;
 
 class Ball : public Entity
 {
@@ -29,7 +31,10 @@ public:
 	void setSpeed(vec2 speed);
 	void setDirection(vec2 direction);
 
+	contourPointList listOfContourPoints();
+	contourTileList listOfContourTiles();
+
 	vec4 getBoundingBox() override;
-	vector<ivec2> occupiedTiles() override;
+	vector<vector<ivec2>> occupiedTiles() override;
 };
 #endif
