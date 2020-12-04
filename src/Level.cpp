@@ -44,6 +44,9 @@ void Level::renderTileMap() const
 	ShaderProgram* shader;
 	bool skip = false;
 
+	mat4 modelMatrix;
+	mat3 normalMatrix;
+
 	for (const vector<Tile>& row : map)
 	{
 		for (const Tile& tile : row)
@@ -64,13 +67,13 @@ void Level::renderTileMap() const
 			}
 
 			// Compute ModelMatrix
-			mat4 modelMatrix = mat4(1.0f);
+			modelMatrix = mat4(1.0f);
 			modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
 			modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
 			modelMatrix = translate(modelMatrix, -model->getCenter());
 			
 			// Compute NormalMatrix
-			mat3 normalMatrix = transpose(inverse(mat3(viewMatrix * modelMatrix)));
+			normalMatrix = transpose(inverse(mat3(viewMatrix * modelMatrix)));
 			
 			// Set uniforms
 			shader->use();
