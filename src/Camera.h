@@ -35,7 +35,7 @@ private:
 
 	// Free Camera
 	bool freeCamera;
-	const float cameraMovingSpeed = 0.2f;
+	const float cameraMovingSpeed = 1.f;
 	vec3 freeCameraTarget;
 	vec3 freeCameraPosition;
 	vec3 direction;

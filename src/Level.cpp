@@ -31,6 +31,9 @@ void Level::free()
 
 void Level::update(int deltaTime)
 {
+	this->setProjMatrix(scene->getProjMatrix());
+	this->setViewMatrix(scene->getViewMatrix());
+
 	for (auto* slide : slides)
 		slide->Slide::update(deltaTime);
 }
@@ -93,7 +96,7 @@ void Level::renderTileMap() const
 			// Set uniforms
 			shader->use();
 			shader->setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
-			shader->setUniformMatrix4f("projection", projMatrix);
+			shader->setUniformMatrix4f("projection", mat4(projMatrix));
 			shader->setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
 			shader->setUniformMatrix3f("normalmatrix", normalMatrix);
 			
@@ -325,16 +328,15 @@ Tile* Level::loadTile(char type, int i, int j)
 
 	switch (type)
 	{
-
-	case Tile::cube:		tile = Tile(coords, chunk, type, true, false);	break;
+	case Tile::cube:
+		tile = Tile(coords, chunk, type, true, false);
+		return &map[i][j];
 	
-	case blank:
-	case Tile::undefined:	tile = Tile(coords, chunk, Tile::undefined, false, false);	break;
-
-	default: return nullptr;
+	default: break;
 	}
 
-	return &map[i][j];
+	tile = Tile(coords, chunk, Tile::undefined, false, false);
+	return nullptr;
 }
 
 void Level::loadModels()
@@ -349,7 +351,6 @@ void Level::loadShaders()
 {
 	cubeShader = new ShaderProgram();
 	Scene::loadShaders("cubeShader", cubeShader);
-
 }
 
 

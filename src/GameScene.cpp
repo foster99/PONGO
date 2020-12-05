@@ -4,79 +4,39 @@ void GameScene::init()
 {
 	this->Scene::init();
 
-	models.resize(1, new Model());
-
-	for (Model* model : models)
-		model->loadFromFile("models/sphere.obj", (*defaultShaderProgram));
-
 	currentChunk = 0;
 	level = new Level(this, 1);
+	level->setViewMatrix(view);
+	level->setProjMatrix(projection);
 
 	initBall();
-
-	// TOMEU TESTING
-	auxMod = new Model();
-	auxMod->loadFromFile("models/cube.obj", (*defaultShaderProgram));
-	ent = new Slide(this, auxMod, defaultShaderProgram);
-	ent->Slide::init();
-	ent->setSize(level->getTileSize(), 1);
-	ent->setLimits(5, 5);
 }
 
 void GameScene::render()
 {
-	float     scaleFactor;
-	glm::vec3 centerModelBase;
-	glm::vec3 transl = vec3(0);
-	glm::mat4 modelMatrix;
-	glm::mat3 normalMatrix;
-	glm::mat4 viewMatrix = cam->getViewMatrix();
 
-	if (!cam->isFree())
-		viewMatrix = lookAtCurrentChunk();
+	if (cam->isFree())
+		view = cam->getViewMatrix();
+	else
+		view = lookAtCurrentChunk();
+	
 
 	renderAxis();
 
-	world->setViewMatrix(viewMatrix);
-	world->setProjMatrix(projection);
+	//world->setViewMatrix(view);
+	//world->setProjMatrix(projection);
 	//world->render();
 
-	float ratio;
-	for (Model* model : models)
-	{
-		ratio = model->getHeight();
-		scaleFactor = ratio / model->getHeight();
+	//defaultShaderProgram->use();
+	//defaultShaderProgram->setUniformMatrix4f("projection", projection);
+	//defaultShaderProgram->setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
+	//defaultShaderProgram->setUniformMatrix4f("modelview", viewMatrix);
+	//defaultShaderProgram->setUniformMatrix3f("normalmatrix", normalMatrix);
 
-		modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::scale(modelMatrix, glm::vec3(scaleFactor, scaleFactor, scaleFactor));
-		modelMatrix = glm::translate(modelMatrix, -model->getCenter());
-		modelMatrix = glm::translate(modelMatrix, transl);
 
-		// Compute Normal Matrix
-
-		normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
-
-		defaultShaderProgram->use();
-		defaultShaderProgram->setUniformMatrix4f("projection", projection);
-		defaultShaderProgram->setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
-		defaultShaderProgram->setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
-		defaultShaderProgram->setUniformMatrix3f("normalmatrix", normalMatrix);
-
-		model->render(*defaultShaderProgram);
-		transl = transl + vec3(ratio,0,0);
-	}
-
-	
-	ent->setViewMatrix(viewMatrix);
-	ent->setProjMatrix(projection);
-	ent->Slide::render();
-
-	level->setViewMatrix(viewMatrix);
-	level->setProjMatrix(projection);
 	level->Level::render();
 
-	ball->setViewMatrix(viewMatrix);
-	ball->setProjMatrix(projection);
+
 	ball->Ball::render();
 
 
@@ -86,13 +46,11 @@ void GameScene::update(int deltaTime)
 {
 	this->Scene::update(deltaTime);
 
-	//level->update(deltaTime);
+	ball->Ball::update(deltaTime);
+
+	level->update(deltaTime);
 
 	updateCurrentChunk();
-
-	ent->Slide::update(deltaTime);
-
-	
 	checkCollisionsAndUpdateEntitiesPositions(deltaTime);
 }
 
@@ -110,106 +68,99 @@ ivec2 GameScene::toTileCoordsNotInverting(vec2 coords)
 	return ivec2(coords / tileSize);
 }
 
-void GameScene::checkCollisionsAndUpdateEntitiesPositions(int deltaTime)
-{	
-	int time, step = 1;
-	bool moveBall = true;
-	for (time = step; time <= deltaTime; time += step)
+bool GameScene::checkCollision_Ball_World(int time)
+{
+	vec2 newBallPosition = ball->Ball::getPosition() + (float(time / 100.f) * ball->Ball::getDirection() * ball->Ball::getSpeed());
+
+	ball->Ball::setPosition(newBallPosition);
+
+	contourTileList ballContourTileList = ball->listOfContourTiles();
+
+	int upCount = 0, downCount = 0, rightCount = 0, leftCount = 0;
+
+	for (Tile* tile : ballContourTileList.down)  if (tile->solid) downCount++;
+	for (Tile* tile : ballContourTileList.up)	 if (tile->solid) upCount++;
+	for (Tile* tile : ballContourTileList.right) if (tile->solid) rightCount++;
+	for (Tile* tile : ballContourTileList.left)  if (tile->solid) leftCount++;
+
+	int totalCount = upCount + downCount + rightCount + leftCount;
+	bool onSolid = totalCount > 0;
+
+	if (onSolid)
 	{
-		vec2 newBallPosition = ball->Ball::getPosition() + (float(time/100.f) * ball->Ball::getDirection() * ball->Ball::getSpeed());
+		vec2 displacement = (float(time / 100.f) * ball->Ball::getSpeed());
 
-		ball->Ball::setPosition(newBallPosition);
-
-		contourTileList ballContourTileList = ball->listOfContourTiles();
-
-		int upCount = 0, downCount = 0, rightCount = 0, leftCount = 0;
-
-		for (Tile* tile : ballContourTileList.down)
-			if (tile->solid)
-				downCount++; 
-
-		for (Tile* tile : ballContourTileList.up)
-			if (tile->solid)
-				upCount++;
-
-		for (Tile* tile : ballContourTileList.right)
-			if (tile->solid)
-				rightCount++;
-
-		for (Tile* tile : ballContourTileList.left)
-			if (tile->solid)
-				leftCount++;
-
-		int totalCount = upCount + downCount + rightCount + leftCount;
-		bool onSolid = totalCount > 0;
-
-		if (onSolid)
-		{	
-			vec2 displacement = (float(time / 100.f) * ball->Ball::getSpeed());
-
-			if (downCount > 1 && downCount > leftCount && downCount > rightCount)
-			{
-				ball->Ball::setPosition(ball->Ball::getPosition() + vec2(0.f, displacement.y));
-				ball->invertDirectionY();
-			}
-			else if (upCount > 1 && upCount > leftCount && upCount > rightCount)
-			{
-				ball->Ball::setPosition(ball->Ball::getPosition() + vec2(0.f, -displacement.y));
-				ball->invertDirectionY();
-			}
-
-			if (leftCount > 1 && leftCount > downCount && leftCount > upCount)
-			{
-				ball->Ball::setPosition(ball->Ball::getPosition() + vec2(displacement.x, 0.f));
-				ball->invertDirectionX();
-			}
-			else if (rightCount > 1 && rightCount > downCount && rightCount > upCount)
-			{
-				ball->Ball::setPosition(ball->Ball::getPosition() + vec2(-displacement.x, 0.f));
-				ball->invertDirectionX();
-			}
-
-			moveBall = false;
+		if (downCount > 1 && downCount > leftCount && downCount > rightCount)
+		{
+			ball->Ball::setPosition(ball->Ball::getPosition() + vec2(0.f, displacement.y));
+			ball->invertDirectionY();
+		}
+		else if (upCount > 1 && upCount > leftCount && upCount > rightCount)
+		{
+			ball->Ball::setPosition(ball->Ball::getPosition() + vec2(0.f, -displacement.y));
+			ball->invertDirectionY();
 		}
 
-
-		for (Slide* slide : level->getSlides())
+		if (leftCount > 1 && leftCount > downCount && leftCount > upCount)
 		{
-			bool slideCollision = false;
-			vec2 oldSlidePosition = slide->Slide::getPosition();
-			vec2 newSlidePosition = oldSlidePosition + (float(time / 100.f) * slide->Slide::getDirection() * slide->Slide::getSpeed());
-			
-			slide->setPosition(newSlidePosition);
+			ball->Ball::setPosition(ball->Ball::getPosition() + vec2(displacement.x, 0.f));
+			ball->invertDirectionX();
+		}
+		else if (rightCount > 1 && rightCount > downCount && rightCount > upCount)
+		{
+			ball->Ball::setPosition(ball->Ball::getPosition() + vec2(-displacement.x, 0.f));
+			ball->invertDirectionX();
+		}
 
-			vector<vector<ivec2>> tiles = slide->Slide::occupiedTiles();
+		return true;
+	}
 
-			for (auto row : tiles)
-			{
-				ivec2 tileCoords = row[0];
-				if (level->getTile(tileCoords)->solid)
-				{
-					slide->Slide::setPosition(oldSlidePosition);
-					slide->invertDirectionY();
-					slideCollision = true;
-					break;
-				}
-			}
+	return false;
+}
 
-			if (slideCollision) break;
-			// lo estaba preparando todo para las colisiones pero me acabo de dar cuenta de que
-			// mirar las tiles en las que esta una Slide no aporta nada para la pelota (pero si
-			// para las paredes) ya que las puede ocupar parcialmente.
-			// Hay que comprobar la colision de forma "solapamiento"
+bool GameScene::checkCollision_Slide_World(Slide* slide, int time)
+{
+	bool slideCollision = false;
+	vec2 oldSlidePosition = slide->Slide::getPosition();
+	vec2 newSlidePosition = oldSlidePosition + (float(time / 100.f) * slide->Slide::getDirection() * slide->Slide::getSpeed());
 
-			// Idea: en las tiles
+	slide->setPosition(newSlidePosition);
+
+	vector<vector<ivec2>> tiles = slide->Slide::occupiedTiles();
+	
+	for (auto row : tiles)
+	{
+		if (level->getTile(row[0])->solid)
+		{
+			slide->Slide::setPosition(oldSlidePosition);
+
+			if (slide->isVertical())	slide->invertDirectionY();
+			else /* horizontal*/		slide->invertDirectionX();
+
+			return true;
 		}
 	}
 
+	return false;
+}
 
-	time = time - deltaTime; // Tiempo restante no tratado en el for
-	if (time > 0)
+void GameScene::checkCollisionsAndUpdateEntitiesPositions(int deltaTime)
+{	
+	bool ballCollidedWithWorld = false;
+	
+	int time, step;
+	for (time = step = 1; time <= deltaTime; time += step)
 	{
-		// una iteracion mas
+		ballCollidedWithWorld = checkCollision_Ball_World(time);
+
+		bool slideCollidedWorld;
+		for (Slide* slide : level->getSlides())
+		{
+			slideCollidedWorld = checkCollision_Slide_World(slide, time);
+		}
+
+		// En este punto del codigo, ni la pelota ni las palas estan chocando con el mundo.
+		
 	}
 }
 
@@ -234,9 +185,7 @@ mat4 GameScene::lookAtCurrentChunk()
 
 void GameScene::addCube()
 {
-	Model* m = new Model();
-	m->loadFromFile("models/sphere.obj", (*defaultShaderProgram));
-	models.push_back(m);
+	// YA NO HAY NADA
 }
 
 void GameScene::initBall()
@@ -253,6 +202,8 @@ void GameScene::initBall()
 	ball = new Ball(this, ballModel, ballShader);
 
 	ball->Ball::init();
+	ball->setViewMatrix(view);
+	ball->setProjMatrix(projection);
 }
 
 void GameScene::playerPressedSpace()
@@ -278,4 +229,14 @@ vec2 GameScene::getPlayerSpd()
 vec2 GameScene::getPlayerDir()
 {
 	return ball->getDirection();
+}
+
+mat4 GameScene::getViewMatrix()
+{
+	return view;
+}
+
+mat4 GameScene::getProjMatrix()
+{
+	return projection;
 }

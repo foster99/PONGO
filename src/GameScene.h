@@ -30,6 +30,10 @@ public:
 
 	ivec2 toTileCoords(vec2 coords);
 	ivec2 toTileCoordsNotInverting(vec2 coords);
+
+	bool checkCollision_Ball_World(int time);
+	bool checkCollision_Slide_World(Slide* slide, int time);
+
 	void checkCollisionsAndUpdateEntitiesPositions(int deltaTime);
 
 	void updateCurrentChunk();
@@ -45,12 +49,14 @@ public:
 	vec2 getPlayerSpd();
 	vec2 getPlayerDir();
 
+	mat4 getViewMatrix();
+	mat4 getProjMatrix();
+
 private:
 
 	int currentChunk;
 
 	ShaderProgram* gameShaderProgram;
-	vector<Model*> models;
 	Level* level;
 
 	// FOWOSTER TESTING

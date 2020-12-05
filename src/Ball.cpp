@@ -20,7 +20,7 @@ void Ball::init()
 
 	setSpeed(vec2(1.00f));
 	setDirection(vec2(-1.f, 1.f));
-	setPosition(vec2(30.f, -30.f));
+	setPosition(vec2(50.f, -50.f));
 }
 
 void Ball::render()
@@ -40,7 +40,7 @@ void Ball::render()
 	// Set uniforms
 	program->use();
 	program->setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
-	program->setUniformMatrix4f("projection", projection);
+	program->setUniformMatrix4f("projection", projMatrix);
 	program->setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
 	program->setUniformMatrix3f("normalmatrix", normalMatrix);
 
@@ -49,6 +49,7 @@ void Ball::render()
 
 void Ball::update(int deltaTime)
 {
+	this->Entity::update(deltaTime);
 	// update ball
 }
 
