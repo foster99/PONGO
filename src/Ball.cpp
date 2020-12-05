@@ -1,5 +1,8 @@
 #include "Ball.h"
 #include "GameScene.h"
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
 
 Ball::~Ball()
 {
@@ -21,6 +24,18 @@ void Ball::init()
 	setSpeed(vec2(1.00f));
 	setDirection(vec2(-1.f, 1.f));
 	setPosition(vec2(30.f, -30.f));
+
+	// INICIALIZAR PARTICULAS EN PELOTA
+	billboard = Billboard::createBillboard(glm::vec2(10.f, 10.f), (*program), "images/bee.png");
+	billboard->setType(BILLBOARD_Y_AXIS);
+
+	ParticleSystem::Particle particle;
+	particle.lifetime = 1e10f;
+	particles = new ParticleSystem();
+	particles->init(glm::vec2(5.f,5.f), (*program), "images/bee.png", 2.f);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+	currentTime = 0.0f;
 }
 
 void Ball::render()
@@ -39,17 +54,59 @@ void Ball::render()
 
 	// Set uniforms
 	program->use();
+	program->setUniform1b("bLighting", true);
 	program->setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
 	program->setUniformMatrix4f("projection", projection);
 	program->setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
 	program->setUniformMatrix3f("normalmatrix", normalMatrix);
 
 	this->Entity::render();
+
+	//// Render billboard
+	//program->setUniform1b("bLighting", false);
+	//modelMatrix = glm::mat4(1.0f);
+	//program->setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
+	//normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
+	//program->setUniformMatrix3f("normalmatrix", normalMatrix);
+	//billboard->render(vec3(position,11), scene->getCameraPosition());
+
+	// Render particles
+	/*glDepthMask(GL_FALSE);
+	glEnable(GL_BLEND);*/
+
+	program->setUniform1b("bLighting", false);
+	modelMatrix = glm::mat4(1.0f);
+	program->setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
+	normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
+	program->setUniformMatrix3f("normalmatrix", normalMatrix);
+	particles->render(scene->getCameraPosition());
+
+	/*glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);*/
 }
 
 void Ball::update(int deltaTime)
 {
 	// update ball
+
+	// UPDATE PARTICULAS
+
+	int nParticlesToSpawn = 20 * (int((currentTime + deltaTime) / 100.f) - int(currentTime / 100.f));
+	ParticleSystem::Particle particle;
+	float angle;
+
+	particle.lifetime = 2.4f;
+	for (int i = 0; i < nParticlesToSpawn; i++)
+	{
+		angle = 2.f * PI * (i + float(rand()) / RAND_MAX) / nParticlesToSpawn;
+		particle.position = vec3(position,0) + glm::vec3(cos(angle)*10, -1.75f, sin(angle)*10);
+		particle.speed = 1.5f * glm::normalize(0.5f * particle.position + glm::vec3(0.f, 3.f, 0.f));
+		particles->addParticle(particle);
+	}
+
+	currentTime += deltaTime;
+
+	particles->update(deltaTime / 1000.f);
 }
 
 void Ball::setPosition(vec2 position)

@@ -92,7 +92,8 @@ void GameScene::update(int deltaTime)
 
 	ent->Slide::update(deltaTime);
 
-	
+	ball->Ball::update(deltaTime);
+
 	checkCollisionsAndUpdateEntitiesPositions(deltaTime);
 }
 
@@ -278,4 +279,9 @@ vec2 GameScene::getPlayerSpd()
 vec2 GameScene::getPlayerDir()
 {
 	return ball->getDirection();
+}
+
+vec3 GameScene::getCameraPosition()
+{
+	return cam->getCameraPosition();
 }

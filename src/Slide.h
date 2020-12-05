@@ -1,7 +1,8 @@
 #ifndef _SLIDE_INCLUDE
 #define _SLIDE_INCLUDE
 
-#include "Entity.h" 
+#include "Entity.h"
+
 using namespace std;
 using namespace glm;
 
