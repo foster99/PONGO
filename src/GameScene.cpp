@@ -54,7 +54,6 @@ void GameScene::update(int deltaTime)
 
 	ball->Ball::update(deltaTime);
 	updateCurrentChunk();
-
 	checkCollisionsAndUpdateEntitiesPositions(deltaTime);
 }
 
@@ -233,17 +232,4 @@ vec2 GameScene::getPlayerSpd()
 vec2 GameScene::getPlayerDir()
 {
 	return ball->getDirection();
-}
-mat4 GameScene::getViewMatrix()
-{
-	return view;
-}
-
-mat4 GameScene::getProjMatrix()
-{
-	return projection;
-}
-vec3 GameScene::getCameraPosition()
-{
-	return cam->getCameraPosition();
 }
