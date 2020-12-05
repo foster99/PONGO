@@ -24,6 +24,10 @@ class Level : public World
 {
 public:
 
+	static constexpr char verticalSlide		= '|';
+	static constexpr char horizontalSlide	= '-';
+	static constexpr char blank				= '.';
+
 	// Constructors
 	Level(GameScene* scene, int id = 1);
 	
@@ -31,8 +35,11 @@ public:
 	~Level();
 	void free() override;
 
+	void update(int deltaTime);
+
 	// Rendering
 	void render() const override;
+	void renderSlides() const;
 	void renderTileMap() const;
 
 	// TileMap Info

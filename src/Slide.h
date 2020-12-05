@@ -23,7 +23,10 @@ public:
 	void setDirection(vec2 direction) override;
 
 	vector<vector<ivec2>> occupiedTiles() override;
-	vec4		 getBoundingBox() override;	// vec4 -> xmin, xmax, ymin, ymax
+	vec4 getBoundingBox() override;	// vec4 -> xmin, xmax, ymin, ymax
+
+	bool isVertical();
+	bool isHorizontal();
 
 	// ESPERAR A AVANCES
 	bool trackPlayerVertical();

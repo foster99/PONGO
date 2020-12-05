@@ -29,13 +29,28 @@ void Level::free()
 	this->World::free();
 }
 
+void Level::update(int deltaTime)
+{
+	for (auto* slide : slides)
+		slide->Slide::update(deltaTime);
+}
+
 void Level::render() const
 {
 	//this->World::render();
 
 	renderTileMap();
-	// render Ball
-	// render Slides
+	renderSlides();
+}
+
+void Level::renderSlides() const
+{
+	for (auto* slide : slides)
+	{
+		slide->setViewMatrix(viewMatrix);
+		slide->setProjMatrix(projMatrix);
+		slide->Slide::render();
+	}
 }
 
 void Level::renderTileMap() const
@@ -162,38 +177,43 @@ void Level::loadTileMap()
 	getline(fin, line);	// Blank line
 
 
+	//// LOAD HORIZONTAL SLIDES
+	//getline(fin, line);	// Blank line
+	//getline(fin, line);
+	//if (diff(line, "START  - HORIZONTAL SLIDES"))
+	//	throw std::string("Error parsing " + line).c_str();
+	//
+	//getline(fin, line);
+	//while (diff(line, "END    - HORIZONTAL SLIDES"))
+	//{
+	//	sstream.str(line);
+	//	sstream >> i >> j0 >> j1;
+	//	Slide* slide = new Slide(scene, slideModel, slideShader);
+	//	slide->Slide::init();
+	//	slide->setSize(tileSize, Slide::horizontal);
+	//	slide->setLimits(j0, j1);
+	//	slides.push_back(slide);
+	//	getline(fin, line);
+	//}
 
-	// LOAD HORIZONTAL SLIDES
-	getline(fin, line);	// Blank line
-	getline(fin, line);
-	if (diff(line, "START  - HORIZONTAL SLIDES"))
-		throw std::string("Error parsing " + line).c_str();
-	
-	getline(fin, line);
-	while (diff(line, "END    - HORIZONTAL SLIDES"))
-	{
-		sstream.str(line);
-		sstream >> i >> j0 >> j1;
-		//slides.push_back(Slide(Slide::Horizontal, i, j0, j1));
-		getline(fin, line);
-	}
 
-
-
-	// LOAD VERTICAL SLIDES
-	getline(fin, line); // Blank line
-	getline(fin, line);
-	if (diff(line, "START  - VERTICAL SLIDES"))
-		throw std::string("Error parsing " + line).c_str();
-
-	getline(fin, line);
-	while (diff(line, "END    - VERTICAL SLIDES"))
-	{
-		sstream.str(line);
-		sstream >> j >> i0 >> i1;
-		//slides.push_back(Slide(Slide::Vertical, j, i0, i1));
-		getline(fin, line);
-	}
+	//// LOAD VERTICAL SLIDES
+	//getline(fin, line); // Blank line
+	//getline(fin, line);
+	//if (diff(line, "START  - VERTICAL SLIDES"))
+	//	throw std::string("Error parsing " + line).c_str();
+	//getline(fin, line);
+	//while (diff(line, "END    - VERTICAL SLIDES"))
+	//{
+	//	sstream.str(line);
+	//	sstream >> j >> i0 >> i1;
+	//	Slide* slide = new Slide(scene, slideModel, slideShader);
+	//	slide->Slide::init();
+	//	slide->setSize(10, Slide::vertical);
+	//	slide->setLimits(i0, i1);
+	//	slides.push_back(slide);
+	//	getline(fin, line);
+	//}
 	
 
 	// LOAD LEVEL PARAMETERS
@@ -218,11 +238,18 @@ void Level::loadTileMap()
 
 	mapSizeInTiles = mapSizeInChunks * chunkSize;
 
+
+	// LOAD SLIDE MODEL AND SHADER
+	ShaderProgram* slideShader = new ShaderProgram();
+	Model* slideModel = new Model();
+	Scene::loadShaders("ballShader", slideShader);
+	slideModel->loadFromFile("models/cube.obj", (*slideShader));
+
+
 	// INICIALIZAR Y LEER TILE MAP
 	char tile;
 	map					= vector<vector<Tile>>(mapSizeInTiles.y, vector<Tile>(mapSizeInTiles.x));
 	firstTileOfChunk	= vector<Tile*>(mapSizeInChunks.x * mapSizeInChunks.y);
-
 	getline(fin, line); // Blank line
 
 	Tile* currentTile;
@@ -234,12 +261,43 @@ void Level::loadTileMap()
 			fin.get(tile);
 
 			currentTile = loadTile(tile, i, j);
-
-
-			if (currentTile->chunk > currentChunk)
+			
+			if (currentTile != nullptr) // Static Tiles
 			{
-				currentChunk = currentTile->chunk;
-				firstTileOfChunk[currentChunk] = currentTile;
+				if (currentTile->chunk > currentChunk)
+				{
+					currentChunk = currentTile->chunk;
+					firstTileOfChunk[currentChunk] = currentTile;
+				}
+			}
+			else // Dynamic Tile
+			{
+				switch (tile)
+				{
+				case verticalSlide:
+				{
+					Slide* slide = new Slide(scene, slideModel, slideShader);
+					slide->Slide::init();
+					slide->setSize(tileSize, Slide::vertical);
+					slide->setPosition(float(tileSize) * vec2(float(j) + 0.5f, -(float(i) + 0.5f)));
+					slide->setDirection(vec2(0.f, 1.f));
+					slide->setSpeed(vec2(0.f, 0.5f));
+					slides.push_back(slide);
+					break;
+				}
+				case horizontalSlide:
+				{
+					Slide* slide = new Slide(scene, slideModel, slideShader);
+					slide->Slide::init();
+					slide->setSize(tileSize, Slide::horizontal);
+					slide->setPosition(float(tileSize) * vec2(float(j) + 0.5f, -(float(i) + 0.5f)));
+					slide->setDirection(vec2(1.f, 0.f));
+					slide->setSpeed(vec2(0.5f, 0.f));
+					slides.push_back(slide);
+					break;
+				}
+				default: break;
+				}
 			}
 		}
 
@@ -269,9 +327,11 @@ Tile* Level::loadTile(char type, int i, int j)
 	{
 
 	case Tile::cube:		tile = Tile(coords, chunk, type, true, false);	break;
-	case Tile::undefined:	tile = Tile(coords, chunk, type, false, false);	break;
+	
+	case blank:
+	case Tile::undefined:	tile = Tile(coords, chunk, Tile::undefined, false, false);	break;
 
-	default: break;
+	default: return nullptr;
 	}
 
 	return &map[i][j];

@@ -1,4 +1,5 @@
 #include "Slide.h"
+#include "GameScene.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 Slide::~Slide()
@@ -18,7 +19,7 @@ void Slide::init()
 	// SI FALTA ALGO ABAIX
 	tracked = false;
 	initialized = false;
-	speed = 0.5;
+	speed = 1.0f;
 	position = ogPos = vec2(32, -48);
 }
 
@@ -38,25 +39,23 @@ void Slide::update(int deltaTime)
 
 void Slide::render()
 {
-	float     scaleFactor;
-	glm::vec3 centerModelBase;
+	
 	glm::mat4 modelMatrix;
 	glm::mat3 normalMatrix;
 	
-	float ratio = model->getHeight();
-	scaleFactor = ratio / model->getHeight();
-	centerModelBase = model->getCenter() - glm::vec3(0.f, -model->getHeight() / 2.f, 0.f);
+	float tileSize		= scene->getLevel()->getTileSize();
+	float scaleFactor	= tileSize / model->getHeight();
 
 	modelMatrix = glm::mat4(1.0f);
 	modelMatrix = translate(modelMatrix, vec3(position,0));
 
-	if(orientation == horizontal)
+	if (orientation == horizontal)
 		modelMatrix = glm::scale(modelMatrix, glm::vec3(4, 1, 1));
 	else
 		modelMatrix = glm::scale(modelMatrix, glm::vec3(1, 4, 1));
 
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(scaleFactor, scaleFactor, scaleFactor));
-	modelMatrix = glm::translate(modelMatrix, -centerModelBase);
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(scaleFactor));
+	modelMatrix = glm::translate(modelMatrix, -model->getCenter());
 
 	// Compute Normal Matrix
 
@@ -74,6 +73,8 @@ void Slide::render()
 
 void Slide::updateVertical(int deltaTime)
 {
+
+	return;
 	float len  = size.y * tileSize;
 	float limY = limits.y * tileSize;
 
@@ -87,6 +88,7 @@ void Slide::updateVertical(int deltaTime)
 
 void Slide::updateHorizontal(int deltaTime)
 {
+	return;
 	float len  = size.x * tileSize;
 	float limX = limits.x * tileSize;
 
@@ -140,15 +142,64 @@ void Slide::setDirection(vec2 direction)
 
 vector<vector<ivec2>> Slide::occupiedTiles()
 {
-	return vector<vector<ivec2>>();
+	vec4 BB = Slide::getBoundingBox();
+
+	float xmin = BB[0];
+	float xmax = BB[1];
+	float ymin = -BB[2];
+	float ymax = -BB[3];
+
+	float tileSize = float(scene->getLevel()->getTileSize());
+	float half_tile = tileSize / 2.f;
+
+	vector<vector<ivec2>> tiles;
+
+	if (isVertical())
+	{
+		tiles.resize(9, vector<ivec2>(1));
+		tiles[0][0] = scene->toTileCoordsNotInverting(vec2((xmin + xmax) / 2.f, ymin + 0.f * half_tile));
+		tiles[1][0] = scene->toTileCoordsNotInverting(vec2((xmin + xmax) / 2.f, ymin + 1.f * half_tile));
+		tiles[2][0] = scene->toTileCoordsNotInverting(vec2((xmin + xmax) / 2.f, ymin + 2.f * half_tile));
+		tiles[3][0] = scene->toTileCoordsNotInverting(vec2((xmin + xmax) / 2.f, ymin + 3.f * half_tile));
+		tiles[4][0] = scene->toTileCoordsNotInverting(vec2((xmin + xmax) / 2.f, ymin + 4.f * half_tile));
+		tiles[5][0] = scene->toTileCoordsNotInverting(vec2((xmin + xmax) / 2.f, ymin + 5.f * half_tile));
+		tiles[6][0] = scene->toTileCoordsNotInverting(vec2((xmin + xmax) / 2.f, ymin + 6.f * half_tile));
+		tiles[7][0] = scene->toTileCoordsNotInverting(vec2((xmin + xmax) / 2.f, ymin + 7.f * half_tile));
+		tiles[8][0] = scene->toTileCoordsNotInverting(vec2((xmin + xmax) / 2.f, ymin + 8.f * half_tile));
+	}
+	else // if (isHorizontal())
+	{
+		tiles.resize(9, vector<ivec2>(1));
+		tiles[0][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 0.f * half_tile));
+		tiles[1][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 1.f * half_tile));
+		tiles[2][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 2.f * half_tile));
+		tiles[3][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 3.f * half_tile));
+		tiles[4][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 4.f * half_tile));
+		tiles[5][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 5.f * half_tile));
+		tiles[6][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 6.f * half_tile));
+		tiles[7][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 7.f * half_tile));
+		tiles[8][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 8.f * half_tile));
+	}
+
+	return tiles;
 }
 
 vec4 Slide::getBoundingBox()
 {
-	float lenX = (float)(size.x * tileSize)/2.;
-	float lenY = (float)(size.y * tileSize)/2.;
+	float lenX = float(size.x) * float(tileSize) / 2.f;
+	float lenY = float(size.y) * float(tileSize) / 2.f;
 
-	return vec4( (position.x-lenX), (position.x+lenX), (position.y-lenY), (position.y+lenY));
+	return vec4( (position.x-lenX), (position.x+lenX), (position.y+lenY), (position.y-lenY));
+}
+
+bool Slide::isVertical()
+{
+	return orientation == vertical;
+}
+
+bool Slide::isHorizontal()
+{
+	return orientation == horizontal;
 }
 
 bool Slide::trackPlayerVertical()

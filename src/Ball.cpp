@@ -27,10 +27,11 @@ void Ball::render()
 {
 	// CAMBIAR COSAS DEL SHADER (UNIFORMS)
 
+	float scale_factor = float(scene->getLevel()->getTileSize()) / model->getHeight();
 	// Compute ModelMatrix
 	mat4 modelMatrix = mat4(1.0f);
 	modelMatrix = translate(modelMatrix, vec3(position, 0.f));
-	modelMatrix = scale(modelMatrix, vec3(float(scene->getLevel()->getTileSize()) / model->getHeight()));
+	modelMatrix = scale(modelMatrix, vec3(scale_factor, scale_factor, scale_factor/2.f));
 	modelMatrix = translate(modelMatrix, -model->getCenter());
 
 	// Compute NormalMatrix

@@ -66,6 +66,7 @@ void GameScene::render()
 		transl = transl + vec3(ratio,0,0);
 	}
 
+	
 	ent->setViewMatrix(viewMatrix);
 	ent->setProjMatrix(projection);
 	ent->Slide::render();
@@ -77,15 +78,20 @@ void GameScene::render()
 	ball->setViewMatrix(viewMatrix);
 	ball->setProjMatrix(projection);
 	ball->Ball::render();
+
+
 }
 
 void GameScene::update(int deltaTime)
 {
 	this->Scene::update(deltaTime);
 
-	ent->Slide::update(deltaTime);
+	//level->update(deltaTime);
 
 	updateCurrentChunk();
+
+	ent->Slide::update(deltaTime);
+
 	
 	checkCollisionsAndUpdateEntitiesPositions(deltaTime);
 }
@@ -113,12 +119,6 @@ void GameScene::checkCollisionsAndUpdateEntitiesPositions(int deltaTime)
 		vec2 newBallPosition = ball->Ball::getPosition() + (float(time/100.f) * ball->Ball::getDirection() * ball->Ball::getSpeed());
 
 		ball->Ball::setPosition(newBallPosition);
-
-		for (Slide* slide : level->getSlides())
-		{
-			// move slides
-			//
-		}
 
 		contourTileList ballContourTileList = ball->listOfContourTiles();
 
@@ -169,8 +169,39 @@ void GameScene::checkCollisionsAndUpdateEntitiesPositions(int deltaTime)
 				ball->invertDirectionX();
 			}
 
-			
 			moveBall = false;
+		}
+
+
+		for (Slide* slide : level->getSlides())
+		{
+			bool slideCollision = false;
+			vec2 oldSlidePosition = slide->Slide::getPosition();
+			vec2 newSlidePosition = oldSlidePosition + (float(time / 100.f) * slide->Slide::getDirection() * slide->Slide::getSpeed());
+			
+			slide->setPosition(newSlidePosition);
+
+			vector<vector<ivec2>> tiles = slide->Slide::occupiedTiles();
+
+			for (auto row : tiles)
+			{
+				ivec2 tileCoords = row[0];
+				if (level->getTile(tileCoords)->solid)
+				{
+					slide->Slide::setPosition(oldSlidePosition);
+					slide->invertDirectionY();
+					slideCollision = true;
+					break;
+				}
+			}
+
+			if (slideCollision) break;
+			// lo estaba preparando todo para las colisiones pero me acabo de dar cuenta de que
+			// mirar las tiles en las que esta una Slide no aporta nada para la pelota (pero si
+			// para las paredes) ya que las puede ocupar parcialmente.
+			// Hay que comprobar la colision de forma "solapamiento"
+
+			// Idea: en las tiles
 		}
 	}
 
