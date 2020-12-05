@@ -25,6 +25,8 @@ void Slide::init()
 
 void Slide::update(int deltaTime)
 {
+	this->Entity::update(deltaTime);
+
 	// UPDATES EN UN FUTUR QUANT FOWOSTER DIGUI NOMES HAN DE CANVIAR DIRECTION I SPEED
 	// SET POSTITION CANVIARA RESPECTE AQUESTES DADES
 	if (orientation == vertical) {
@@ -62,7 +64,7 @@ void Slide::render()
 	normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
 
 	program->use();
-	program->setUniformMatrix4f("projection", projection);
+	program->setUniformMatrix4f("projection", projMatrix);
 	program->setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
 	program->setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
 	program->setUniformMatrix3f("normalmatrix", normalMatrix);
@@ -152,11 +154,10 @@ vector<vector<ivec2>> Slide::occupiedTiles()
 	float tileSize = float(scene->getLevel()->getTileSize());
 	float half_tile = tileSize / 2.f;
 
-	vector<vector<ivec2>> tiles;
+	vector<vector<ivec2>> tiles(9, vector<ivec2>(1));
 
 	if (isVertical())
 	{
-		tiles.resize(9, vector<ivec2>(1));
 		tiles[0][0] = scene->toTileCoordsNotInverting(vec2((xmin + xmax) / 2.f, ymin + 0.f * half_tile));
 		tiles[1][0] = scene->toTileCoordsNotInverting(vec2((xmin + xmax) / 2.f, ymin + 1.f * half_tile));
 		tiles[2][0] = scene->toTileCoordsNotInverting(vec2((xmin + xmax) / 2.f, ymin + 2.f * half_tile));
@@ -169,16 +170,15 @@ vector<vector<ivec2>> Slide::occupiedTiles()
 	}
 	else // if (isHorizontal())
 	{
-		tiles.resize(9, vector<ivec2>(1));
-		tiles[0][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 0.f * half_tile));
-		tiles[1][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 1.f * half_tile));
-		tiles[2][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 2.f * half_tile));
-		tiles[3][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 3.f * half_tile));
-		tiles[4][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 4.f * half_tile));
-		tiles[5][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 5.f * half_tile));
-		tiles[6][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 6.f * half_tile));
-		tiles[7][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 7.f * half_tile));
-		tiles[8][0] = scene->toTileCoordsNotInverting(vec2((ymin + ymax) / 2.f, xmin + 8.f * half_tile));
+		tiles[0][0] = scene->toTileCoordsNotInverting(vec2(xmin + 0.f * half_tile, (ymin + ymax) / 2.f));
+		tiles[1][0] = scene->toTileCoordsNotInverting(vec2(xmin + 1.f * half_tile, (ymin + ymax) / 2.f));
+		tiles[2][0] = scene->toTileCoordsNotInverting(vec2(xmin + 2.f * half_tile, (ymin + ymax) / 2.f));
+		tiles[3][0] = scene->toTileCoordsNotInverting(vec2(xmin + 3.f * half_tile, (ymin + ymax) / 2.f));
+		tiles[4][0] = scene->toTileCoordsNotInverting(vec2(xmin + 4.f * half_tile, (ymin + ymax) / 2.f));
+		tiles[5][0] = scene->toTileCoordsNotInverting(vec2(xmin + 5.f * half_tile, (ymin + ymax) / 2.f));
+		tiles[6][0] = scene->toTileCoordsNotInverting(vec2(xmin + 6.f * half_tile, (ymin + ymax) / 2.f));
+		tiles[7][0] = scene->toTileCoordsNotInverting(vec2(xmin + 7.f * half_tile, (ymin + ymax) / 2.f));
+		tiles[8][0] = scene->toTileCoordsNotInverting(vec2(xmin + 8.f * half_tile, (ymin + ymax) / 2.f));
 	}
 
 	return tiles;

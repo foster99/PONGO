@@ -56,7 +56,7 @@ void Ball::render()
 	program->use();
 	program->setUniform1b("bLighting", true);
 	program->setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
-	program->setUniformMatrix4f("projection", projection);
+	program->setUniformMatrix4f("projection", projMatrix);
 	program->setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
 	program->setUniformMatrix3f("normalmatrix", normalMatrix);
 
@@ -87,6 +87,7 @@ void Ball::render()
 
 void Ball::update(int deltaTime)
 {
+	this->Entity::update(deltaTime);
 	// update ball
 
 	// UPDATE PARTICULAS

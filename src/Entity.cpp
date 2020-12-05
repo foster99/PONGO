@@ -16,6 +16,7 @@ Entity::Entity()
 }
 
 Entity::Entity(GameScene* scene, Model* model, ShaderProgram* program)
+    : viewMatrix(mat4(1.f)), projMatrix(mat4(1.f))
 {
     this->model     = model;
     this->scene     = scene;
@@ -30,6 +31,12 @@ void Entity::init()
 void Entity::render()
 {
     model->render(*(program));
+}
+
+void Entity::update(int deltaTime)
+{
+    viewMatrix = scene->getViewMatrix();
+    projMatrix = scene->getProjMatrix();
 }
 
 vec2 Entity::getPosition()
@@ -51,8 +58,6 @@ vec2 Entity::getOldPosition()
 {
     return vec2(oldPositionX, oldPositionY);
 }
-
-
 
 void Entity::setPosition(vec2 position)
 {
@@ -112,14 +117,14 @@ void Entity::rollbackPositionY()
 }
 
 
-void Entity::setViewMatrix(mat4 view)
+void Entity::setViewMatrix(const mat4& view)
 {
     viewMatrix = view;
 }
 
-void Entity::setProjMatrix(mat4 proj)
+void Entity::setProjMatrix(const mat4& proj)
 {
-    projection = proj;
+    projMatrix = proj;
 }
 
 std::pair<bool, glm::vec2> Entity::collisionPoint(const Entity& e1, const Entity& e2)

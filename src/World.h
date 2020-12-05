@@ -39,8 +39,8 @@ public:
 protected:
 	
 	ShaderProgram* defaultWorldShaderProgram;
-	mat4& viewMatrix;
-	mat4& projMatrix;
+	mat4 viewMatrix;
+	mat4 projMatrix;
 
 private:
 

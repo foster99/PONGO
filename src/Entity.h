@@ -26,7 +26,7 @@ protected:
 	GameScene*		scene	= nullptr;
 
 	mat4 viewMatrix;
-	mat4 projection;
+	mat4 projMatrix;
 
 public:
 
@@ -37,7 +37,7 @@ public:
 
 	virtual void init();
 	virtual void render();
-	virtual void update(int deltaTime) = 0;
+	virtual void update(int deltaTime);
 
 	virtual vector<vector<ivec2>> occupiedTiles()  = 0;
 	virtual vec4		  getBoundingBox() = 0;	// vec4 -> xmin, xmax, ymin, ymax
@@ -60,8 +60,8 @@ public:
 	void rollbackPositionX();
 	void rollbackPositionY();
 
-	void setViewMatrix(mat4 view);
-	void setProjMatrix(mat4 proj);
+	void setViewMatrix(const mat4& view);
+	void setProjMatrix(const mat4& proj);
 
 	// Given two entities returs if they collided and so, its collission point according to its Bounding Boxes too.
 	static std::pair<bool, glm::vec2> collisionPoint(const Entity& e1, const Entity& e2);

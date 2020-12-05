@@ -65,7 +65,7 @@ void World::render() const
 	normalMatrix = glm::transpose(inverse(mat3(viewMatrix * modelMatrix)));
 
 	defaultWorldShaderProgram->setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
-	defaultWorldShaderProgram->setUniformMatrix4f("projection", projMatrix);
+	defaultWorldShaderProgram->setUniformMatrix4f("projection", mat4(projMatrix));
 	defaultWorldShaderProgram->setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
 	defaultWorldShaderProgram->setUniformMatrix3f("normalmatrix", normalMatrix);
 
@@ -85,7 +85,7 @@ void World::render() const
 		normalMatrix = transpose(inverse(mat3(viewMatrix * modelMatrix)));
 
 		defaultWorldShaderProgram->setUniform4f("color", 1.0f, 0.0f, 0.0f, 1.0f);
-		defaultWorldShaderProgram->setUniformMatrix4f("projection", projMatrix);
+		defaultWorldShaderProgram->setUniformMatrix4f("projection", mat4(projMatrix));
 		defaultWorldShaderProgram->setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
 		defaultWorldShaderProgram->setUniformMatrix3f("normalmatrix", normalMatrix);
 
