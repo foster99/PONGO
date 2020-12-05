@@ -55,6 +55,12 @@
     <ClCompile Include="AssimpModel.cpp">
       <Filter>Source Files\3D\Entity</Filter>
     </ClCompile>
+    <ClCompile Include="Billboard.cpp">
+      <Filter>Source Files\Painting</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Source Files\Painting</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderProgram.h">
@@ -110,6 +116,12 @@
     </ClInclude>
     <ClInclude Include="AssimpModel.h">
       <Filter>Header Files\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>Header Files\Painting</Filter>
+    </ClInclude>
+    <ClInclude Include="Billboard.h">
+      <Filter>Header Files\Painting</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
