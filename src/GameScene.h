@@ -48,6 +48,7 @@ public:
 	vec2 getPlayerPos();
 	vec2 getPlayerSpd();
 	vec2 getPlayerDir();
+	vec3 getCameraChunkPosition();
 	vec3 getCameraPosition();
 
 	mat4 getViewMatrix();
