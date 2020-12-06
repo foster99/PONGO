@@ -32,7 +32,7 @@ void Ball::init()
 	ParticleSystem::Particle particle;
 	particle.lifetime = 1e10f;
 	particles = new ParticleSystem();
-	particles->init(glm::vec2(3.f,3.f), (*program), "images/bee.png", 2.f);
+	particles->init(glm::vec2(1.f,1.f), (*program), "images/particle.png",0);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 	currentTime = 0.0f;
@@ -71,8 +71,8 @@ void Ball::render()
 	//billboard->render(vec3(position,11), scene->getCameraPosition());
 
 	// Render particles
-	glDepthMask(GL_FALSE);
-	glEnable(GL_BLEND);
+	/*glDepthMask(GL_FALSE);
+	glEnable(GL_BLEND);*/
 
 	program->setUniform1b("bLighting", false);
 	modelMatrix = glm::mat4(1.0f);
@@ -81,8 +81,8 @@ void Ball::render()
 	program->setUniformMatrix3f("normalmatrix", normalMatrix);
 	particles->render(scene->getCameraPosition());
 
-	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);
+	/*glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);*/
 }
 
 void Ball::update(int deltaTime)
@@ -91,20 +91,6 @@ void Ball::update(int deltaTime)
 	// update ball
 
 	// UPDATE PARTICULAS
-
-	int nParticlesToSpawn = 20 * (int((currentTime + deltaTime) / 100.f) - int(currentTime / 100.f));
-	ParticleSystem::Particle particle;
-	float angle;
-
-	particle.lifetime = 1.f;
-	for (int i = 0; i < nParticlesToSpawn; i++)
-	{
-		angle = 2.f * PI * (i + float(rand()) / RAND_MAX) / nParticlesToSpawn;
-		particle.speed = 1.5f * glm::normalize(0.5f * particle.position + glm::vec3(0.f, 3.f, 0.f));
-		particle.position = vec3(position, 0) + glm::vec3(cos(angle) * 10, -1.75f, sin(angle) * 10);
-		particles->addParticle(particle);
-	}
-
 	currentTime += deltaTime;
 
 	particles->update(deltaTime / 1000.f);
@@ -128,6 +114,26 @@ void Ball::setDirection(vec2 direction)
 void Ball::displacePosition(vec2 displacement)
 {
 	position += displacement;
+}
+
+void Ball::spawnParticles()
+{
+	int nParticlesToSpawn = 18;
+	ParticleSystem::Particle particle;
+	float angleStep = 360.f/(float)nParticlesToSpawn;
+
+	particle.lifetime = 0.7f;
+	for (int i = 0; i < nParticlesToSpawn; i++)
+	{
+		float currAngle = (angleStep * i) * (PI / 180.f);
+		particle.position = vec3(position, 0) + vec3(5 * direction.x,0,0) + glm::vec3(cos(currAngle), 0.f, sin(currAngle));
+		
+		//particle.speed = vec3(15.f*cos(currAngle)*direction.x,10*direction.y,10*sin(currAngle));
+		particle.speed = vec3(10*direction.y, 10.f * cos(currAngle) * direction.x,10*sin(currAngle));
+		
+		//particle.speed = 1.5f * glm::normalize(0.5f * particle.position + glm::vec3(3.f, 3.f, 3.f));
+		particles->addParticle(particle);
+	}
 }
 
 contourPointList Ball::listOfContourPoints()

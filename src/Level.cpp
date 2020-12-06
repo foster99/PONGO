@@ -254,7 +254,7 @@ void Level::loadTileMap()
 	// LOAD SLIDE MODEL AND SHADER
 	ShaderProgram* slideShader = new ShaderProgram();
 	Model* slideModel = new Model();
-	Scene::loadShaders("ballShader", slideShader);
+	Scene::loadShaders("slideShader", slideShader);
 	slideModel->loadFromFile("models/cube.obj", (*slideShader));
 
 

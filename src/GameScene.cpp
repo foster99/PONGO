@@ -292,6 +292,7 @@ void GameScene::initBall()
 
 void GameScene::playerPressedSpace()
 {
+	ball->spawnParticles();
 	ball->invertDirectionY();
 }
 

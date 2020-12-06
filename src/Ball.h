@@ -39,6 +39,8 @@ public:
 
 	void displacePosition(vec2 displacement);
 
+	void spawnParticles();
+
 	contourPointList listOfContourPoints();
 	contourTileList listOfContourTiles();
 
