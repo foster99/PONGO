@@ -35,8 +35,8 @@ void Entity::render()
 
 void Entity::update(int deltaTime)
 {
-    viewMatrix = scene->getViewMatrix();
-    projMatrix = scene->getProjMatrix();
+    viewMatrix = scene->Scene::getViewMatrix();
+    projMatrix = scene->Scene::getProjMatrix();
 }
 
 vec2 Entity::getPosition()

@@ -40,7 +40,7 @@ void GameScene::update(int deltaTime)
 	ball->Ball::update(deltaTime);
 	level->update(deltaTime);
 
-	ent->Slide::update(deltaTime);
+	//ent->Slide::update(deltaTime);
 
 	ball->Ball::update(deltaTime);
 	updateCurrentChunk();
@@ -315,4 +315,26 @@ vec2 GameScene::getPlayerSpd()
 vec2 GameScene::getPlayerDir()
 {
 	return ball->getDirection();
+}
+
+vec3 GameScene::getCameraChunkPosition() {
+
+	vec2 distanceToChunkCentre, chunkCentre;
+
+	// TileSize * (chunkSize - 1) / 2   ---->  El 1 esta para desplazar medio cubo extra
+	distanceToChunkCentre = float(level->getTileSize()) * (vec2(level->getChunkSize()) - vec2(1.f)) / 2.f;
+	distanceToChunkCentre = vec2(1, -1) * distanceToChunkCentre;
+	chunkCentre = level->getFirstTileOfChunk(currentChunk)->coords + distanceToChunkCentre;
+
+	float zDisplacement = float(level->getTileSize()) * (float(glm::max(level->getChunkSize().x, level->getChunkSize().y)) + 1.f) / 2.f;
+
+	return vec3(chunkCentre, zDisplacement);
+}
+
+vec3 GameScene::getCameraPosition()
+{
+	if (cam->isFree())
+		return cam->getCameraPosition();
+
+	return getCameraChunkPosition();
 }

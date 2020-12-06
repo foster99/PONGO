@@ -104,7 +104,7 @@ vec3 Camera::getFreeCameraNormalicedTarget()
 
 vec3 Camera::getCameraPosition()
 {
-		return freeCameraPosition;
+	return freeCameraPosition;
 }
 
 void Camera::updateFreeCamera()
