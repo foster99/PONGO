@@ -2,6 +2,8 @@
 #define _BALL_INCLUDE
 
 #include "Entity.h"
+#include "Billboard.h"
+#include "ParticleSystem.h"
 
 using namespace std;
 using namespace glm;
@@ -15,6 +17,10 @@ class Ball : public Entity
 private:
 
 	// BALL atributtes
+	float currentTime;
+
+	ParticleSystem* particles;
+	Billboard* billboard;
 
 public:
 
