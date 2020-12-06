@@ -55,6 +55,7 @@ public:
 	Tile* getFirstTileOfChunk(int k);
 
 	// Slides
+	Slide* whichSlideIsCollidingWithTheBall();
 	vector<Slide*>& getSlides();
 
 private:

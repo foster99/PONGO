@@ -3,12 +3,25 @@
 
 #include <glm/glm.hpp>
 #include <utility>
+#include <stack>
 #include "AssimpModel.h"
 using namespace std;
 using namespace glm;
 
 class GameScene;
 typedef AssimpModel Model;
+
+struct oldPosition
+{
+	int time;
+	vec2 position;
+
+	oldPosition(vec2 p, int t)
+	{
+		time = t;
+		position = p;
+	}
+};
 
 class Entity
 {
@@ -18,15 +31,14 @@ protected:
 	vec2 speed;
 	vec2 direction;
 
-	float oldPositionX;
-	float oldPositionY;
-
 	Model*			model	= nullptr;
 	ShaderProgram*	program = nullptr;
 	GameScene*		scene	= nullptr;
 
 	mat4 viewMatrix;
 	mat4 projMatrix;
+
+	stack<oldPosition> positionHistory;
 
 public:
 
@@ -40,32 +52,26 @@ public:
 	virtual void update(int deltaTime);
 
 	virtual vector<vector<ivec2>> occupiedTiles()  = 0;
-	virtual vec4		  getBoundingBox() = 0;	// vec4 -> xmin, xmax, ymin, ymax
+	virtual vec4 getBoundingBox() = 0;	// vec4 -> xmin, xmax, ymin, ymax
 
 	vec2 getPosition();
 	vec2 getSpeed();
 	vec2 getDirection();
-	vec2 getOldPosition();
+	vec2 getPreviousPosition();
+	int getPreviousTime();
 
-	virtual void setPosition(vec2 position);
-	virtual void setPositionX(float new_x);
-	virtual void setPositionY(float y);
+	virtual void setPosition(vec2 position, int time = -1);
 	virtual void setSpeed(vec2 speed);
 	virtual void setDirection(vec2 direction);
 
 	void invertDirectionX();
 	void invertDirectionY();
 
-	void rollbackPosition();
-	void rollbackPositionX();
-	void rollbackPositionY();
+	void clearHistory();
+	bool rollbackPosition();
 
 	void setViewMatrix(const mat4& view);
 	void setProjMatrix(const mat4& proj);
-
-	// Given two entities returs if they collided and so, its collission point according to its Bounding Boxes too.
-	static std::pair<bool, glm::vec2> collisionPoint(const Entity& e1, const Entity& e2);
-
 };
 #endif
 

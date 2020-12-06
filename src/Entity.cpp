@@ -54,28 +54,21 @@ vec2 Entity::getDirection()
     return direction;
 }
 
-vec2 Entity::getOldPosition()
+vec2 Entity::getPreviousPosition()
 {
-    return vec2(oldPositionX, oldPositionY);
+    return positionHistory.top().position;
 }
 
-void Entity::setPosition(vec2 position)
+int Entity::getPreviousTime()
 {
-    this->oldPositionX = this->position.x;
-    this->oldPositionY = this->position.y;
+    if (positionHistory.empty()) return -1;
+    return positionHistory.top().time;
+}
+
+void Entity::setPosition(vec2 position, int time)
+{
+    positionHistory.push(oldPosition(position, time));
     this->position = position;
-}
-
-void Entity::setPositionX(float new_x)
-{
-    this->oldPositionX = this->position.x;
-    this->position.x = new_x;
-}
-
-void Entity::setPositionY(float new_y)
-{
-    this->oldPositionY = this->position.y;
-    this->position.y = new_y;
 }
 
 void Entity::setSpeed(vec2 speed)
@@ -100,22 +93,21 @@ void Entity::invertDirectionY()
     this->setDirection(vec2(1.f, -1.f) * currentDirection);
 }
 
-void Entity::rollbackPosition()
+void Entity::clearHistory()
 {
-    rollbackPositionX();
-    rollbackPositionY();
+    positionHistory = {};
 }
 
-void Entity::rollbackPositionX()
+bool Entity::rollbackPosition()
 {
-    this->position.x = oldPositionX;
-}
+    if (positionHistory.empty()) 
+        return false;
 
-void Entity::rollbackPositionY()
-{
-    this->position.y = oldPositionY;
-}
+    position = positionHistory.top().position;
+    positionHistory.pop();
 
+    return ! positionHistory.empty();
+}
 
 void Entity::setViewMatrix(const mat4& view)
 {
@@ -125,21 +117,4 @@ void Entity::setViewMatrix(const mat4& view)
 void Entity::setProjMatrix(const mat4& proj)
 {
     projMatrix = proj;
-}
-
-std::pair<bool, glm::vec2> Entity::collisionPoint(const Entity& e1, const Entity& e2)
-{
-    // get center point circle first 
-    //glm::vec2 center = e1.center;
-
-    //// get difference vector between both centers
-    //glm::vec2 difference = e1.center - e2.center;
-    //glm::vec2 clamped = glm::clamp(difference, - aabb_half_extents, aabb_half_extents);
-    //// add clamped value to AABB_center and we get the value of box closest to circle
-    //glm::vec2 closest = e2.center + clamped;
-    //// retrieve vector between center circle and closest point AABB and check if length <= radius
-    //difference = closest - e1.center;
-    //return glm::length(difference) < e1.Radius;
-
-    return std::pair<bool, glm::vec2>();
 }

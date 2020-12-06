@@ -122,9 +122,9 @@ void Slide::setLimits(int head, int tail)
 	limits = ivec2(head, tail);
 }
 
-void Slide::setPosition(vec2 position)
+void Slide::setPosition(vec2 position, int time) 
 {
-	this->Entity::setPosition(position);
+	this->Entity::setPosition(position, time);
 	
 	if (!initialized) {
 		ogPos = position;
@@ -140,6 +140,11 @@ void Slide::setSpeed(vec2 speed)
 void Slide::setDirection(vec2 direction)
 {
 	this->Entity::setDirection(direction);
+}
+
+void Slide::goBackALittle()
+{
+	position -= direction * 0.05f;
 }
 
 vector<vector<ivec2>> Slide::occupiedTiles()

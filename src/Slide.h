@@ -18,9 +18,11 @@ public:
 	void setSize(int tileSize, int orient);
 	void setLimits(int head, int tail);
 
-	void setPosition(vec2 position) override;
+	void setPosition(vec2 position, int time=-1) override;
 	void setSpeed(vec2 speed) override;
 	void setDirection(vec2 direction) override;
+
+	void goBackALittle();
 
 	vector<vector<ivec2>> occupiedTiles() override;
 	vec4 getBoundingBox() override;	// vec4 -> xmin, xmax, ymin, ymax

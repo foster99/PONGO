@@ -141,6 +141,15 @@ Tile* Level::getFirstTileOfChunk(int k)
 	return firstTileOfChunk[k];
 }
 
+Slide* Level::whichSlideIsCollidingWithTheBall()
+{
+	for (Slide* slide : slides)
+		if (scene->ballAndSlideAreColliding(slide))
+			return slide;
+
+	return nullptr;
+}
+
 vector<Slide*>& Level::getSlides()
 {
 	return slides;

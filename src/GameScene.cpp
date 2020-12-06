@@ -14,13 +14,6 @@ void GameScene::init()
 
 void GameScene::render()
 {
-
-	if (cam->isFree())
-		view = cam->getViewMatrix();
-	else
-		view = lookAtCurrentChunk();
-	
-
 	renderAxis();
 
 	//world->setViewMatrix(view);
@@ -33,25 +26,23 @@ void GameScene::render()
 	//defaultShaderProgram->setUniformMatrix4f("modelview", viewMatrix);
 	//defaultShaderProgram->setUniformMatrix3f("normalmatrix", normalMatrix);
 
-
 	level->Level::render();
-
-
 	ball->Ball::render();
-
-
 }
 
 void GameScene::update(int deltaTime)
 {
 	this->Scene::update(deltaTime);
 
-	ball->Ball::update(deltaTime);
+	if (cam->isFree())	view = cam->getViewMatrix();
+	else				view = lookAtCurrentChunk();
 
+	ball->Ball::update(deltaTime);
 	level->update(deltaTime);
 
 	updateCurrentChunk();
 	checkCollisionsAndUpdateEntitiesPositions(deltaTime);
+	clearPositionHistories();
 }
 
 ivec2 GameScene::toTileCoords(vec2 coords)
@@ -68,11 +59,64 @@ ivec2 GameScene::toTileCoordsNotInverting(vec2 coords)
 	return ivec2(coords / tileSize);
 }
 
+void GameScene::clearPositionHistories()
+{
+	ball->clearHistory();
+
+	for (Slide* slide : level->getSlides())
+		slide->clearHistory();
+}
+
+bool GameScene::ballIsOnHorizontalSlideScope(Slide* slide)
+{
+	vec4 ball_BB	= ball->Ball::getBoundingBox();
+	vec4 slide_BB	= slide->Slide::getBoundingBox();
+
+	float ymin_1 = -ball_BB[3];
+	float ymax_1 = -ball_BB[2];
+
+	float ymin_2 = -slide_BB[2];
+	float ymax_2 = -slide_BB[3];
+
+	return (ymin_1 <= ymax_2 && ymax_1 >= ymin_2);
+}
+
+bool GameScene::ballIsOnVerticalSlideScope(Slide* slide)
+{
+	vec4 ball_BB = ball->Ball::getBoundingBox();
+	vec4 slide_BB = slide->Slide::getBoundingBox();
+
+	float xmin_1 = ball_BB[0];
+	float xmax_1 = ball_BB[1];
+
+	float xmin_2 = slide_BB[0];
+	float xmax_2 = slide_BB[1];
+
+	return (xmin_1 <= xmax_2 && xmax_1 >= xmin_2);
+}
+
+bool GameScene::collidingBoundingBoxes(vec4 BB1, vec4 BB2)
+{
+	float xmin_1 =  BB1[0];
+	float xmax_1 =  BB1[1];
+	float ymin_1 = -BB1[3];
+	float ymax_1 = -BB1[2];
+
+	float xmin_2 =  BB2[0];
+	float xmax_2 =  BB2[1];
+	float ymin_2 = -BB2[2];
+	float ymax_2 = -BB2[3];
+
+	return	(xmin_1 <= xmax_2 && xmax_1 >= xmin_2) &&
+			(ymin_1 <= ymax_2 && ymax_1 >= ymin_2);
+}
+
 bool GameScene::checkCollision_Ball_World(int time)
 {
-	vec2 newBallPosition = ball->Ball::getPosition() + (float(time / 100.f) * ball->Ball::getDirection() * ball->Ball::getSpeed());
+	vec2 displacement = (float(time / 100.f) * ball->Ball::getSpeed());
+	vec2 newBallPosition = ball->Ball::getPosition() + displacement * ball->getDirection();
 
-	ball->Ball::setPosition(newBallPosition);
+	ball->Ball::setPosition(newBallPosition, time);
 
 	contourTileList ballContourTileList = ball->listOfContourTiles();
 
@@ -88,28 +132,28 @@ bool GameScene::checkCollision_Ball_World(int time)
 
 	if (onSolid)
 	{
-		vec2 displacement = (float(time / 100.f) * ball->Ball::getSpeed());
+		ball->rollbackPosition();
 
 		if (downCount > 1 && downCount > leftCount && downCount > rightCount)
 		{
-			ball->Ball::setPosition(ball->Ball::getPosition() + vec2(0.f, displacement.y));
 			ball->invertDirectionY();
+			ball->displacePosition(vec2(0.f, displacement.y));
 		}
 		else if (upCount > 1 && upCount > leftCount && upCount > rightCount)
 		{
-			ball->Ball::setPosition(ball->Ball::getPosition() + vec2(0.f, -displacement.y));
 			ball->invertDirectionY();
+			ball->displacePosition(vec2(0.f, -displacement.y));
 		}
 
 		if (leftCount > 1 && leftCount > downCount && leftCount > upCount)
 		{
-			ball->Ball::setPosition(ball->Ball::getPosition() + vec2(displacement.x, 0.f));
 			ball->invertDirectionX();
+			ball->displacePosition(vec2(displacement.x, 0.f));
 		}
 		else if (rightCount > 1 && rightCount > downCount && rightCount > upCount)
 		{
-			ball->Ball::setPosition(ball->Ball::getPosition() + vec2(-displacement.x, 0.f));
 			ball->invertDirectionX();
+			ball->displacePosition(vec2(-displacement.x, 0.f));
 		}
 
 		return true;
@@ -124,7 +168,7 @@ bool GameScene::checkCollision_Slide_World(Slide* slide, int time)
 	vec2 oldSlidePosition = slide->Slide::getPosition();
 	vec2 newSlidePosition = oldSlidePosition + (float(time / 100.f) * slide->Slide::getDirection() * slide->Slide::getSpeed());
 
-	slide->setPosition(newSlidePosition);
+	slide->setPosition(newSlidePosition, time);
 
 	vector<vector<ivec2>> tiles = slide->Slide::occupiedTiles();
 	
@@ -132,7 +176,7 @@ bool GameScene::checkCollision_Slide_World(Slide* slide, int time)
 	{
 		if (level->getTile(row[0])->solid)
 		{
-			slide->Slide::setPosition(oldSlidePosition);
+			slide->rollbackPosition();
 
 			if (slide->isVertical())	slide->invertDirectionY();
 			else /* horizontal*/		slide->invertDirectionX();
@@ -151,17 +195,56 @@ void GameScene::checkCollisionsAndUpdateEntitiesPositions(int deltaTime)
 	int time, step;
 	for (time = step = 1; time <= deltaTime; time += step)
 	{
-		ballCollidedWithWorld = checkCollision_Ball_World(time);
+		if (!ballCollidedWithWorld)
+			ballCollidedWithWorld = checkCollision_Ball_World(time);
 
 		bool slideCollidedWorld;
 		for (Slide* slide : level->getSlides())
 		{
 			slideCollidedWorld = checkCollision_Slide_World(slide, time);
 		}
-
-		// En este punto del codigo, ni la pelota ni las palas estan chocando con el mundo.
-		
 	}
+
+	// aqui
+
+	Slide* slide = level->whichSlideIsCollidingWithTheBall();
+
+	if (slide == nullptr) return;
+
+	while (slide->getPreviousTime() > ball->getPreviousTime() && slide->rollbackPosition());
+
+	while (ball->getPreviousTime() > slide->getPreviousTime() && ball->rollbackPosition());
+
+	while (ballAndSlideAreColliding(slide) && ball->rollbackPosition() && slide->rollbackPosition());
+
+
+	if (ballIsOnVerticalSlideScope(slide))
+	{
+		ball->invertDirectionY();
+
+		if (slide->isVertical())
+		{
+			slide->goBackALittle();
+			ball->displacePosition(ball->getSpeed() * vec2((ball->getDirection()).x, 0.f));
+		}
+	}
+	if (ballIsOnHorizontalSlideScope(slide))
+	{
+		ball->invertDirectionX();
+
+		if (slide->isHorizontal())
+		{
+			slide->goBackALittle();
+			ball->displacePosition(ball->getSpeed() * vec2(0.f, (ball->getDirection()).y));
+		}
+	}
+}
+
+
+
+bool GameScene::ballAndSlideAreColliding(Slide* slide)
+{
+	return collidingBoundingBoxes(ball->Ball::getBoundingBox(), slide->Slide::getBoundingBox());
 }
 
 void GameScene::updateCurrentChunk()
