@@ -31,6 +31,12 @@ public:
 	ivec2 toTileCoords(vec2 coords);
 	ivec2 toTileCoordsNotInverting(vec2 coords);
 
+	void clearPositionHistories();
+
+	bool ballIsOnHorizontalSlideScope(Slide* slide);
+	bool ballIsOnVerticalSlideScope(Slide* slide);
+	bool collidingBoundingBoxes(vec4 BB1, vec4 BB2);
+	bool ballAndSlideAreColliding(Slide* slide);
 	bool checkCollision_Ball_World(int time);
 	bool checkCollision_Slide_World(Slide* slide, int time);
 
@@ -48,11 +54,8 @@ public:
 	vec2 getPlayerPos();
 	vec2 getPlayerSpd();
 	vec2 getPlayerDir();
-	vec3 getCameraChunkPosition();
 	vec3 getCameraPosition();
-
-	mat4 getViewMatrix();
-	mat4 getProjMatrix();
+	vec3 getCameraChunkPosition();
 
 private:
 

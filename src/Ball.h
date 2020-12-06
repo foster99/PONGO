@@ -33,9 +33,11 @@ public:
 	void render() override;
 	void update(int deltaTime) override;
 
-	void setPosition(vec2 position);
+	void setPosition(vec2 position, int time = -1) override;
 	void setSpeed(vec2 speed);
 	void setDirection(vec2 direction);
+
+	void displacePosition(vec2 displacement);
 
 	contourPointList listOfContourPoints();
 	contourTileList listOfContourTiles();

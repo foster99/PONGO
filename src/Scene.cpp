@@ -197,3 +197,13 @@ void Scene::setMouseAngles(int x, int y)
 
 	cam->addMouseAngles(horizontalAngle, verticalAngle);
 }
+
+mat4 Scene::getViewMatrix()
+{
+	return view;
+}
+
+mat4 Scene::getProjMatrix()
+{
+	return projection;
+}

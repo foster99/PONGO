@@ -110,9 +110,9 @@ void Ball::update(int deltaTime)
 	particles->update(deltaTime / 1000.f);
 }
 
-void Ball::setPosition(vec2 position)
+void Ball::setPosition(vec2 position, int time)
 {
-	this->Entity::setPosition(position);
+	this->Entity::setPosition(position, time);
 }
 
 void Ball::setSpeed(vec2 speed)
@@ -123,6 +123,11 @@ void Ball::setSpeed(vec2 speed)
 void Ball::setDirection(vec2 direction)
 {
 	this->Entity::setDirection(direction);
+}
+
+void Ball::displacePosition(vec2 displacement)
+{
+	position += displacement;
 }
 
 contourPointList Ball::listOfContourPoints()
