@@ -76,6 +76,8 @@ private:
 	// Game Models
 	void loadModels();
 	Model* cubeModel;
+	Model* pinchoModel;
+	Model* bolaPinchoModel;
 
 	void loadShaders();
 	ShaderProgram* cubeShader;

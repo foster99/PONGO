@@ -9,7 +9,10 @@ void GameScene::init()
 	level->setViewMatrix(view);
 	level->setProjMatrix(projection);
 
+	dead = false;
+
 	initBall();
+	waitToStart = 3000;
 }
 
 void GameScene::render()
@@ -33,6 +36,14 @@ void GameScene::render()
 void GameScene::update(int deltaTime)
 {
 	this->Scene::update(deltaTime);
+
+	if (waitToStart > 0)
+	{
+		waitToStart -= deltaTime;
+		return;
+	}
+
+	//if (dead) return;
 
 	if (cam->isFree())	view = cam->getViewMatrix();
 	else				view = lookAtCurrentChunk();
@@ -66,6 +77,11 @@ void GameScene::clearPositionHistories()
 
 	for (Slide* slide : level->getSlides())
 		slide->clearHistory();
+}
+
+void GameScene::killBall()
+{
+	dead = true;
 }
 
 bool GameScene::ballIsOnHorizontalSlideScope(Slide* slide)
@@ -123,10 +139,26 @@ bool GameScene::checkCollision_Ball_World(int time)
 
 	int upCount = 0, downCount = 0, rightCount = 0, leftCount = 0;
 
-	for (Tile* tile : ballContourTileList.down)  if (tile->solid) downCount++;
-	for (Tile* tile : ballContourTileList.up)	 if (tile->solid) upCount++;
-	for (Tile* tile : ballContourTileList.right) if (tile->solid) rightCount++;
-	for (Tile* tile : ballContourTileList.left)  if (tile->solid) leftCount++;
+	for (Tile* tile : ballContourTileList.down)
+	{
+		if (tile->deadly) killBall();
+		if (tile->solid) downCount++;
+	}
+	for (Tile* tile : ballContourTileList.up)
+	{
+		if (tile->deadly) killBall();
+		if (tile->solid) upCount++;
+	}
+	for (Tile* tile : ballContourTileList.right)
+	{
+		if (tile->deadly) killBall();
+		if (tile->solid) rightCount++;
+	}
+	for (Tile* tile : ballContourTileList.left)
+	{
+		if (tile->deadly) killBall();
+		if (tile->solid) leftCount++;
+	}
 
 	int totalCount = upCount + downCount + rightCount + leftCount;
 	bool onSolid = totalCount > 0;

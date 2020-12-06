@@ -33,6 +33,8 @@ public:
 
 	void clearPositionHistories();
 
+	void killBall();
+
 	bool ballIsOnHorizontalSlideScope(Slide* slide);
 	bool ballIsOnVerticalSlideScope(Slide* slide);
 	bool collidingBoundingBoxes(vec4 BB1, vec4 BB2);
@@ -61,7 +63,9 @@ public:
 
 private:
 
+	int waitToStart;
 	int currentChunk;
+	bool dead;
 
 	ShaderProgram* gameShaderProgram;
 	Level* level;
