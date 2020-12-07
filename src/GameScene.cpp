@@ -330,6 +330,11 @@ vec3 GameScene::getCameraChunkPosition() {
 	return vec3(chunkCentre, zDisplacement);
 }
 
+vec4 GameScene::getPlayerBBox()
+{
+	return ball->Ball::getBoundingBox();
+}
+
 vec3 GameScene::getCameraPosition()
 {
 	if(cam->isFree())

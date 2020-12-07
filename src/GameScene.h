@@ -58,6 +58,7 @@ public:
 	mat4 getViewMatrix();
 	mat4 getProjMatrix();
 	vec3 getCameraChunkPosition();
+	vec4 getPlayerBBox();
 
 private:
 

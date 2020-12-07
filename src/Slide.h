@@ -25,6 +25,9 @@ public:
 
 	void goBackALittle();
 
+	bool checkTrackedPos();
+
+
 	vector<vector<ivec2>> occupiedTiles() override;
 	vec4 getBoundingBox() override;	// vec4 -> xmin, xmax, ymin, ymax
 
@@ -41,15 +44,13 @@ public:
 	static constexpr int chase = 0;
 	static constexpr int escape = 1;
 
-private:
-	vec2 ogPos, playerPos;
-	ivec2 size, limits;
-	float speed;
-	int tileSize, orientation, mode;
-	bool tracked, initialized;
+	static constexpr float minmunTrackDistance = 1.5;
+	static constexpr float distanceError = 0.005;
 
-	void updateVertical(int deltaTime);
-	void updateHorizontal(int deltaTime);
+private:
+	vec2 trackedPos;
+	ivec2 size;
+	int tileSize, orientation, mode;
 };
 
 #endif

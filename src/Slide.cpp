@@ -15,27 +15,26 @@ Slide::Slide(GameScene* scene, Model* model, ShaderProgram* prog)
 void Slide::init()
 {
 	this->Entity::init();
-
-	// SI FALTA ALGO ABAIX
-	tracked = false;
-	initialized = false;
-	speed = 1.0f;
-	position = ogPos = vec2(32, -48);
+	// QUITAR CUANDO SE PUEDA DISTINGUIR EL TIPO EN LA LECTURA DEL MAPA
+	mode = chase;
 }
 
 void Slide::update(int deltaTime)
 {
 	this->Entity::update(deltaTime);
 
-	// UPDATES EN UN FUTUR QUANT FOWOSTER DIGUI NOMES HAN DE CANVIAR DIRECTION I SPEED
-	// SET POSTITION CANVIARA RESPECTE AQUESTES DADES
 	if (orientation == vertical) {
-		if (!trackPlayerVertical())
-			updateVertical(deltaTime);
+		if (!checkTrackedPos()) {
+			if (!trackPlayerVertical()) {
+				speed.x = 1.0f;
+			}
+		}
 	}
 	else {
-		if (!trackPlayerHorizontal())
-			updateHorizontal(deltaTime);
+		if (!checkTrackedPos()) {
+			if (!trackPlayerHorizontal())
+				speed.x = 1.0f;
+		}
 	}
 }
 
@@ -73,35 +72,6 @@ void Slide::render()
 	this->Entity::render();
 }
 
-void Slide::updateVertical(int deltaTime)
-{
-
-	return;
-	float len  = size.y * tileSize;
-	float limY = limits.y * tileSize;
-
-	position.y += speed * direction.y;
-
-	if (position.y < (ogPos.y - size.y - limY ) || (position.y + len) > (ogPos.y + len + limY)) {
-		position.y -= speed * direction.y;
-		direction.y *= -1;
-	}
-}
-
-void Slide::updateHorizontal(int deltaTime)
-{
-	return;
-	float len  = size.x * tileSize;
-	float limX = limits.x * tileSize;
-
-	position.x += speed * direction.x;
-
-	if (position.x < (ogPos.x - size.x - limX) || (position.x + len) >(ogPos.x + len + limX)) {
-		position.x -= speed * direction.x;
-		direction.x *= -1;
-	}
-}
-
 void Slide::setSize(int ts, int orient)
 {
 	tileSize = ts;
@@ -117,19 +87,10 @@ void Slide::setSize(int ts, int orient)
 	}
 }
 
-void Slide::setLimits(int head, int tail)
-{
-	limits = ivec2(head, tail);
-}
-
 void Slide::setPosition(vec2 position, int time) 
 {
 	this->Entity::setPosition(position, time);
-	
-	if (!initialized) {
-		ogPos = position;
-		initialized = true;
-	}
+
 }
 
 void Slide::setSpeed(vec2 speed)
@@ -145,6 +106,17 @@ void Slide::setDirection(vec2 direction)
 void Slide::goBackALittle()
 {
 	position -= direction * 0.05f;
+}
+
+bool Slide::checkTrackedPos()
+{
+	if (trackedPos.x >= 0) {
+		vec2 diffPos = abs(position - trackedPos);
+		if (diffPos.x < distanceError && diffPos.y < distanceError) {
+			return true;
+		}
+	}
+	return false;
 }
 
 vector<vector<ivec2>> Slide::occupiedTiles()
@@ -209,10 +181,59 @@ bool Slide::isHorizontal()
 
 bool Slide::trackPlayerVertical()
 {
+	vec2 playerPosition = scene->getPlayerPos();
+	vec2 playerDirection = scene->getPlayerDir();
+
+	float dist = abs(playerPosition.x - position.x);
+	dist -= tileSize;
+
+	bool isAbove = playerPosition.y > position.y;
+	bool isRight = playerPosition.x > position.x;
+
+	float dTrack = minmunTrackDistance * tileSize;
+
+	bool trackedRight = isRight && playerDirection.x < 0 && dist < dTrack;
+	bool trackedLeft = !isRight && playerDirection.x > 0 && dist < dTrack;
+
+	if (trackedRight || trackedLeft) {
+		if (isAbove)
+			direction.y = 1;
+		else
+			direction.y = -1;
+
+		trackedPos = playerPosition;
+		speed.y = 1.5f;
+		return true;
+	}
+	trackedPos = vec2(-1.f, -1.f);
 	return false;
 }
 
 bool Slide::trackPlayerHorizontal()
 {
+	vec2 playerPosition = scene->getPlayerPos();
+	vec2 playerDirection = scene->getPlayerDir();
+
+	float dist = abs(playerPosition.y - position.y);
+	dist -= tileSize;
+
+	bool isAbove = playerPosition.y > position.y;
+	bool isRight = playerPosition.x > position.x;
+
+	float dTrack = minmunTrackDistance * tileSize;
+
+	bool trackedUp = isAbove && playerDirection.y < 0 && dist < dTrack;
+	bool trackedDown = !isAbove && playerDirection.y > 0 && dist < dTrack;
+
+	if (trackedUp || trackedDown) {
+		if (isRight)
+			direction.x = 1;
+		else 
+			direction.x = -1;
+
+		trackedPos = playerPosition;
+		speed.x = 1.5f;
+		return true;
+	}
 	return false;
 }
