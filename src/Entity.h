@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <utility>
-#include <stack>
+#include <deque>
 #include "AssimpModel.h"
 using namespace std;
 using namespace glm;
@@ -38,7 +38,7 @@ protected:
 	mat4 viewMatrix;
 	mat4 projMatrix;
 
-	stack<oldPosition> positionHistory;
+	deque<oldPosition> positionHistory;
 
 public:
 

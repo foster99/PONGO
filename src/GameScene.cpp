@@ -44,7 +44,7 @@ void GameScene::update(int deltaTime)
 
 
 	checkCollisionsAndUpdateEntitiesPositions(deltaTime);
-	clearPositionHistories();	
+	clearPositionHistories();
 }
 
 void GameScene::restartLevel(int levelID)
@@ -285,7 +285,7 @@ bool GameScene::checkCollision_Slide_World(Slide* slide, int tick, int deltaTime
 }
 
 void GameScene::checkCollisionsAndUpdateEntitiesPositions(int deltaTime)
-{	
+{
 	bool ballCollidedWithWorld = false;
 
 	for (int tick = 1; tick <= nTicks; tick++)
@@ -327,6 +327,11 @@ void GameScene::checkCollision_Ball_Slide()
 
 		if (slide->isVertical())
 		{
+			// Colision de Canto
+
+			if ((ball->getDirection().y < 0) ^ (slide->getDirection().y < 0))
+				ball->invertDirectionY();
+
 			slide->goBackALittle();
 			ball->displacePosition(ball->getSpeed() * vec2((ball->getDirection()).x, 0.f));
 		}
@@ -337,6 +342,11 @@ void GameScene::checkCollision_Ball_Slide()
 
 		if (slide->isHorizontal())
 		{
+			// Colision de Canto
+
+			if ((ball->getDirection().x < 0) ^ (slide->getDirection().x < 0))
+				ball->invertDirectionX();
+
 			slide->goBackALittle();
 			ball->displacePosition(ball->getSpeed() * vec2(0.f, (ball->getDirection()).y));
 		}

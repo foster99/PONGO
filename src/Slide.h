@@ -23,8 +23,10 @@ public:
 	void setSpeed(vec2 speed) override;
 	void setDirection(vec2 direction) override;
 
+	bool isBlocked();
+	void unlockNextMovement();
+	void blockNextMovement();
 	void goBackALittle();
-
 	bool checkTrackedPos();
 
 
@@ -34,7 +36,6 @@ public:
 	bool isVertical();
 	bool isHorizontal();
 
-	// ESPERAR A AVANCES
 	bool trackPlayerVertical();
 	bool trackPlayerHorizontal();
 
@@ -48,6 +49,10 @@ public:
 	static constexpr float distanceError = 0.005;
 
 private:
+
+
+	bool blocked = false;
+
 	vec2 trackedPos;
 	ivec2 size;
 	int tileSize, orientation, mode;

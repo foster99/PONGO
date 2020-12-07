@@ -23,16 +23,18 @@ void Slide::update(int deltaTime)
 {
 	this->Entity::update(deltaTime);
 
-	if (orientation == vertical) {
+	
+
+	if (isVertical()) {
 		if (!checkTrackedPos()) {
-			if (!trackPlayerVertical()) {
+			if (scene->ballIsOnVerticalSlideScope(this) || !trackPlayerVertical()) {
 				speed.y = 1.0f;
 			}
 		}
 	}
 	else {
 		if (!checkTrackedPos()) {
-			if (!trackPlayerHorizontal())
+			if (scene->ballIsOnHorizontalSlideScope(this) || !trackPlayerHorizontal())
 				speed.x = 1.0f;
 		}
 	}
@@ -181,7 +183,8 @@ bool Slide::isHorizontal()
 
 bool Slide::trackPlayerVertical()
 {
-	if (this->getCurrentChunk() == scene->getPlayerChunk()) {
+	if (this->getCurrentChunk() == scene->getPlayerChunk())
+	{
 		vec2 playerPosition = scene->getPlayerPos();
 		vec2 playerDirection = scene->getPlayerDir();
 
@@ -241,4 +244,19 @@ bool Slide::trackPlayerHorizontal()
 	}
 	trackedPos = vec2(-1.f, -1.f);
 	return false;
+}
+
+void Slide::unlockNextMovement()
+{
+	blocked = false;
+}
+
+bool Slide::isBlocked()
+{
+	return blocked;
+}
+
+void Slide::blockNextMovement()
+{
+	blocked = true;
 }

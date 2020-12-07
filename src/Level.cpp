@@ -327,7 +327,7 @@ void Level::loadTileMap()
 					slide->setSize(tileSize, Slide::vertical);
 					slide->setPosition(float(tileSize) * vec2(float(j) + 0.5f, -(float(i) + 0.5f)));
 					slide->setDirection(vec2(0.f, 1.f));
-					slide->setSpeed(vec2(0.f, 5.f));
+					slide->setSpeed(vec2(0.f, 0.5f));
 					slides.push_back(slide);
 					break;
 				}
@@ -338,7 +338,7 @@ void Level::loadTileMap()
 					slide->Slide::setSize(tileSize, Slide::horizontal);
 					slide->setPosition(float(tileSize) * vec2(float(j) + 0.5f, -(float(i) + 0.5f)));
 					slide->setDirection(vec2(1.f, 0.f));
-					slide->setSpeed(vec2(5.f, 0.f));
+					slide->setSpeed(vec2(0.5f, 0.f));
 					slides.push_back(slide);
 					break;
 				}
