@@ -299,7 +299,7 @@ void Level::loadTileMap()
 	getline(fin, line); // Blank line
 
 	Tile* currentTile;
-	int currentChunk = -1;
+	int lastSavedChunk = -1;
 	for (int i = 0; i < mapSizeInTiles.y; i++)
 	{
 		for (int j = 0; j < mapSizeInTiles.x; j++)
@@ -308,19 +308,17 @@ void Level::loadTileMap()
 
 			currentTile = loadTile(tile, i, j);
 			
-			if (currentTile != nullptr) // Static Tiles
+			if (currentTile->chunk > lastSavedChunk)
 			{
-				if (currentTile->chunk > currentChunk)
-				{
-					currentChunk = currentTile->chunk;
-					firstTileOfChunk[currentChunk] = currentTile;
-				}
+				lastSavedChunk = currentTile->chunk;
+				firstTileOfChunk[lastSavedChunk] = currentTile;
 			}
-			else // Dynamic Tile
+			
+			if (currentTile->isUndefined()) // Dynamic Tile
 			{
 				switch (tile)
 				{
-				case verticalSlide:
+				case verticalSlideChase:
 				{
 					Slide* slide = new Slide(scene, slideModel, slideShader);
 					slide->Slide::init();
@@ -331,7 +329,29 @@ void Level::loadTileMap()
 					slides.push_back(slide);
 					break;
 				}
-				case horizontalSlide:
+				case horizontalSlideChase:
+				{
+					Slide* slide = new Slide(scene, slideModel, slideShader);
+					slide->Slide::init();
+					slide->Slide::setSize(tileSize, Slide::horizontal);
+					slide->setPosition(float(tileSize) * vec2(float(j) + 0.5f, -(float(i) + 0.5f)));
+					slide->setDirection(vec2(1.f, 0.f));
+					slide->setSpeed(vec2(0.5f, 0.f));
+					slides.push_back(slide);
+					break;
+				}
+				case verticalSlideEscape:
+				{
+					Slide* slide = new Slide(scene, slideModel, slideShader);
+					slide->Slide::init();
+					slide->setSize(tileSize, Slide::vertical);
+					slide->setPosition(float(tileSize) * vec2(float(j) + 0.5f, -(float(i) + 0.5f)));
+					slide->setDirection(vec2(0.f, 1.f));
+					slide->setSpeed(vec2(0.f, 0.5f));
+					slides.push_back(slide);
+					break;
+				}
+				case horizontalSlideEscape:
 				{
 					Slide* slide = new Slide(scene, slideModel, slideShader);
 					slide->Slide::init();
@@ -399,7 +419,7 @@ Tile* Level::loadTile(char type, int i, int j)
 	}
 
 	tile = Tile(coords, chunk, Tile::undefined, false, false);
-	return nullptr;
+	return &map[i][j];
 }
 
 void Level::loadModels()

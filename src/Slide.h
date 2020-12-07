@@ -12,20 +12,17 @@ public:
 	~Slide();
 	Slide(GameScene* scene, Model* model, ShaderProgram* prog);
 
+	void init(int tileSize, int orient, vec2 pos, vec2 dir, vec2 speed, int mode);
 	void init() override;
 	void update(int deltaTime) override;
 	void render() override;
 
 	void setSize(int tileSize, int orient);
-	void setLimits(int head, int tail);
-
+	void setMode(int mode);
 	void setPosition(vec2 position, int time=-1) override;
 	void setSpeed(vec2 speed) override;
 	void setDirection(vec2 direction) override;
 
-	bool isBlocked();
-	void unlockNextMovement();
-	void blockNextMovement();
 	void goBackALittle();
 	bool checkTrackedPos();
 
