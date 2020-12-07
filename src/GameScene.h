@@ -48,7 +48,8 @@ public:
 	bool checkCollision_Slide_World(Slide* slide, int time);
 
 	void checkCollisionsAndUpdateEntitiesPositions(int deltaTime);
-
+	
+	int getChunkOfCoords(vec2 coords);
 	void updateCurrentChunk();
 	mat4 lookAtCurrentChunk();
 

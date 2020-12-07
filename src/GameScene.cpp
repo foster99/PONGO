@@ -343,9 +343,14 @@ void GameScene::checkCollision_Ball_Slide()
 	}
 }
 
+int GameScene::getChunkOfCoords(vec2 coords)
+{
+	return level->getTile(toTileCoords(coords))->chunk;
+}
+
 void GameScene::updateCurrentChunk()
 {
-	currentChunk = level->getTile(toTileCoords(ball->getPosition()))->chunk;
+	currentChunk = getChunkOfCoords(ball->getPosition());
 }
 
 mat4 GameScene::lookAtCurrentChunk()
