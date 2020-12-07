@@ -24,6 +24,8 @@ class GameScene : public Scene
 {
 public:
 	
+	static constexpr int nTicks = 10;
+
 	void init() override;
 	void render() override;
 	void update(int deltaTime) override;
@@ -44,8 +46,8 @@ public:
 	bool collidingBoundingBoxes(vec4 BB1, vec4 BB2);
 	bool ballAndSlideAreColliding(Slide* slide);
 	void checkCollision_Ball_Slide();
-	bool checkCollision_Ball_World(int time);
-	bool checkCollision_Slide_World(Slide* slide, int time);
+	bool checkCollision_Ball_World(int nTicks, int deltaTime);
+	bool checkCollision_Slide_World(Slide* slide, int nTicks, int deltaTime);
 
 	void checkCollisionsAndUpdateEntitiesPositions(int deltaTime);
 	
@@ -73,6 +75,7 @@ public:
 
 private:
 
+	float speedDivisor;
 	int countdown;
 	int currentChunk;
 	bool dead;

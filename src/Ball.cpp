@@ -18,7 +18,7 @@ void Ball::init()
 {
 	this->Entity::init();
 
-	setSpeed(vec2(1.00f));
+	setSpeed(vec2(5.00f));
 	setDirection(vec2(-1.f, 1.f));
 	setPosition(spawnPoint);
 

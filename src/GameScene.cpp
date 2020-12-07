@@ -7,6 +7,8 @@ void GameScene::init()
 	levelID = 1;
 	restartLevel(levelID);
 
+	speedDivisor = float(level->getTileSize());
+	
 	loadCountDownModels();
 }
 
@@ -42,7 +44,7 @@ void GameScene::update(int deltaTime)
 
 
 	checkCollisionsAndUpdateEntitiesPositions(deltaTime);
-	//clearPositionHistories();
+	clearPositionHistories();	
 }
 
 void GameScene::restartLevel(int levelID)
@@ -190,12 +192,12 @@ bool GameScene::collidingBoundingBoxes(vec4 BB1, vec4 BB2)
 			(ymin_1 <= ymax_2 && ymax_1 >= ymin_2);
 }
 
-bool GameScene::checkCollision_Ball_World(int time)
+bool GameScene::checkCollision_Ball_World(int tick, int deltaTime)
 {
-	vec2 displacement = (float(time / 100.f) * ball->Ball::getSpeed());
+	vec2 displacement    = float(deltaTime) * ball->Ball::getSpeed() / (float(nTicks) * speedDivisor);
 	vec2 newBallPosition = ball->Ball::getPosition() + displacement * ball->getDirection();
 
-	ball->Ball::setPosition(newBallPosition, time);
+	ball->Ball::setPosition(newBallPosition, tick);
 
 	contourTileList ballContourTileList = ball->listOfContourTiles();
 
@@ -257,13 +259,12 @@ bool GameScene::checkCollision_Ball_World(int time)
 	return false;
 }
 
-bool GameScene::checkCollision_Slide_World(Slide* slide, int time)
+bool GameScene::checkCollision_Slide_World(Slide* slide, int tick, int deltaTime)
 {
-	bool slideCollision = false;
 	vec2 oldSlidePosition = slide->Slide::getPosition();
-	vec2 newSlidePosition = oldSlidePosition + (float(time / 100.f) * slide->Slide::getDirection() * slide->Slide::getSpeed());
+	vec2 newSlidePosition = oldSlidePosition + (float(deltaTime) * slide->Slide::getDirection() * slide->Slide::getSpeed() / (float(nTicks) * speedDivisor));
 
-	slide->setPosition(newSlidePosition, time);
+	slide->setPosition(newSlidePosition, tick);
 
 	vector<vector<ivec2>> tiles = slide->Slide::occupiedTiles();
 	
@@ -286,17 +287,16 @@ bool GameScene::checkCollision_Slide_World(Slide* slide, int time)
 void GameScene::checkCollisionsAndUpdateEntitiesPositions(int deltaTime)
 {	
 	bool ballCollidedWithWorld = false;
-	
-	int time, step;
-	for (time = step = 1; time <= deltaTime; time += step)
+
+	for (int tick = 1; tick <= nTicks; tick++)
 	{
 		if (!ballCollidedWithWorld)
-			ballCollidedWithWorld = checkCollision_Ball_World(time);
+			ballCollidedWithWorld = checkCollision_Ball_World(tick, deltaTime);
 
 		bool slideCollidedWorld;
 		for (Slide* slide : level->getSlides())
 		{
-			slideCollidedWorld = checkCollision_Slide_World(slide, time);
+			slideCollidedWorld = checkCollision_Slide_World(slide, tick, deltaTime);
 		}
 	}
 
@@ -314,9 +314,9 @@ void GameScene::checkCollision_Ball_Slide()
 
 	if (slide == nullptr) return;
 
-	while (slide->getPreviousTime() > ball->getPreviousTime() && slide->rollbackPosition());
+	while (slide->getPreviousTick() > ball->getPreviousTick() && slide->rollbackPosition());
 
-	while (ball->getPreviousTime() > slide->getPreviousTime() && ball->rollbackPosition());
+	while (ball->getPreviousTick() > slide->getPreviousTick() && ball->rollbackPosition());
 
 	while (ballAndSlideAreColliding(slide) && ball->rollbackPosition() && slide->rollbackPosition());
 

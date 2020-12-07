@@ -59,10 +59,10 @@ vec2 Entity::getPreviousPosition()
     return positionHistory.top().position;
 }
 
-int Entity::getPreviousTime()
+int Entity::getPreviousTick()
 {
     if (positionHistory.empty()) return -1;
-    return positionHistory.top().time;
+    return positionHistory.top().tick;
 }
 
 void Entity::setPosition(vec2 position, int time)
@@ -100,9 +100,11 @@ void Entity::clearHistory()
 
 bool Entity::rollbackPosition()
 {
-    if (positionHistory.empty()) 
-        return false;
+    if (positionHistory.empty())return false;
+    position = positionHistory.top().position;
+    positionHistory.pop();
 
+    if (positionHistory.empty()) return false;
     position = positionHistory.top().position;
     positionHistory.pop();
 

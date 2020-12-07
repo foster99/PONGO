@@ -13,12 +13,12 @@ typedef AssimpModel Model;
 
 struct oldPosition
 {
-	int time;
+	int tick;
 	vec2 position;
 
 	oldPosition(vec2 p, int t)
 	{
-		time = t;
+		tick = t;
 		position = p;
 	}
 };
@@ -58,7 +58,7 @@ public:
 	vec2 getSpeed();
 	vec2 getDirection();
 	vec2 getPreviousPosition();
-	int getPreviousTime();
+	int getPreviousTick();
 
 	virtual void setPosition(vec2 position, int time = -1);
 	virtual void setSpeed(vec2 speed);
