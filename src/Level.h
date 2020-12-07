@@ -27,6 +27,8 @@ public:
 	static constexpr char verticalSlide		= '|';
 	static constexpr char horizontalSlide	= '-';
 	static constexpr char blank				= '.';
+	static constexpr char spawnPoint		= 'S';
+	static constexpr char endPointChar		= 'E';
 
 	// Constructors
 	Level(GameScene* scene, int id = 1);
@@ -73,9 +75,14 @@ private:
 	vector<vector<Tile>> map;
 	vector<Tile*> firstTileOfChunk;
 
+	vec2 startPoint;
+	vec2 endPoint;
+
 	// Game Models
 	void loadModels();
 	Model* cubeModel;
+	Model* pinchoModel;
+	Model* bolaPinchoModel;
 
 	void loadShaders();
 	ShaderProgram* cubeShader;

@@ -28,20 +28,28 @@ public:
 	void render() override;
 	void update(int deltaTime) override;
 
+	void restartLevel(int levelID);
+	
 	ivec2 toTileCoords(vec2 coords);
 	ivec2 toTileCoordsNotInverting(vec2 coords);
 
-	void clearPositionHistories();
+	bool onCountDown(int deltaTime);
+	void loadCountDownModels();
+	void renderCountDown();
 
+	void clearPositionHistories();
+	void killBall();
 	bool ballIsOnHorizontalSlideScope(Slide* slide);
 	bool ballIsOnVerticalSlideScope(Slide* slide);
 	bool collidingBoundingBoxes(vec4 BB1, vec4 BB2);
 	bool ballAndSlideAreColliding(Slide* slide);
+	void checkCollision_Ball_Slide();
 	bool checkCollision_Ball_World(int time);
 	bool checkCollision_Slide_World(Slide* slide, int time);
 
 	void checkCollisionsAndUpdateEntitiesPositions(int deltaTime);
-
+	
+	int getChunkOfCoords(vec2 coords);
 	void updateCurrentChunk();
 	mat4 lookAtCurrentChunk();
 
@@ -60,21 +68,30 @@ public:
 	vec3 getCameraChunkPosition();
 	vec4 getPlayerBBox();
 
+	void setSpawnPoint(vec2 coords);
+	void locateBallInSpawnPoint();
+
 private:
 
+	int countdown;
 	int currentChunk;
+	bool dead;
 
-	ShaderProgram* gameShaderProgram;
+	int levelID;
 	Level* level;
+	ShaderProgram* gameShaderProgram;
 
-	// FOWOSTER TESTING
+	// BALL THINGS
 	ShaderProgram*	ballShader;
 	Model*			ballModel;
 	Ball*			ball;
 
-	// TOMEU TESTING
-	Slide* ent;
-	Model* auxMod;
+	// NUMBER THINGS
+	ShaderProgram* numbersShader;
+	Model* model_1;
+	Model* model_2;
+	Model* model_3;
+
 };
 #endif
 

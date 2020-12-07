@@ -71,11 +71,51 @@ void Level::renderTileMap() const
 		{
 			if (tile.isUndefined()) continue;
 
+			modelMatrix = mat4(1.0f);
+
 			switch (tile.type)
 			{
 			case Tile::cube:
 				shader	= cubeShader;
 				model	= cubeModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+
+			case Tile::pinchoU:
+				shader = cubeShader;
+				model = pinchoModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+
+			case Tile::pinchoD:
+				shader = cubeShader;
+				model = pinchoModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
+				modelMatrix = rotate(modelMatrix, PI, vec3(0.f, 0.f, 1.f));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+
+			case Tile::pinchoR:
+				shader = cubeShader;
+				model = pinchoModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
+				modelMatrix = rotate(modelMatrix, -PI/2.f, vec3(0.f,0.f,1.f));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+
+			case Tile::pinchoL:
+				shader	= cubeShader;
+				model	= pinchoModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
+				modelMatrix = rotate(modelMatrix, PI / 2.f, vec3(0.f, 0.f, 1.f));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
 
 			default:
@@ -83,12 +123,6 @@ void Level::renderTileMap() const
 				model	= nullptr;
 				break;
 			}
-
-			// Compute ModelMatrix
-			modelMatrix = mat4(1.0f);
-			modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
-			modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
-			modelMatrix = translate(modelMatrix, -model->getCenter());
 			
 			// Compute NormalMatrix
 			normalMatrix = transpose(inverse(mat3(viewMatrix * modelMatrix)));
@@ -255,7 +289,7 @@ void Level::loadTileMap()
 	ShaderProgram* slideShader = new ShaderProgram();
 	Model* slideModel = new Model();
 	Scene::loadShaders("slideShader", slideShader);
-	slideModel->loadFromFile("models/cube.obj", (*slideShader));
+	slideModel->loadFromFile("models/cubeBlue.obj", (*slideShader));
 
 
 	// INICIALIZAR Y LEER TILE MAP
@@ -308,6 +342,18 @@ void Level::loadTileMap()
 					slides.push_back(slide);
 					break;
 				}
+				case spawnPoint:
+				{
+					startPoint = float(tileSize) * vec2(float(j) + 0.5f, -(float(i) + 0.5f));
+					scene->setSpawnPoint(startPoint);
+					scene->locateBallInSpawnPoint();
+					break;
+				}
+				case endPointChar:
+				{
+					endPoint = float(tileSize) * vec2(float(j) + 0.5f, -(float(i) + 0.5f));
+					break;
+				}
 				default: break;
 				}
 			}
@@ -337,8 +383,16 @@ Tile* Level::loadTile(char type, int i, int j)
 
 	switch (type)
 	{
+		// LOG EDGAR: AHORA HAY QUE PONER AQUI EL LOAD DE LAS TILES DE PINCHOS, CHECKPOINT, START, END
 	case Tile::cube:
 		tile = Tile(coords, chunk, type, true, false);
+		return &map[i][j];
+
+	case Tile::pinchoU:
+	case Tile::pinchoD:
+	case Tile::pinchoR:
+	case Tile::pinchoL:
+		tile = Tile(coords, chunk, type, true, true);
 		return &map[i][j];
 	
 	default: break;
@@ -351,7 +405,13 @@ Tile* Level::loadTile(char type, int i, int j)
 void Level::loadModels()
 {
 	cubeModel = new Model();
-	cubeModel->loadFromFile("models/cube.obj", *cubeShader);
+	cubeModel->loadFromFile("models/cubeBlue.obj", *cubeShader);
+
+	pinchoModel = new Model();
+	pinchoModel->loadFromFile("models/pincho.obj", *cubeShader);
+	
+	bolaPinchoModel = new Model();
+	bolaPinchoModel->loadFromFile("models/UPC.obj", *cubeShader);
 }
 
 #include "Scene.h"

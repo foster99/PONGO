@@ -18,13 +18,13 @@ private:
 
 	// BALL atributtes
 	float currentTime;
+	vec2 spawnPoint;
 
 	ParticleSystem* particles;
 	Billboard* billboard;
 
 public:
 
-	vec2 spawnPoint;
 
 	~Ball();
 	Ball(GameScene* scene, Model* model, ShaderProgram* prog);
@@ -36,9 +36,9 @@ public:
 	void setPosition(vec2 position, int time = -1) override;
 	void setSpeed(vec2 speed);
 	void setDirection(vec2 direction);
-
+	void setSpawnPoint(vec2 coords);
 	void displacePosition(vec2 displacement);
-
+	void locateInSpawnPoint();
 	void spawnParticles();
 
 	contourPointList listOfContourPoints();

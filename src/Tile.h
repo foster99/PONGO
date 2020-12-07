@@ -12,12 +12,18 @@ class Tile
 {
 public:
 
-	static constexpr char undefined	= ' ';
-	static constexpr char cube	= '#';
+	static constexpr char undefined = ' ';
+	static constexpr char cube = '#';
 	static constexpr char spike = '*';
-	static constexpr char rope	= 'R';
-	static constexpr char start	= 'S';
-	static constexpr char end	= 'E';
+	
+	static constexpr char pinchoU = '^';
+	static constexpr char pinchoD = 'v';
+	static constexpr char pinchoR = '>';
+	static constexpr char pinchoL = '<';
+
+	static constexpr char rope = 'R';
+	static constexpr char start = 'S';
+	static constexpr char end = 'E';
 
 	
 	Tile();

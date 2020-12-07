@@ -4,27 +4,18 @@ void GameScene::init()
 {
 	this->Scene::init();
 
-	currentChunk = 0;
-	level = new Level(this, 1);
-	level->setViewMatrix(view);
-	level->setProjMatrix(projection);
+	levelID = 1;
+	restartLevel(levelID);
 
-	initBall();
+	loadCountDownModels();
 }
 
 void GameScene::render()
 {
 	renderAxis();
 
-	//world->setViewMatrix(view);
-	//world->setProjMatrix(projection);
-	//world->render();
+	if (countdown > 0) renderCountDown();
 
-	//defaultShaderProgram->use();
-	//defaultShaderProgram->setUniformMatrix4f("projection", projection);
-	//defaultShaderProgram->setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
-	//defaultShaderProgram->setUniformMatrix4f("modelview", viewMatrix);
-	//defaultShaderProgram->setUniformMatrix3f("normalmatrix", normalMatrix);
 
 	level->Level::render();
 	ball->Ball::render();
@@ -37,13 +28,36 @@ void GameScene::update(int deltaTime)
 	if (cam->isFree())	view = cam->getViewMatrix();
 	else				view = lookAtCurrentChunk();
 
-	ball->Ball::update(deltaTime);
 	level->update(deltaTime);
-
 	ball->Ball::update(deltaTime);
 	updateCurrentChunk();
+
+	if (onCountDown(deltaTime)) return;
+
+	if (dead)
+	{
+		ball->locateInSpawnPoint();
+		dead = false;
+	}
+
+
 	checkCollisionsAndUpdateEntitiesPositions(deltaTime);
-	clearPositionHistories();
+	//clearPositionHistories();
+}
+
+void GameScene::restartLevel(int levelID)
+{
+	initBall();
+
+	level = new Level(this, levelID);
+	level->setViewMatrix(view);
+	level->setProjMatrix(projection);
+
+	dead = false;
+	currentChunk = 0;
+	countdown = 3000;
+
+	// Restart Song
 }
 
 ivec2 GameScene::toTileCoords(vec2 coords)
@@ -60,12 +74,76 @@ ivec2 GameScene::toTileCoordsNotInverting(vec2 coords)
 	return ivec2(coords / tileSize);
 }
 
+bool GameScene::onCountDown(int deltaTime)
+{
+	if (countdown <= 0) return false;
+
+	countdown -= deltaTime;
+
+	return true;
+}
+
+void GameScene::loadCountDownModels()
+{
+	// Load Shader
+	numbersShader = new ShaderProgram();
+	loadShaders("numbersShader", numbersShader);
+
+	// Load Models
+	model_1 = new Model();
+	model_1->loadFromFile("models/one.obj", (*ballShader));
+
+	model_2 = new Model();
+	model_2->loadFromFile("models/two.obj", (*ballShader));
+
+	model_3 = new Model();
+	model_3->loadFromFile("models/three.obj", (*ballShader));
+}
+
+void GameScene::renderCountDown()
+{
+	Model* model;
+
+	     if (countdown > 2000) model = model_3;
+	else if (countdown > 1000) model = model_2;
+	else                       model = model_1;
+
+	float scale_factor = 5.f * float(getLevel()->getTileSize()) / model->getHeight();
+	
+	vec3 position = getCameraChunkPosition() * vec3(1.f, 1.f, 0.33f);
+
+	// Compute ModelMatrix
+	mat4 modelMatrix = mat4(1.0f);
+	modelMatrix = translate(modelMatrix, position);
+	modelMatrix = scale(modelMatrix, vec3(scale_factor, scale_factor, scale_factor / 2.f));
+	modelMatrix = translate(modelMatrix, -model->getCenter());
+
+	// Compute NormalMatrix
+	mat3 normalMatrix = transpose(inverse(mat3(view * modelMatrix)));
+
+	// Set uniforms
+	numbersShader->use();
+	numbersShader->setUniform1b("bLighting", true);
+	numbersShader->setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
+	numbersShader->setUniformMatrix4f("projection", projection);
+	numbersShader->setUniformMatrix4f("modelview", view * modelMatrix);
+	numbersShader->setUniformMatrix3f("normalmatrix", normalMatrix);
+
+	model->render(*(numbersShader));
+
+}
+
 void GameScene::clearPositionHistories()
 {
 	ball->clearHistory();
 
 	for (Slide* slide : level->getSlides())
 		slide->clearHistory();
+}
+
+void GameScene::killBall()
+{
+	dead = true;
 }
 
 bool GameScene::ballIsOnHorizontalSlideScope(Slide* slide)
@@ -123,10 +201,26 @@ bool GameScene::checkCollision_Ball_World(int time)
 
 	int upCount = 0, downCount = 0, rightCount = 0, leftCount = 0;
 
-	for (Tile* tile : ballContourTileList.down)  if (tile->solid) downCount++;
-	for (Tile* tile : ballContourTileList.up)	 if (tile->solid) upCount++;
-	for (Tile* tile : ballContourTileList.right) if (tile->solid) rightCount++;
-	for (Tile* tile : ballContourTileList.left)  if (tile->solid) leftCount++;
+	for (Tile* tile : ballContourTileList.down)
+	{
+		if (tile->deadly) killBall();
+		if (tile->solid) downCount++;
+	}
+	for (Tile* tile : ballContourTileList.up)
+	{
+		if (tile->deadly) killBall();
+		if (tile->solid) upCount++;
+	}
+	for (Tile* tile : ballContourTileList.right)
+	{
+		if (tile->deadly) killBall();
+		if (tile->solid) rightCount++;
+	}
+	for (Tile* tile : ballContourTileList.left)
+	{
+		if (tile->deadly) killBall();
+		if (tile->solid) leftCount++;
+	}
 
 	int totalCount = upCount + downCount + rightCount + leftCount;
 	bool onSolid = totalCount > 0;
@@ -206,8 +300,16 @@ void GameScene::checkCollisionsAndUpdateEntitiesPositions(int deltaTime)
 		}
 	}
 
-	// aqui
+	checkCollision_Ball_Slide();
+}
 
+bool GameScene::ballAndSlideAreColliding(Slide* slide)
+{
+	return collidingBoundingBoxes(ball->Ball::getBoundingBox(), slide->Slide::getBoundingBox());
+}
+
+void GameScene::checkCollision_Ball_Slide()
+{
 	Slide* slide = level->whichSlideIsCollidingWithTheBall();
 
 	if (slide == nullptr) return;
@@ -241,16 +343,14 @@ void GameScene::checkCollisionsAndUpdateEntitiesPositions(int deltaTime)
 	}
 }
 
-
-
-bool GameScene::ballAndSlideAreColliding(Slide* slide)
+int GameScene::getChunkOfCoords(vec2 coords)
 {
-	return collidingBoundingBoxes(ball->Ball::getBoundingBox(), slide->Slide::getBoundingBox());
+	return level->getTile(toTileCoords(coords))->chunk;
 }
 
 void GameScene::updateCurrentChunk()
 {
-	currentChunk = level->getTile(toTileCoords(ball->getPosition()))->chunk;
+	currentChunk = getChunkOfCoords(ball->getPosition());
 }
 
 mat4 GameScene::lookAtCurrentChunk()
@@ -328,6 +428,16 @@ vec3 GameScene::getCameraChunkPosition() {
 	float zDisplacement = float(level->getTileSize()) * (float(glm::max(level->getChunkSize().x, level->getChunkSize().y)) + 1.f) / 2.f;
 
 	return vec3(chunkCentre, zDisplacement);
+}
+
+void GameScene::setSpawnPoint(vec2 coords)
+{
+	ball->setSpawnPoint(coords);
+}
+
+void GameScene::locateBallInSpawnPoint()
+{
+	ball->locateInSpawnPoint();
 }
 
 vec4 GameScene::getPlayerBBox()
