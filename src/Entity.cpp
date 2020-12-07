@@ -65,6 +65,11 @@ int Entity::getPreviousTime()
     return positionHistory.top().time;
 }
 
+int Entity::getCurrentChunk()
+{
+    return scene->getChunkOfCoords(position);
+}
+
 void Entity::setPosition(vec2 position, int time)
 {
     positionHistory.push(oldPosition(position, time));

@@ -445,6 +445,11 @@ vec4 GameScene::getPlayerBBox()
 	return ball->Ball::getBoundingBox();
 }
 
+int GameScene::getPlayerChunk()
+{
+	return ball->getCurrentChunk();
+}
+
 vec3 GameScene::getCameraPosition()
 {
 	if(cam->isFree())
