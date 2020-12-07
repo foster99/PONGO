@@ -289,7 +289,7 @@ void Level::loadTileMap()
 	ShaderProgram* slideShader = new ShaderProgram();
 	Model* slideModel = new Model();
 	Scene::loadShaders("slideShader", slideShader);
-	slideModel->loadFromFile("models/cube.obj", (*slideShader));
+	slideModel->loadFromFile("models/cubeBlue.obj", (*slideShader));
 
 
 	// INICIALIZAR Y LEER TILE MAP
@@ -342,6 +342,18 @@ void Level::loadTileMap()
 					slides.push_back(slide);
 					break;
 				}
+				case spawnPoint:
+				{
+					startPoint = float(tileSize) * vec2(float(j) + 0.5f, -(float(i) + 0.5f));
+					scene->setSpawnPoint(startPoint);
+					scene->locateBallInSpawnPoint();
+					break;
+				}
+				case endPointChar:
+				{
+					endPoint = float(tileSize) * vec2(float(j) + 0.5f, -(float(i) + 0.5f));
+					break;
+				}
 				default: break;
 				}
 			}
@@ -382,6 +394,7 @@ Tile* Level::loadTile(char type, int i, int j)
 	case Tile::pinchoL:
 		tile = Tile(coords, chunk, type, true, true);
 		return &map[i][j];
+	
 	default: break;
 	}
 

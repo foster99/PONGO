@@ -18,12 +18,9 @@ void Ball::init()
 {
 	this->Entity::init();
 
-	// estas haciendo el spawnpoint para k la pelota empiece flotando y poder comprobar las colisiones mientras las programas
-	spawnPoint = vec2(0);
-
 	setSpeed(vec2(1.00f));
 	setDirection(vec2(-1.f, 1.f));
-	setPosition(vec2(30.f, -30.f));
+	setPosition(spawnPoint);
 
 	// INICIALIZAR PARTICULAS EN PELOTA
 	billboard = Billboard::createBillboard(glm::vec2(10.f, 10.f), (*program), "images/bee.png");
@@ -111,9 +108,19 @@ void Ball::setDirection(vec2 direction)
 	this->Entity::setDirection(direction);
 }
 
+void Ball::setSpawnPoint(vec2 coords)
+{
+	spawnPoint = coords;
+}
+
 void Ball::displacePosition(vec2 displacement)
 {
 	position += displacement;
+}
+
+void Ball::locateInSpawnPoint()
+{
+	setPosition(spawnPoint);
 }
 
 void Ball::spawnParticles()
