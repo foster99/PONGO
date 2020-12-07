@@ -26,7 +26,7 @@ void Slide::update(int deltaTime)
 	if (orientation == vertical) {
 		if (!checkTrackedPos()) {
 			if (!trackPlayerVertical()) {
-				speed.x = 1.0f;
+				speed.y = 1.0f;
 			}
 		}
 	}
@@ -181,29 +181,31 @@ bool Slide::isHorizontal()
 
 bool Slide::trackPlayerVertical()
 {
-	vec2 playerPosition = scene->getPlayerPos();
-	vec2 playerDirection = scene->getPlayerDir();
+	if (this->getCurrentChunk() == scene->getPlayerChunk()) {
+		vec2 playerPosition = scene->getPlayerPos();
+		vec2 playerDirection = scene->getPlayerDir();
 
-	float dist = abs(playerPosition.x - position.x);
-	dist -= tileSize;
+		float dist = abs(playerPosition.x - position.x);
+		dist -= tileSize;
 
-	bool isAbove = playerPosition.y > position.y;
-	bool isRight = playerPosition.x > position.x;
+		bool isAbove = playerPosition.y > position.y;
+		bool isRight = playerPosition.x > position.x;
 
-	float dTrack = minmunTrackDistance * tileSize;
+		float dTrack = minmunTrackDistance * tileSize;
 
-	bool trackedRight = isRight && playerDirection.x < 0 && dist < dTrack;
-	bool trackedLeft = !isRight && playerDirection.x > 0 && dist < dTrack;
+		bool trackedRight = isRight && playerDirection.x < 0 && dist < dTrack;
+		bool trackedLeft = !isRight && playerDirection.x > 0 && dist < dTrack;
 
-	if (trackedRight || trackedLeft) {
-		if (isAbove)
-			direction.y = 1;
-		else
-			direction.y = -1;
+		if (trackedRight || trackedLeft) {
+			if (isAbove)
+				direction.y = 1;
+			else
+				direction.y = -1;
 
-		trackedPos = playerPosition;
-		speed.y = 1.5f;
-		return true;
+			trackedPos = playerPosition;
+			speed.y = 1.5f;
+			return true;
+		}
 	}
 	trackedPos = vec2(-1.f, -1.f);
 	return false;
@@ -211,29 +213,32 @@ bool Slide::trackPlayerVertical()
 
 bool Slide::trackPlayerHorizontal()
 {
-	vec2 playerPosition = scene->getPlayerPos();
-	vec2 playerDirection = scene->getPlayerDir();
+	if (this->getCurrentChunk() == scene->getPlayerChunk()) {
+		vec2 playerPosition = scene->getPlayerPos();
+		vec2 playerDirection = scene->getPlayerDir();
 
-	float dist = abs(playerPosition.y - position.y);
-	dist -= tileSize;
+		float dist = abs(playerPosition.y - position.y);
+		dist -= tileSize;
 
-	bool isAbove = playerPosition.y > position.y;
-	bool isRight = playerPosition.x > position.x;
+		bool isAbove = playerPosition.y > position.y;
+		bool isRight = playerPosition.x > position.x;
 
-	float dTrack = minmunTrackDistance * tileSize;
+		float dTrack = minmunTrackDistance * tileSize;
 
-	bool trackedUp = isAbove && playerDirection.y < 0 && dist < dTrack;
-	bool trackedDown = !isAbove && playerDirection.y > 0 && dist < dTrack;
+		bool trackedUp = isAbove && playerDirection.y < 0 && dist < dTrack;
+		bool trackedDown = !isAbove && playerDirection.y > 0 && dist < dTrack;
 
-	if (trackedUp || trackedDown) {
-		if (isRight)
-			direction.x = 1;
-		else 
-			direction.x = -1;
+		if (trackedUp || trackedDown) {
+			if (isRight)
+				direction.x = 1;
+			else
+				direction.x = -1;
 
-		trackedPos = playerPosition;
-		speed.x = 1.5f;
-		return true;
+			trackedPos = playerPosition;
+			speed.x = 1.5f;
+			return true;
+		}
 	}
+	trackedPos = vec2(-1.f, -1.f);
 	return false;
 }

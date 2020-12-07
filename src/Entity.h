@@ -58,7 +58,9 @@ public:
 	vec2 getSpeed();
 	vec2 getDirection();
 	vec2 getPreviousPosition();
+
 	int getPreviousTick();
+	int getCurrentChunk();
 
 	virtual void setPosition(vec2 position, int time = -1);
 	virtual void setSpeed(vec2 speed);

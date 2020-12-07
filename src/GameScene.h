@@ -69,6 +69,7 @@ public:
 	mat4 getProjMatrix();
 	vec3 getCameraChunkPosition();
 	vec4 getPlayerBBox();
+	int getPlayerChunk();
 
 	void setSpawnPoint(vec2 coords);
 	void locateBallInSpawnPoint();
