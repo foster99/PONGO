@@ -67,6 +67,18 @@ public:
 	// GodMode Public Functions
 	bool isInGodMode();
 
+	// Sounds
+	void stopBackgroundSong();
+	void stopLevelSong();
+	void playBackgroundSong();
+	void playLevelSong();
+	void playButtonSound();
+	void playGotaSound();
+	void playDoorSound();
+	void playHitmarkerSound();
+	void playCountdownSound();
+	void playDeathSound();
+
 private:
 
 	// GAME STATUS CONTROL VARIABLES
@@ -88,6 +100,19 @@ private:
 	OptionsScene	optionsScene;
 	MenuScene		startMenuScene;
 
+	// Sounds
+	Sound* backgroundSong;
+	
+	Sound* gotaSound[14];
+	Sound* levelSong[5];
+	
+	Sound* buttonSound;
+	Sound* doorSound;
+	Sound* hitmarkerSound;
+	Sound* countdownSound;
+	Sound* deathSound;
+
+	void loadSounds();
 	void setUp_playing(int level);
 	void setUp_options();
 	void setUp_StartMenu();
@@ -96,6 +121,8 @@ private:
 	void updateFreeCamera();
 
 	bool keys[256], specialKeys[256]; 
+
+
 
 };
 

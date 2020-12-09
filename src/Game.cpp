@@ -2,6 +2,7 @@
 #include <GL/glut.h>
 #include "Game.h"
 #include <iostream>
+#include <random>
 
 void Game::init()
 {
@@ -9,7 +10,7 @@ void Game::init()
 	glEnable(GL_DEPTH_TEST);
 	modeHist.push(startMenu);
 
-	// TODO: LOAD SOUNDS
+	loadSounds();
 
 	// SCENE INITIALIZATION
 
@@ -17,6 +18,8 @@ void Game::init()
 		startMenuScene.init();
 		optionsScene.init();
 		gameScene.init();
+
+		playBackgroundSong();
 	}
 	catch (const char* msg)
 	{
@@ -186,7 +189,6 @@ void Game::keyPressed_playing(int key, bool specialKey)
 		case 'G':
 		case 'g':	toggleGodMode();				break;
 		case ' ':	gameScene.playerPressedSpace(); break;
-		case 'm':	gameScene.addCube();			break;
 		default:	break;
 		}
 	}
@@ -301,7 +303,92 @@ void Game::updateFreeCamera()
 	}
 }
 
+void Game::loadSounds()
+{
+	backgroundSong	= new Sound("backgroundSong.wav", true);
+		
+	buttonSound		= new Sound("button.wav", false);
+	doorSound		= new Sound("door.wav", false);
+	hitmarkerSound	= new Sound("hitmarker.wav", false);
+	countdownSound	= new Sound("countdown.wav", false);
+	deathSound		= new Sound("death.wav", false);
 
+	levelSong[0]	= new Sound("levelSong_01.wav", true);
+	levelSong[1]	= new Sound("levelSong_01.wav", true);
+	levelSong[2]	= new Sound("levelSong_01.wav", true);
+	levelSong[3]	= new Sound("levelSong_01.wav", true);
+	levelSong[4]	= new Sound("levelSong_01.wav", true);
+
+	gotaSound[0]	= new Sound("gota_00.wav", false);
+	gotaSound[1]	= new Sound("gota_01.wav", false);
+	gotaSound[2]	= new Sound("gota_02.wav", false);
+	gotaSound[3]	= new Sound("gota_03.wav", false);
+	gotaSound[4]	= new Sound("gota_04.wav", false);
+	gotaSound[5]	= new Sound("gota_05.wav", false);
+	gotaSound[6]	= new Sound("gota_06.wav", false);
+	gotaSound[7]	= new Sound("gota_07.wav", false);
+	gotaSound[8]	= new Sound("gota_08.wav", false);
+	gotaSound[9]	= new Sound("gota_09.wav", false);
+	gotaSound[10]	= new Sound("gota_10.wav", false);
+	gotaSound[11]	= new Sound("gota_11.wav", false);
+	gotaSound[12]	= new Sound("gota_12.wav", false);
+	gotaSound[13]	= new Sound("gota_13.wav", false);
+}
+
+void Game::playBackgroundSong()
+{
+	backgroundSong->play();
+}
+
+void Game::playLevelSong()
+{
+	int level = gameScene.getLevelID();
+	levelSong[level]->play();
+}
+
+void Game::playButtonSound()
+{
+	buttonSound->play();
+}
+
+void Game::playGotaSound()
+{
+	int min = 0, max = 13;
+	int gota = min + (std::rand() % static_cast<int>(max - min + 1));
+
+	gotaSound[gota]->play();
+}
+
+void Game::playDoorSound()
+{
+	doorSound->play();
+}
+
+void Game::playHitmarkerSound()
+{
+	hitmarkerSound->play();
+}
+
+void Game::playCountdownSound()
+{
+	countdownSound->play();
+}
+
+void Game::playDeathSound()
+{
+	deathSound->play();
+}
+
+void Game::stopBackgroundSong()
+{
+	backgroundSong->drop();
+}
+
+void Game::stopLevelSong()
+{
+	int level = gameScene.getLevelID();
+	levelSong[level]->drop();
+}
 
 // GAME STATUS CONTROL
 

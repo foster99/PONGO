@@ -48,6 +48,7 @@ public:
 	static void loadShaders(const string& filename, ShaderProgram* program);
 	static void displayText(vec2 position, vec3 color, string text);
 
+	int getCurrentTime();
 	mat4 getViewMatrix();
 	mat4 getProjMatrix();
 

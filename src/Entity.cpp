@@ -65,14 +65,20 @@ int Entity::getPreviousTick()
     return positionHistory.front().tick;
 }
 
+int Entity::getPreviousTime()
+{
+    if (positionHistory.empty()) return -1;
+    return positionHistory.front().time;
+}
+
 int Entity::getCurrentChunk()
 {
     return scene->getChunkOfCoords(position);
 }
 
-void Entity::setPosition(vec2 position, int time)
+void Entity::setPosition(vec2 position, int tick)
 {
-    positionHistory.push_front(oldPosition(position, time));
+    positionHistory.push_front(oldPosition(position, tick, scene->getCurrentTime()));
     this->position = position;
 }
 

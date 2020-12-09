@@ -14,11 +14,13 @@ typedef AssimpModel Model;
 struct oldPosition
 {
 	int tick;
+	int time;
 	vec2 position;
 
-	oldPosition(vec2 p, int t)
+	oldPosition(vec2 p, int tik, int tim)
 	{
-		tick = t;
+		tick = tik;
+		time = tim;
 		position = p;
 	}
 };
@@ -40,6 +42,8 @@ protected:
 
 	deque<oldPosition> positionHistory;
 
+	int currentTime;
+
 public:
 
 	~Entity();
@@ -60,6 +64,7 @@ public:
 	vec2 getPreviousPosition();
 
 	int getPreviousTick();
+	int getPreviousTime();
 	int getCurrentChunk();
 
 	virtual void setPosition(vec2 position, int time = -1);

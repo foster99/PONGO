@@ -32,15 +32,13 @@ public:
 
 	void restartLevel(int levelID);
 	
-	ivec2 toTileCoords(vec2 coords);
-	ivec2 toTileCoordsNotInverting(vec2 coords);
-
+	// CountDown
 	bool onCountDown(int deltaTime);
 	void loadCountDownModels();
 	void renderCountDown();
 
+	// Collisions
 	void clearPositionHistories();
-	void killBall();
 	bool ballIsOnHorizontalSlideScope(Slide* slide);
 	bool ballIsOnVerticalSlideScope(Slide* slide);
 	bool collidingBoundingBoxes(vec4 BB1, vec4 BB2);
@@ -48,18 +46,32 @@ public:
 	void checkCollision_Ball_Slide();
 	bool checkCollision_Ball_World(int nTicks, int deltaTime);
 	bool checkCollision_Slide_World(Slide* slide, int nTicks, int deltaTime);
-
 	void checkCollisionsAndUpdateEntitiesPositions(int deltaTime);
 	
+	// Camera
+	void updateViewMatrix();
+	
+	// Transition
+	static constexpr int offsetX = 2;
+	static constexpr int offsetY = 1;
+	bool weAreInTransition();
+	void transitionControlUpdate();
+	mat4 transitionMatrix();
+	
+	// Chunk Camera
 	int getChunkOfCoords(vec2 coords);
 	void updateCurrentChunk();
 	mat4 lookAtCurrentChunk();
 
-	void addCube();
-
+	// Ball Control
 	void initBall();
+	void killBall();
 	void playerPressedSpace();
+	void setSpawnPoint(vec2 coords);
+	void locateBallInSpawnPoint();
 
+	// Getters
+	int getLevelID();
 	Level* getLevel();
 	vec2 getPlayerPos();
 	vec2 getPlayerSpd();
@@ -71,15 +83,28 @@ public:
 	vec4 getPlayerBBox();
 	int getPlayerChunk();
 
-	void setSpawnPoint(vec2 coords);
-	void locateBallInSpawnPoint();
+	// Aux Methods
+	ivec2 toTileCoords(vec2 coords);
+	ivec2 toTileCoordsNotInverting(vec2 coords);
 
 private:
 
 	float speedDivisor;
-	int countdown;
+	
+	// Chunk Camera
 	int currentChunk;
+	bool transitionR;
+	bool transitionL;
+	bool transitionD;
+	bool transitionU;
+
+	// Initial Countdown
+	bool countdownStarted;
+	int countdown;
+
+	// Death Variables
 	bool dead;
+	int deadtime;
 
 	int levelID;
 	Level* level;

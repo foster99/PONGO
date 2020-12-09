@@ -221,7 +221,7 @@ bool Slide::trackPlayerVertical()
 				direction.y = -1;
 
 			trackedPos = playerPosition;
-			speed.y = 1.5f;
+			speed.y = 1.0f;
 			return true;
 		}
 	}
@@ -253,7 +253,7 @@ bool Slide::trackPlayerHorizontal()
 				direction.x = -1;
 
 			trackedPos = playerPosition;
-			speed.x = 1.5f;
+			speed.x = 1.0f;
 			return true;
 		}
 	}

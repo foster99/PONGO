@@ -48,7 +48,7 @@ public:
 	void renderTileMap() const;
 
 	// TileMap Info
-	int		getTileSize();
+	int	getTileSize();
 	ivec2 getChunkSize();
 	ivec2 getMapSizeInTiles();
 	ivec2 getMapSizeInChunks();

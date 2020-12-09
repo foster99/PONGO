@@ -198,6 +198,11 @@ void Scene::setMouseAngles(int x, int y)
 	cam->addMouseAngles(horizontalAngle, verticalAngle);
 }
 
+int Scene::getCurrentTime()
+{
+	return currentTime;
+}
+
 mat4 Scene::getViewMatrix()
 {
 	return view;
