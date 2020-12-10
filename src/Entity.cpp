@@ -56,13 +56,19 @@ vec2 Entity::getDirection()
 
 vec2 Entity::getPreviousPosition()
 {
-    return positionHistory.top().position;
+    return positionHistory.front().position;
+}
+
+int Entity::getPreviousTick()
+{
+    if (positionHistory.empty()) return -1;
+    return positionHistory.front().tick;
 }
 
 int Entity::getPreviousTime()
 {
     if (positionHistory.empty()) return -1;
-    return positionHistory.top().time;
+    return positionHistory.front().time;
 }
 
 int Entity::getCurrentChunk()
@@ -70,9 +76,9 @@ int Entity::getCurrentChunk()
     return scene->getChunkOfCoords(position);
 }
 
-void Entity::setPosition(vec2 position, int time)
+void Entity::setPosition(vec2 position, int tick)
 {
-    positionHistory.push(oldPosition(position, time));
+    positionHistory.push_front(oldPosition(position, tick, scene->getCurrentTime()));
     this->position = position;
 }
 
@@ -100,16 +106,19 @@ void Entity::invertDirectionY()
 
 void Entity::clearHistory()
 {
-    positionHistory = {};
+    while (positionHistory.size() > 1000)
+        positionHistory.pop_back();
 }
 
 bool Entity::rollbackPosition()
 {
-    if (positionHistory.empty()) 
-        return false;
+    if (positionHistory.empty())return false;
+    position = positionHistory.front().position;
+    positionHistory.pop_front();
 
-    position = positionHistory.top().position;
-    positionHistory.pop();
+    if (positionHistory.empty()) return false;
+    position = positionHistory.front().position;
+    positionHistory.pop_front();
 
     return ! positionHistory.empty();
 }

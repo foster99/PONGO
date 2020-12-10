@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "Game.h"
 
 void GameScene::init()
 {
@@ -7,6 +8,8 @@ void GameScene::init()
 	levelID = 1;
 	restartLevel(levelID);
 
+	speedDivisor = float(level->getTileSize());
+	
 	loadCountDownModels();
 }
 
@@ -14,35 +17,44 @@ void GameScene::render()
 {
 	renderAxis();
 
-	if (countdown > 0) renderCountDown();
-
+	if (countdown > 0)
+		renderCountDown();
 
 	level->Level::render();
-	ball->Ball::render();
+
+	if (!dead)
+		ball->Ball::render();
 }
 
 void GameScene::update(int deltaTime)
 {
 	this->Scene::update(deltaTime);
 
-	if (cam->isFree())	view = cam->getViewMatrix();
-	else				view = lookAtCurrentChunk();
+	updateCurrentChunk();
+	transitionControlUpdate();
+	updateViewMatrix();
 
 	level->update(deltaTime);
 	ball->Ball::update(deltaTime);
-	updateCurrentChunk();
+
 
 	if (onCountDown(deltaTime)) return;
 
 	if (dead)
 	{
+		if (deadtime > 0)
+		{
+			deadtime -= deltaTime;
+			return;
+		}
+
 		ball->locateInSpawnPoint();
 		dead = false;
 	}
 
 
 	checkCollisionsAndUpdateEntitiesPositions(deltaTime);
-	//clearPositionHistories();
+	clearPositionHistories();
 }
 
 void GameScene::restartLevel(int levelID)
@@ -55,8 +67,12 @@ void GameScene::restartLevel(int levelID)
 
 	dead = false;
 	currentChunk = 0;
+	transitionR = false;
+	transitionL = false;
+	transitionU = false;
+	transitionD = false;
 	countdown = 3000;
-
+	countdownStarted = false;
 	// Restart Song
 }
 
@@ -78,8 +94,19 @@ bool GameScene::onCountDown(int deltaTime)
 {
 	if (countdown <= 0) return false;
 
-	countdown -= deltaTime;
+	if (!countdownStarted)
+	{
+		countdownStarted = true;
+		Game::instance().stopBackgroundSong();
+		Game::instance().playCountdownSound();
+	}
 
+	countdown -= deltaTime;
+	
+	if (countdown < 200)
+		Game::instance().playLevelSong();
+
+	
 	return true;
 }
 
@@ -143,7 +170,11 @@ void GameScene::clearPositionHistories()
 
 void GameScene::killBall()
 {
-	dead = true;
+	if (Game::instance().isInGodMode()) return;
+
+	dead	 = true;
+	deadtime = 1000.f;
+	Game::instance().playDeathSound();
 }
 
 bool GameScene::ballIsOnHorizontalSlideScope(Slide* slide)
@@ -190,12 +221,12 @@ bool GameScene::collidingBoundingBoxes(vec4 BB1, vec4 BB2)
 			(ymin_1 <= ymax_2 && ymax_1 >= ymin_2);
 }
 
-bool GameScene::checkCollision_Ball_World(int time)
+bool GameScene::checkCollision_Ball_World(int tick, int deltaTime)
 {
-	vec2 displacement = (float(time / 100.f) * ball->Ball::getSpeed());
+	vec2 displacement    = float(deltaTime) * ball->Ball::getSpeed() / (float(nTicks) * speedDivisor);
 	vec2 newBallPosition = ball->Ball::getPosition() + displacement * ball->getDirection();
 
-	ball->Ball::setPosition(newBallPosition, time);
+	ball->Ball::setPosition(newBallPosition, tick);
 
 	contourTileList ballContourTileList = ball->listOfContourTiles();
 
@@ -257,13 +288,12 @@ bool GameScene::checkCollision_Ball_World(int time)
 	return false;
 }
 
-bool GameScene::checkCollision_Slide_World(Slide* slide, int time)
+bool GameScene::checkCollision_Slide_World(Slide* slide, int tick, int deltaTime)
 {
-	bool slideCollision = false;
 	vec2 oldSlidePosition = slide->Slide::getPosition();
-	vec2 newSlidePosition = oldSlidePosition + (float(time / 100.f) * slide->Slide::getDirection() * slide->Slide::getSpeed());
+	vec2 newSlidePosition = oldSlidePosition + (float(deltaTime) * slide->Slide::getDirection() * slide->Slide::getSpeed() / (float(nTicks) * speedDivisor));
 
-	slide->setPosition(newSlidePosition, time);
+	slide->setPosition(newSlidePosition, tick);
 
 	vector<vector<ivec2>> tiles = slide->Slide::occupiedTiles();
 	
@@ -284,23 +314,23 @@ bool GameScene::checkCollision_Slide_World(Slide* slide, int time)
 }
 
 void GameScene::checkCollisionsAndUpdateEntitiesPositions(int deltaTime)
-{	
+{
 	bool ballCollidedWithWorld = false;
-	
-	int time, step;
-	for (time = step = 1; time <= deltaTime; time += step)
+
+	for (int tick = 1; tick <= nTicks; tick++)
 	{
 		if (!ballCollidedWithWorld)
-			ballCollidedWithWorld = checkCollision_Ball_World(time);
+			ballCollidedWithWorld = checkCollision_Ball_World(tick, deltaTime);
 
 		bool slideCollidedWorld;
 		for (Slide* slide : level->getSlides())
 		{
-			slideCollidedWorld = checkCollision_Slide_World(slide, time);
+			slideCollidedWorld = checkCollision_Slide_World(slide, tick, deltaTime);
 		}
 	}
 
-	checkCollision_Ball_Slide();
+	if (!Game::instance().isInGodMode())
+		checkCollision_Ball_Slide();
 }
 
 bool GameScene::ballAndSlideAreColliding(Slide* slide)
@@ -314,9 +344,13 @@ void GameScene::checkCollision_Ball_Slide()
 
 	if (slide == nullptr) return;
 
-	while (slide->getPreviousTime() > ball->getPreviousTime() && slide->rollbackPosition());
+	Game::instance().playHitmarkerSound();
 
+	while (slide->getPreviousTime() > ball->getPreviousTime() && slide->rollbackPosition());
 	while (ball->getPreviousTime() > slide->getPreviousTime() && ball->rollbackPosition());
+
+	while (slide->getPreviousTick() > ball->getPreviousTick() && slide->rollbackPosition());
+	while (ball->getPreviousTick() > slide->getPreviousTick() && ball->rollbackPosition());
 
 	while (ballAndSlideAreColliding(slide) && ball->rollbackPosition() && slide->rollbackPosition());
 
@@ -327,6 +361,11 @@ void GameScene::checkCollision_Ball_Slide()
 
 		if (slide->isVertical())
 		{
+			// Colision de Canto
+
+			if ((ball->getDirection().y < 0) ^ (slide->getDirection().y < 0))
+				ball->invertDirectionY();
+
 			slide->goBackALittle();
 			ball->displacePosition(ball->getSpeed() * vec2((ball->getDirection()).x, 0.f));
 		}
@@ -337,10 +376,106 @@ void GameScene::checkCollision_Ball_Slide()
 
 		if (slide->isHorizontal())
 		{
+			// Colision de Canto
+
+			if ((ball->getDirection().x < 0) ^ (slide->getDirection().x < 0))
+				ball->invertDirectionX();
+
 			slide->goBackALittle();
 			ball->displacePosition(ball->getSpeed() * vec2(0.f, (ball->getDirection()).y));
 		}
 	}
+}
+
+void GameScene::updateViewMatrix()
+{
+	if (cam->isFree())				view = cam->getViewMatrix();
+	else if (weAreInTransition())	view = transitionMatrix();
+	else							view = lookAtCurrentChunk();
+}
+
+bool GameScene::weAreInTransition()
+{
+	return transitionR || transitionL || transitionU || transitionD;
+}
+
+void GameScene::transitionControlUpdate()
+{
+	ivec2 tileCoords = toTileCoords(ball->getPosition());
+	int i = tileCoords.y;
+	int j = tileCoords.x;
+
+
+	ivec2 mapSize = level->getMapSizeInChunks();
+	bool inMapLimitR = (currentChunk % mapSize.x == mapSize.x - 1);
+	bool inMapLimitL = (currentChunk % mapSize.x == 0);
+	bool inMapLimitD = (currentChunk / mapSize.x == mapSize.y - 1);
+	bool inMapLimitU = (currentChunk / mapSize.x == 0);
+
+	ivec2 chunkSize = level->getChunkSize();
+	int i_chunk = i % chunkSize.y;
+	int j_chunk = j % chunkSize.x;
+
+	int limitR = chunkSize.x - 1 - offsetX;
+	int limitL = offsetX;
+	int limitD = chunkSize.y - 1 - offsetY;
+	int limitU = offsetY;
+
+	transitionR = !inMapLimitR && j_chunk >= limitR;
+	transitionL = !inMapLimitL && j_chunk <= limitL;
+	if (transitionR && transitionL)
+		transitionD = transitionD;
+	transitionD = !inMapLimitD && i_chunk >= limitD;
+	transitionU = !inMapLimitU && i_chunk <= limitU;
+}
+
+mat4 GameScene::transitionMatrix()
+{
+	float tileSize		= float(level->getTileSize());
+	float zDisplacement	= tileSize * (float(glm::max(level->getChunkSize().x, level->getChunkSize().y)) + 1.f) / 2.f;
+	vec2 chunkTopLeft = level->getFirstTileOfChunk(currentChunk)->coords - vec2(tileSize / 2.f, - tileSize / 2.f);
+	vec2 chunkLength = tileSize * vec2(level->getChunkSize());
+
+	float chunkU = chunkTopLeft.y;
+	float chunkL = chunkTopLeft.x;
+	float chunkD = chunkU - chunkLength.y;
+	float chunkR = chunkL + chunkLength.x;
+
+	vec3 currentChunkCenterCoords = getCameraChunkPosition();
+	vec2 ballPosition = ball->getPosition();
+
+	float start, end;
+	vec2 transitionCoords(currentChunkCenterCoords);
+
+    if (transitionR)
+	{
+		start	= chunkR - float(offsetX) * tileSize;
+		end		= chunkR;
+		transitionCoords.x += smoothstep(start, end + (end - start), ballPosition.x) * chunkLength.x;
+	}
+	
+	if (transitionL)
+	{
+		start	= chunkL;
+		end		= chunkL + float(offsetX) * tileSize;
+		transitionCoords.x -= (1.f - smoothstep(start - (end - start), end , ballPosition.x)) * chunkLength.x;
+	}
+
+	if (transitionD)
+	{
+		start	= chunkD + float(offsetY) * tileSize;
+		end		= chunkD;
+		transitionCoords.y -= smoothstep(start, end + (end - start), ballPosition.y) * chunkLength.y;
+	}
+
+	if (transitionU)
+	{
+		start	= chunkU;
+		end		= chunkU - float(offsetY) * tileSize;;
+		transitionCoords.y += (1.f - smoothstep(start - (end - start), end, ballPosition.y)) * chunkLength.y;
+	}
+
+	return lookAt(vec3(transitionCoords, zDisplacement), vec3(transitionCoords, 0.f), vec3(0.f, 1.f, 0.f));
 }
 
 int GameScene::getChunkOfCoords(vec2 coords)
@@ -355,21 +490,9 @@ void GameScene::updateCurrentChunk()
 
 mat4 GameScene::lookAtCurrentChunk()
 {
-	vec2 distanceToChunkCentre, chunkCentre;
+	vec3 currentChunkCenterCoords = getCameraChunkPosition();
 
-							// TileSize * (chunkSize - 1) / 2   ---->  El 1 esta para desplazar medio cubo extra
-	distanceToChunkCentre = float(level->getTileSize()) * (vec2(level->getChunkSize()) - vec2(1.f)) / 2.f;
-	distanceToChunkCentre = vec2(1, -1) * distanceToChunkCentre;
-	chunkCentre           = level->getFirstTileOfChunk(currentChunk)->coords + distanceToChunkCentre;
-
-	float zDisplacement = float(level->getTileSize()) * (float(glm::max(level->getChunkSize().x, level->getChunkSize().y)) + 1.f) / 2.f;
-
-	return lookAt(vec3(chunkCentre, zDisplacement), vec3(chunkCentre, 0.f), vec3(0.f, 1.f, 0.f));
-}
-
-void GameScene::addCube()
-{
-	// YA NO HAY NADA
+	return lookAt(currentChunkCenterCoords, vec3(currentChunkCenterCoords.x, currentChunkCenterCoords.y, 0.f), vec3(0.f, 1.f, 0.f));
 }
 
 void GameScene::initBall()
@@ -394,6 +517,12 @@ void GameScene::playerPressedSpace()
 {
 	ball->spawnParticles();
 	ball->invertDirectionY();
+	Game::instance().playGotaSound();
+}
+
+int GameScene::getLevelID()
+{
+	return levelID;
 }
 
 Level* GameScene::getLevel()

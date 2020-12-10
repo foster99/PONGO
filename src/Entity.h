@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <utility>
-#include <stack>
+#include <deque>
 #include "AssimpModel.h"
 using namespace std;
 using namespace glm;
@@ -13,12 +13,14 @@ typedef AssimpModel Model;
 
 struct oldPosition
 {
+	int tick;
 	int time;
 	vec2 position;
 
-	oldPosition(vec2 p, int t)
+	oldPosition(vec2 p, int tik, int tim)
 	{
-		time = t;
+		tick = tik;
+		time = tim;
 		position = p;
 	}
 };
@@ -38,7 +40,9 @@ protected:
 	mat4 viewMatrix;
 	mat4 projMatrix;
 
-	stack<oldPosition> positionHistory;
+	deque<oldPosition> positionHistory;
+
+	int currentTime;
 
 public:
 
@@ -58,6 +62,8 @@ public:
 	vec2 getSpeed();
 	vec2 getDirection();
 	vec2 getPreviousPosition();
+
+	int getPreviousTick();
 	int getPreviousTime();
 	int getCurrentChunk();
 

@@ -12,6 +12,16 @@ Slide::Slide(GameScene* scene, Model* model, ShaderProgram* prog)
 	this->Entity::Entity(scene,model,prog);
 }
 
+void Slide::init(int tileSize, int orient, vec2 pos, vec2 dir, vec2 speed, int mode)
+{
+	this->Slide::init();
+	this->Slide::setSize(tileSize, orient);
+	this->Slide::setPosition(pos);
+	this->Slide::setDirection(dir);
+	this->Slide::setSpeed(speed);
+	this->Slide::setMode(mode);
+}
+
 void Slide::init()
 {
 	this->Entity::init();
@@ -23,16 +33,18 @@ void Slide::update(int deltaTime)
 {
 	this->Entity::update(deltaTime);
 
-	if (orientation == vertical) {
+	
+
+	if (isVertical()) {
 		if (!checkTrackedPos()) {
-			if (!trackPlayerVertical()) {
+			if (scene->ballIsOnVerticalSlideScope(this) || !trackPlayerVertical()) {
 				speed.y = 1.0f;
 			}
 		}
 	}
 	else {
 		if (!checkTrackedPos()) {
-			if (!trackPlayerHorizontal())
+			if (scene->ballIsOnHorizontalSlideScope(this) || !trackPlayerHorizontal())
 				speed.x = 1.0f;
 		}
 	}
@@ -87,7 +99,12 @@ void Slide::setSize(int ts, int orient)
 	}
 }
 
-void Slide::setPosition(vec2 position, int time) 
+void Slide::setMode(int mode)
+{
+	this->mode = mode;
+}
+
+void Slide::setPosition(vec2 position, int time)
 {
 	this->Entity::setPosition(position, time);
 
@@ -181,7 +198,8 @@ bool Slide::isHorizontal()
 
 bool Slide::trackPlayerVertical()
 {
-	if (this->getCurrentChunk() == scene->getPlayerChunk()) {
+	if (this->getCurrentChunk() == scene->getPlayerChunk())
+	{
 		vec2 playerPosition = scene->getPlayerPos();
 		vec2 playerDirection = scene->getPlayerDir();
 
@@ -203,7 +221,7 @@ bool Slide::trackPlayerVertical()
 				direction.y = -1;
 
 			trackedPos = playerPosition;
-			speed.y = 1.5f;
+			speed.y = 1.0f;
 			return true;
 		}
 	}
@@ -235,7 +253,7 @@ bool Slide::trackPlayerHorizontal()
 				direction.x = -1;
 
 			trackedPos = playerPosition;
-			speed.x = 1.5f;
+			speed.x = 1.0f;
 			return true;
 		}
 	}

@@ -250,9 +250,9 @@ void Level::loadTileMap()
 
 
 	// START LOADING LEVEL
-	getline(fin, line);
+	std::getline(fin, line);
 	if (diff(line, "LEVEL")) throw "LEVEL NOT FOUND";
-	getline(fin, line);	// Blank line
+	std::getline(fin, line);	// Blank line
 
 
 	//// LOAD HORIZONTAL SLIDES
@@ -295,22 +295,22 @@ void Level::loadTileMap()
 	
 
 	// LOAD LEVEL PARAMETERS
-	getline(fin, line);	// Blank line
-	getline(fin, line);
+	std::getline(fin, line);	// Blank line
+	std::getline(fin, line);
 	if (diff(line, "START  - TILEMAP"))
 		throw std::string("Error parsing " + line).c_str();
-	getline(fin, line);
+	std::getline(fin, line);
 	sstream.str(line);
 	sstream >> tileSize;
 
 
 
 
-	getline(fin, line);
+	std::getline(fin, line);
 	sstream.str(line);
 	sstream >> chunkSize.y >> chunkSize.x;
 
-	getline(fin, line);
+	std::getline(fin, line);
 	sstream.str(line);
 	sstream >> mapSizeInChunks.y >> mapSizeInChunks.x;
 
@@ -328,12 +328,12 @@ void Level::loadTileMap()
 	char tile;
 	map					= vector<vector<Tile>>(mapSizeInTiles.y, vector<Tile>(mapSizeInTiles.x));
 	firstTileOfChunk	= vector<Tile*>(mapSizeInChunks.x * mapSizeInChunks.y);
-	getline(fin, line); // Blank line
+	std::getline(fin, line); // Blank line
 
 	bool firstSpawnPoint = true;
 
 	Tile* currentTile;
-	int currentChunk = -1;
+	int lastSavedChunk = -1;
 	for (int i = 0; i < mapSizeInTiles.y; i++)
 	{
 		for (int j = 0; j < mapSizeInTiles.x; j++)
@@ -342,37 +342,41 @@ void Level::loadTileMap()
 
 			currentTile = loadTile(tile, i, j);
 			
-			if (currentTile != nullptr) // Static Tiles
+			if (currentTile->chunk > lastSavedChunk)
 			{
-				if (currentTile->chunk > currentChunk)
-				{
-					currentChunk = currentTile->chunk;
-					firstTileOfChunk[currentChunk] = currentTile;
-				}
+				lastSavedChunk = currentTile->chunk;
+				firstTileOfChunk[lastSavedChunk] = currentTile;
 			}
-			else // Dynamic Tile
+			
+			if (currentTile->isUndefined()) // Dynamic Tile
 			{
 				switch (tile)
 				{
-				case verticalSlide:
+				case verticalSlideChase:
 				{
 					Slide* slide = new Slide(scene, slideModel, slideShader);
-					slide->Slide::init();
-					slide->setSize(tileSize, Slide::vertical);
-					slide->setPosition(float(tileSize) * vec2(float(j) + 0.5f, -(float(i) + 0.5f)));
-					slide->setDirection(vec2(0.f, 1.f));
-					slide->setSpeed(vec2(0.f, 0.5f));
+					slide->Slide::init(tileSize, Slide::vertical, currentTile->coords, vec2(0.f, 1.f), vec2(0.f, 0.5f), Slide::chase);
 					slides.push_back(slide);
 					break;
 				}
-				case horizontalSlide:
+				case horizontalSlideChase:
 				{
 					Slide* slide = new Slide(scene, slideModel, slideShader);
-					slide->Slide::init();
-					slide->setSize(tileSize, Slide::horizontal);
-					slide->setPosition(float(tileSize) * vec2(float(j) + 0.5f, -(float(i) + 0.5f)));
-					slide->setDirection(vec2(1.f, 0.f));
-					slide->setSpeed(vec2(0.5f, 0.f));
+					slide->Slide::init(tileSize, Slide::horizontal, currentTile->coords, vec2(1.f, 0.f), vec2(0.5f, 0.f), Slide::chase);
+					slides.push_back(slide);
+					break;
+				}
+				case verticalSlideEscape:
+				{
+					Slide* slide = new Slide(scene, slideModel, slideShader);
+					slide->Slide::init(tileSize, Slide::vertical, currentTile->coords, vec2(0.f, 1.f), vec2(0.f, 0.5f), Slide::escape);
+					slides.push_back(slide);
+					break;
+				}
+				case horizontalSlideEscape:
+				{
+					Slide* slide = new Slide(scene, slideModel, slideShader);
+					slide->Slide::init(tileSize, Slide::horizontal, currentTile->coords, vec2(1.f, 0.f), vec2(0.5f, 0.f), Slide::escape);
 					slides.push_back(slide);
 					break;
 				}
@@ -398,7 +402,7 @@ void Level::loadTileMap()
 				}
 				case endPointChar:
 				{
-					endPoint = float(tileSize) * vec2(float(j) + 0.5f, -(float(i) + 0.5f));
+					endPoint = currentTile->coords;
 					break;
 				}
 				default: break;
@@ -413,8 +417,8 @@ void Level::loadTileMap()
 		#endif
 	}
 
-	getline(fin, line); // Blank line
-	getline(fin, line);
+	std::getline(fin, line); // Blank line
+	std::getline(fin, line);
 	if (diff(line, "END    - TILEMAP"))
 		throw std::string("Error parsing " + line).c_str();
 
@@ -446,7 +450,7 @@ Tile* Level::loadTile(char type, int i, int j)
 	}
 
 	tile = Tile(coords, chunk, Tile::undefined, false, false);
-	return nullptr;
+	return &map[i][j];
 }
 
 void Level::loadModels()

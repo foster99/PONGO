@@ -26,8 +26,11 @@ class Level : public World
 {
 public:
 
-	static constexpr char verticalSlide		= '|';
-	static constexpr char horizontalSlide	= '-';
+	static constexpr char verticalSlideChase		= '|';
+	static constexpr char verticalSlideEscape		= '!';
+	static constexpr char horizontalSlideChase		= '_';
+	static constexpr char horizontalSlideEscape		= '-';
+
 	static constexpr char blank				= '.';
 	static constexpr char spawnPoint		= 'S';
 	static constexpr char endPointChar		= 'E';
@@ -48,7 +51,7 @@ public:
 	void renderSpawns() const;
 
 	// TileMap Info
-	int getTileSize();
+	int	getTileSize();
 	ivec2 getChunkSize();
 	ivec2 getMapSizeInTiles();
 	ivec2 getMapSizeInChunks();
