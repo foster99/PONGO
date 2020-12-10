@@ -388,16 +388,16 @@ void Level::loadTileMap()
 					startPoint = float(tileSize) * vec2(float(j) + 0.5f, -(float(i) + 0.5f));
 
 					aux->setPosition(startPoint);
-					
-					if (firstSpawnPoint) {
-						spawnPositions.push(startPoint);
-						firstSpawnPoint = false;
-					}
 
 					spawns.push_back(aux);
 
-					scene->setSpawnPoint(spawnPositions.top());
-					scene->locateBallInSpawnPoint();
+					if (firstSpawnPoint) {
+						spawnPositions.push(startPoint);
+						scene->setSpawnPoint(spawnPositions.top());
+						scene->locateBallInSpawnPoint();
+						firstSpawnPoint = false;
+					}
+
 					break;
 				}
 				case endPointChar:
