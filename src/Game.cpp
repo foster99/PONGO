@@ -145,6 +145,9 @@ void Game::mouseMove(int x, int y)
 
 void Game::mousePress(int button)
 {
+	if (playing)
+		if (button == GLUT_LEFT_BUTTON)
+			gameScene.playerPressedSpace();
 }
 
 void Game::mouseRelease(int button)

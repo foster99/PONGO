@@ -170,6 +170,8 @@ void GameScene::clearPositionHistories()
 
 void GameScene::killBall()
 {
+	if (Game::instance().isInGodMode()) return;
+
 	dead	 = true;
 	deadtime = 1000.f;
 	Game::instance().playDeathSound();
@@ -342,6 +344,7 @@ void GameScene::checkCollision_Ball_Slide()
 
 	if (slide == nullptr) return;
 
+	Game::instance().playHitmarkerSound();
 
 	while (slide->getPreviousTime() > ball->getPreviousTime() && slide->rollbackPosition());
 	while (ball->getPreviousTime() > slide->getPreviousTime() && ball->rollbackPosition());

@@ -90,7 +90,8 @@ public:
 private:
 
 	float speedDivisor;
-	
+	ShaderProgram* gameShaderProgram;
+
 	// Chunk Camera
 	int currentChunk;
 	bool transitionR;
@@ -102,13 +103,17 @@ private:
 	bool countdownStarted;
 	int countdown;
 
+	// Win variables
+	bool win;
+	int winTime;
+
 	// Death Variables
 	bool dead;
 	int deadtime;
 
+	// Level info
 	int levelID;
 	Level* level;
-	ShaderProgram* gameShaderProgram;
 
 	// BALL THINGS
 	ShaderProgram*	ballShader;
