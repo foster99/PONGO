@@ -63,7 +63,7 @@ void GameScene::update(int deltaTime)
 
 	// Collisions
 	checkCollisionsAndUpdateEntitiesPositions(deltaTime);
-	//level->checkIfBallCollidedWithACheckpoint();
+	level->checkIfBallCollidedWithACheckpoint();
 	clearPositionHistories();
 }
 

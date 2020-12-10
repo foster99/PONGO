@@ -219,11 +219,11 @@ vector<Slide*>& Level::getSlides()
 
 void Level::checkIfBallCollidedWithACheckpoint()
 {
-	ivec2 ballTileCoords = getTile(scene->getPlayerPos())->coords;
+	ivec2 ballTileCoords = getTile(scene->toTileCoords(scene->getPlayerPos()))->coords;
 
 	for (SpawnCheckpoint* spawn : spawns)
 	{
-		ivec2 spawnTileCoords = getTile(spawn->getPosition())->coords;
+		ivec2 spawnTileCoords = getTile(scene->toTileCoords(spawn->getPosition()))->coords;
 
 		if (ballTileCoords == spawnTileCoords)
 		{
