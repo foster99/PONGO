@@ -28,6 +28,7 @@
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Slide.h" />
     <ClInclude Include="Sound.h" />
+    <ClInclude Include="SpawnCheckpoint.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="World.h" />
@@ -50,6 +51,7 @@
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Slide.cpp" />
     <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="SpawnCheckpoint.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="World.cpp" />

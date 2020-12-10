@@ -3,6 +3,7 @@
 
 
 #include <vector>
+#include <stack>
 #include <string>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -11,6 +12,7 @@
 #include "World.h"
 #include "Ball.h"
 #include "Slide.h"
+#include "SpawnCheckpoint.h"
 #include "Texture.h"
 #include "ShaderProgram.h"
 
@@ -43,6 +45,7 @@ public:
 	void render() const override;
 	void renderSlides() const;
 	void renderTileMap() const;
+	void renderSpawns() const;
 
 	// TileMap Info
 	int getTileSize();
@@ -59,6 +62,12 @@ public:
 	// Slides
 	Slide* whichSlideIsCollidingWithTheBall();
 	vector<Slide*>& getSlides();
+
+	void addSpawnPoint(vec2 pos);
+	void removeSpawnPoint();
+
+	//PURE TESTING REMOVE LATER
+	void changeSpawnPoint();
 
 private:
 
@@ -91,9 +100,11 @@ private:
 	int levelID;
 	vec3 size;
 	Texture floor, wall;
+	stack<vec2> spawnPositions;
 
 	// Entities
 	vector<Slide*> slides;
+	vector<SpawnCheckpoint*> spawns;
 
 };
 

@@ -440,6 +440,12 @@ void GameScene::locateBallInSpawnPoint()
 	ball->locateInSpawnPoint();
 }
 
+// PURE TESTING REMOVE LATER
+void GameScene::changeSpawnPoint()
+{
+	level->changeSpawnPoint();
+}
+
 vec4 GameScene::getPlayerBBox()
 {
 	return ball->Ball::getBoundingBox();

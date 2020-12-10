@@ -61,6 +61,9 @@
     <ClCompile Include="ParticleSystem.cpp">
       <Filter>Source Files\Painting</Filter>
     </ClCompile>
+    <ClCompile Include="SpawnCheckpoint.cpp">
+      <Filter>Source Files\3D\Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderProgram.h">
@@ -122,6 +125,9 @@
     </ClInclude>
     <ClInclude Include="Billboard.h">
       <Filter>Header Files\Painting</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnCheckpoint.h">
+      <Filter>Header Files\3D\Entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -44,6 +44,7 @@ void Level::render() const
 
 	renderTileMap();
 	renderSlides();
+	renderSpawns();
 }
 
 void Level::renderSlides() const
@@ -140,6 +141,16 @@ void Level::renderTileMap() const
 	}
 }
 
+void Level::renderSpawns() const
+{
+	for (auto* spawn : spawns)
+	{
+		spawn->setViewMatrix(viewMatrix);
+		spawn->setProjMatrix(projMatrix);
+		spawn->SpawnCheckpoint::render();
+	}
+}
+
 int Level::getTileSize()
 {
 	return tileSize;
@@ -187,6 +198,27 @@ Slide* Level::whichSlideIsCollidingWithTheBall()
 vector<Slide*>& Level::getSlides()
 {
 	return slides;
+}
+
+void Level::addSpawnPoint(vec2 pos)
+{
+	spawnPositions.push(pos);
+	scene->setSpawnPoint(spawnPositions.top());
+}
+
+void Level::removeSpawnPoint()
+{
+	if (spawnPositions.size() > 1) {
+		spawnPositions.pop();
+		scene->setSpawnPoint(spawnPositions.top());
+	}
+}
+
+// PURE TESTING REMOVE LATER
+void Level::changeSpawnPoint()
+{
+	if (spawns.size() > 1)
+		spawns[1]->collided();
 }
 
 
@@ -298,6 +330,8 @@ void Level::loadTileMap()
 	firstTileOfChunk	= vector<Tile*>(mapSizeInChunks.x * mapSizeInChunks.y);
 	getline(fin, line); // Blank line
 
+	bool firstSpawnPoint = true;
+
 	Tile* currentTile;
 	int currentChunk = -1;
 	for (int i = 0; i < mapSizeInTiles.y; i++)
@@ -344,8 +378,21 @@ void Level::loadTileMap()
 				}
 				case spawnPoint:
 				{
+					SpawnCheckpoint* aux = new SpawnCheckpoint(scene,slideModel,slideShader);
+					aux->init();
+					
 					startPoint = float(tileSize) * vec2(float(j) + 0.5f, -(float(i) + 0.5f));
-					scene->setSpawnPoint(startPoint);
+
+					aux->setPosition(startPoint);
+					
+					if (firstSpawnPoint) {
+						spawnPositions.push(startPoint);
+						firstSpawnPoint = false;
+					}
+
+					spawns.push_back(aux);
+
+					scene->setSpawnPoint(spawnPositions.top());
 					scene->locateBallInSpawnPoint();
 					break;
 				}

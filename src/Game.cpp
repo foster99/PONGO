@@ -187,6 +187,7 @@ void Game::keyPressed_playing(int key, bool specialKey)
 		case 'g':	toggleGodMode();				break;
 		case ' ':	gameScene.playerPressedSpace(); break;
 		case 'm':	gameScene.addCube();			break;
+		case 'p':	gameScene.changeSpawnPoint();   break; // PURE TESTING REMOVE LATER
 		default:	break;
 		}
 	}

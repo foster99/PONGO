@@ -72,6 +72,9 @@ public:
 	void setSpawnPoint(vec2 coords);
 	void locateBallInSpawnPoint();
 
+	//PURE TESTING REMOVE LATER
+	void changeSpawnPoint();
+
 private:
 
 	int countdown;
