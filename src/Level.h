@@ -66,6 +66,8 @@ public:
 	Slide* whichSlideIsCollidingWithTheBall();
 	vector<Slide*>& getSlides();
 
+	// CheckPoints
+	void checkIfBallCollidedWithACheckpoint();
 	void addSpawnPoint(vec2 pos);
 	void removeSpawnPoint();
 
@@ -93,11 +95,13 @@ private:
 	// Game Models
 	void loadModels();
 	Model* cubeModel;
+	Model* ropeModel;
 	Model* pinchoModel;
 	Model* bolaPinchoModel;
 
 	void loadShaders();
 	ShaderProgram* cubeShader;
+	ShaderProgram* ropeShader;
 
 	// World stuff
 	int levelID;

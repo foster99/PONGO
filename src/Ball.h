@@ -23,6 +23,9 @@ private:
 	ParticleSystem* particles;
 	Billboard* billboard;
 
+	bool verticalDirBlocked;
+	bool horizontalDirBlocked;
+
 public:
 
 
@@ -40,6 +43,12 @@ public:
 	void displacePosition(vec2 displacement);
 	void locateInSpawnPoint();
 	void spawnParticles();
+
+	bool horizontalIsBlocked();
+	bool verticalIsBlocked();
+	void blockHorizontalDirection();
+	void blockVerticalDirection();
+	void restartDirectionBlocks();
 
 	contourPointList listOfContourPoints();
 	contourTileList listOfContourTiles();

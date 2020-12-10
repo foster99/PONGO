@@ -48,6 +48,12 @@ public:
 	bool checkCollision_Slide_World(Slide* slide, int nTicks, int deltaTime);
 	void checkCollisionsAndUpdateEntitiesPositions(int deltaTime);
 	
+	// Rope
+	bool ballIsOnHorizontalRope();
+	bool ballIsOnVerticalRope();
+	void blockBallsHorizontalDirection();
+	void blockBallsVerticalDirection();
+
 	// Camera
 	void updateViewMatrix();
 	

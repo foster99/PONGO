@@ -95,7 +95,31 @@ void Ball::update(int deltaTime)
 
 void Ball::setPosition(vec2 position, int time)
 {
-	this->Entity::setPosition(position, time);
+	vec2 nextPosition = position;
+
+	ivec2 tileCenter = scene->getLevel()->getTile(scene->toTileCoords(position))->coords;
+
+	float tileSize = scene->getLevel()->getTileSize();
+
+	if (horizontalIsBlocked())
+	{
+		nextPosition.x = tileCenter.x;
+		//if (mod(this->position.x, tileSize) <= tileSize/2.f)
+		//	nextPosition.x += mod(this->position.x, 5.f);
+		//else
+		//	nextPosition.x -= mod(this->position.x, 5.f);
+	}
+
+	if (verticalIsBlocked())
+	{
+		nextPosition.y = tileCenter.y;
+		//if (mod(this->position.y, tileSize) <= tileSize/2.f)
+		//	nextPosition.y -= mod(this->position.y, tileSize/2.f);
+		//else 
+		//	nextPosition.y += mod(this->position.y, tileSize/2.f);
+	}
+
+	this->Entity::setPosition(nextPosition, time);
 }
 
 void Ball::setSpeed(vec2 speed)
@@ -141,6 +165,32 @@ void Ball::spawnParticles()
 		//particle.speed = 1.5f * glm::normalize(0.5f * particle.position + glm::vec3(3.f, 3.f, 3.f));
 		particles->addParticle(particle);
 	}
+}
+
+bool Ball::horizontalIsBlocked()
+{
+	return horizontalDirBlocked;
+}
+
+bool Ball::verticalIsBlocked()
+{
+	return verticalDirBlocked;
+}
+
+void Ball::blockHorizontalDirection()
+{
+	horizontalDirBlocked	= true;
+}
+
+void Ball::blockVerticalDirection()
+{
+	verticalDirBlocked		= true;
+}
+
+void Ball::restartDirectionBlocks()
+{
+	verticalDirBlocked		= false;
+	horizontalDirBlocked	= false;
 }
 
 contourPointList Ball::listOfContourPoints()

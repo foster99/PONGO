@@ -77,24 +77,41 @@ void Level::renderTileMap() const
 			switch (tile.type)
 			{
 			case Tile::cube:
-				shader	= cubeShader;
-				model	= cubeModel;
+				shader		= cubeShader;
+				model		= cubeModel;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
 				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
 
+			case Tile::ropeH:
+				shader		= ropeShader;
+				model		= ropeModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / (model->getHeight())));
+				modelMatrix = rotate(modelMatrix, PI/2.f, vec3(0.f, 0.f, 1.f));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+
+			case Tile::ropeV:
+				shader		= ropeShader;
+				model		= ropeModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / (model->getHeight())));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+
 			case Tile::pinchoU:
-				shader = cubeShader;
-				model = pinchoModel;
+				shader		= cubeShader;
+				model		= pinchoModel;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
 				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
 
 			case Tile::pinchoD:
-				shader = cubeShader;
-				model = pinchoModel;
+				shader		= cubeShader;
+				model		= pinchoModel;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
 				modelMatrix = rotate(modelMatrix, PI, vec3(0.f, 0.f, 1.f));
 				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
@@ -102,8 +119,8 @@ void Level::renderTileMap() const
 				break;
 
 			case Tile::pinchoR:
-				shader = cubeShader;
-				model = pinchoModel;
+				shader		= cubeShader;
+				model		= pinchoModel;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
 				modelMatrix = rotate(modelMatrix, -PI/2.f, vec3(0.f,0.f,1.f));
 				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
@@ -111,8 +128,8 @@ void Level::renderTileMap() const
 				break;
 
 			case Tile::pinchoL:
-				shader	= cubeShader;
-				model	= pinchoModel;
+				shader		= cubeShader;
+				model		= pinchoModel;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
 				modelMatrix = rotate(modelMatrix, PI / 2.f, vec3(0.f, 0.f, 1.f));
 				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
@@ -200,6 +217,22 @@ vector<Slide*>& Level::getSlides()
 	return slides;
 }
 
+void Level::checkIfBallCollidedWithACheckpoint()
+{
+	ivec2 ballTileCoords = getTile(scene->getPlayerPos())->coords;
+
+	for (SpawnCheckpoint* spawn : spawns)
+	{
+		ivec2 spawnTileCoords = getTile(spawn->getPosition())->coords;
+
+		if (ballTileCoords == spawnTileCoords)
+		{
+			spawn->collided();
+			return;
+		}
+	}
+}
+
 void Level::addSpawnPoint(vec2 pos)
 {
 	spawnPositions.push(pos);
@@ -255,44 +288,6 @@ void Level::loadTileMap()
 	std::getline(fin, line);	// Blank line
 
 
-	//// LOAD HORIZONTAL SLIDES
-	//getline(fin, line);	// Blank line
-	//getline(fin, line);
-	//if (diff(line, "START  - HORIZONTAL SLIDES"))
-	//	throw std::string("Error parsing " + line).c_str();
-	//
-	//getline(fin, line);
-	//while (diff(line, "END    - HORIZONTAL SLIDES"))
-	//{
-	//	sstream.str(line);
-	//	sstream >> i >> j0 >> j1;
-	//	Slide* slide = new Slide(scene, slideModel, slideShader);
-	//	slide->Slide::init();
-	//	slide->setSize(tileSize, Slide::horizontal);
-	//	slide->setLimits(j0, j1);
-	//	slides.push_back(slide);
-	//	getline(fin, line);
-	//}
-
-
-	//// LOAD VERTICAL SLIDES
-	//getline(fin, line); // Blank line
-	//getline(fin, line);
-	//if (diff(line, "START  - VERTICAL SLIDES"))
-	//	throw std::string("Error parsing " + line).c_str();
-	//getline(fin, line);
-	//while (diff(line, "END    - VERTICAL SLIDES"))
-	//{
-	//	sstream.str(line);
-	//	sstream >> j >> i0 >> i1;
-	//	Slide* slide = new Slide(scene, slideModel, slideShader);
-	//	slide->Slide::init();
-	//	slide->setSize(10, Slide::vertical);
-	//	slide->setLimits(i0, i1);
-	//	slides.push_back(slide);
-	//	getline(fin, line);
-	//}
-	
 
 	// LOAD LEVEL PARAMETERS
 	std::getline(fin, line);	// Blank line
@@ -434,9 +429,16 @@ Tile* Level::loadTile(char type, int i, int j)
 
 	switch (type)
 	{
-		// LOG EDGAR: AHORA HAY QUE PONER AQUI EL LOAD DE LAS TILES DE PINCHOS, CHECKPOINT, START, END
 	case Tile::cube:
 		tile = Tile(coords, chunk, type, true, false);
+		return &map[i][j];
+
+	case Tile::ropeH:
+		tile = Tile(coords, chunk, type, false, false);
+		return &map[i][j];
+	
+	case Tile::ropeV:
+		tile = Tile(coords, chunk, type, false, false);
 		return &map[i][j];
 
 	case Tile::pinchoU:
@@ -455,6 +457,9 @@ Tile* Level::loadTile(char type, int i, int j)
 
 void Level::loadModels()
 {
+	ropeModel = new Model();
+	ropeModel->loadFromFile("models/rope.obj", *ropeShader);
+
 	cubeModel = new Model();
 	cubeModel->loadFromFile("models/cubeBlue.obj", *cubeShader);
 
@@ -471,6 +476,9 @@ void Level::loadShaders()
 {
 	cubeShader = new ShaderProgram();
 	Scene::loadShaders("cubeShader", cubeShader);
+
+	ropeShader = new ShaderProgram();
+	Scene::loadShaders("ropeShader", ropeShader);
 }
 
 

@@ -52,8 +52,18 @@ void GameScene::update(int deltaTime)
 		dead = false;
 	}
 
+	// Rope blocks
+	ball->restartDirectionBlocks();
 
+	if (ballIsOnHorizontalRope())
+		blockBallsVerticalDirection();
+
+	if (ballIsOnVerticalRope())	
+		blockBallsHorizontalDirection();
+
+	// Collisions
 	checkCollisionsAndUpdateEntitiesPositions(deltaTime);
+	//level->checkIfBallCollidedWithACheckpoint();
 	clearPositionHistories();
 }
 
@@ -387,6 +397,28 @@ void GameScene::checkCollision_Ball_Slide()
 	}
 }
 
+bool GameScene::ballIsOnHorizontalRope()
+{
+	Tile* tile = level->getTile(toTileCoords(ball->getPosition()));
+	return (tile->type == Tile::ropeH);
+}
+
+bool GameScene::ballIsOnVerticalRope()
+{
+	Tile* tile = level->getTile(toTileCoords(ball->getPosition()));
+	return (tile->type == Tile::ropeV);
+}
+
+void GameScene::blockBallsHorizontalDirection()
+{
+	ball->blockHorizontalDirection();
+}
+
+void GameScene::blockBallsVerticalDirection()
+{
+	ball->blockVerticalDirection();
+}
+
 void GameScene::updateViewMatrix()
 {
 	if (cam->isFree())				view = cam->getViewMatrix();
@@ -516,7 +548,12 @@ void GameScene::initBall()
 void GameScene::playerPressedSpace()
 {
 	ball->spawnParticles();
+
+	if (ballIsOnHorizontalRope())
+		ball->invertDirectionX();
+	
 	ball->invertDirectionY();
+
 	Game::instance().playGotaSound();
 }
 
