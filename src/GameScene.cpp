@@ -244,24 +244,24 @@ bool GameScene::checkCollision_Ball_World(int tick, int deltaTime)
 
 	for (Tile* tile : ballContourTileList.down)
 	{
-		if (tile->deadly) killBall();
 		if (tile->solid) downCount++;
 	}
 	for (Tile* tile : ballContourTileList.up)
 	{
-		if (tile->deadly) killBall();
 		if (tile->solid) upCount++;
 	}
 	for (Tile* tile : ballContourTileList.right)
 	{
-		if (tile->deadly) killBall();
 		if (tile->solid) rightCount++;
 	}
 	for (Tile* tile : ballContourTileList.left)
 	{
-		if (tile->deadly) killBall();
 		if (tile->solid) leftCount++;
 	}
+
+	
+	if (ball->isOnDeathTiles()) killBall();
+
 
 	int totalCount = upCount + downCount + rightCount + leftCount;
 	bool onSolid = totalCount > 0;

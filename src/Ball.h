@@ -44,6 +44,8 @@ public:
 	void locateInSpawnPoint();
 	void spawnParticles();
 
+	bool isOnDeathTiles();
+
 	bool horizontalIsBlocked();
 	bool verticalIsBlocked();
 	void blockHorizontalDirection();

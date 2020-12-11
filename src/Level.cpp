@@ -468,6 +468,12 @@ void Level::loadModels()
 	
 	bolaPinchoModel = new Model();
 	bolaPinchoModel->loadFromFile("models/UPC.obj", *cubeShader);
+
+	buttonONModel = new Model();
+	buttonONModel->loadFromFile("model/buttonOn.obj", *buttonShader);
+
+	buttonOFFModel = new Model();
+	buttonOFFModel->loadFromFile("model/buttonOn.obj", *buttonShader);
 }
 
 #include "Scene.h"
@@ -479,6 +485,9 @@ void Level::loadShaders()
 
 	ropeShader = new ShaderProgram();
 	Scene::loadShaders("ropeShader", ropeShader);
+
+	buttonShader = new ShaderProgram();
+	Scene::loadShaders("buttonShader", ropeShader);
 }
 
 

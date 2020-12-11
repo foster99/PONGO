@@ -167,6 +167,25 @@ void Ball::spawnParticles()
 	}
 }
 
+bool Ball::isOnDeathTiles()
+{
+	vector<vector<ivec2>> cornerTileCoords = this->Ball::occupiedTiles();
+	vector<vector<Tile*>> cornerTiles(2, vector<Tile*>(2, nullptr));
+	
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < 2; j++)
+			cornerTiles[i][j] = scene->getLevel()->getTile(cornerTileCoords[i][j].y, cornerTileCoords[i][j].x);
+		
+	return	(cornerTiles[0][0]->deadly && cornerTiles[0][1]->deadly) ||
+			(cornerTiles[1][0]->deadly && cornerTiles[1][1]->deadly) ||
+			(cornerTiles[0][0]->deadly && cornerTiles[1][0]->deadly) ||
+			(cornerTiles[0][1]->deadly && cornerTiles[1][1]->deadly) ||
+			(direction.y < 0 && ((cornerTiles[1][0]->deadly && !cornerTiles[1][1]->solid) || (cornerTiles[1][1]->deadly && !cornerTiles[1][0]->solid))) ||
+			(direction.y > 0 && ((cornerTiles[0][0]->deadly && !cornerTiles[0][1]->solid) || (cornerTiles[0][1]->deadly && !cornerTiles[0][0]->solid))) ||
+			(direction.x < 0 && ((cornerTiles[1][0]->deadly && !cornerTiles[0][0]->solid) || (cornerTiles[0][0]->deadly && !cornerTiles[1][0]->solid))) ||
+			(direction.x > 0 && ((cornerTiles[0][1]->deadly && !cornerTiles[1][1]->solid) || (cornerTiles[1][1]->deadly && !cornerTiles[0][1]->solid)));
+}
+
 bool Ball::horizontalIsBlocked()
 {
 	return horizontalDirBlocked;

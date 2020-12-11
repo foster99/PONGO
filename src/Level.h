@@ -98,10 +98,13 @@ private:
 	Model* ropeModel;
 	Model* pinchoModel;
 	Model* bolaPinchoModel;
+	Model* buttonONModel;
+	Model* buttonOFFModel;
 
 	void loadShaders();
 	ShaderProgram* cubeShader;
 	ShaderProgram* ropeShader;
+	ShaderProgram* buttonShader;
 
 	// World stuff
 	int levelID;
