@@ -127,7 +127,7 @@ void Slide::goBackALittle()
 
 bool Slide::checkTrackedPos()
 {
-	if (trackedPos.x >= 0) {
+	if (trackedPos.x >= 0 && mode == chase) {
 		vec2 diffPos = abs(position - trackedPos);
 		if (diffPos.x < distanceError && diffPos.y < distanceError) {
 			return true;
@@ -209,19 +209,29 @@ bool Slide::trackPlayerVertical()
 		bool isAbove = playerPosition.y > position.y;
 		bool isRight = playerPosition.x > position.x;
 
-		float dTrack = minmunTrackDistance * tileSize;
+		float dTrack;
+
+		dTrack = minmunTrackDistance * tileSize;
 
 		bool trackedRight = isRight && playerDirection.x < 0 && dist < dTrack;
 		bool trackedLeft = !isRight && playerDirection.x > 0 && dist < dTrack;
 
 		if (trackedRight || trackedLeft) {
-			if (isAbove)
-				direction.y = 1;
-			else
-				direction.y = -1;
-
+			if (mode == chase) {
+				if (isAbove)
+					direction.y = 1;
+				else
+					direction.y = -1;
+				speed.y = 1.0f;
+			}
+			else {
+				if (isAbove)
+					direction.y = -1;
+				else
+					direction.y = 1;
+				speed.y = 1.3f;
+			}
 			trackedPos = playerPosition;
-			speed.y = 1.0f;
 			return true;
 		}
 	}
@@ -241,19 +251,30 @@ bool Slide::trackPlayerHorizontal()
 		bool isAbove = playerPosition.y > position.y;
 		bool isRight = playerPosition.x > position.x;
 
-		float dTrack = minmunTrackDistance * tileSize;
+		float dTrack; 
+		
+		dTrack = minmunTrackDistance * tileSize;
 
 		bool trackedUp = isAbove && playerDirection.y < 0 && dist < dTrack;
 		bool trackedDown = !isAbove && playerDirection.y > 0 && dist < dTrack;
 
 		if (trackedUp || trackedDown) {
-			if (isRight)
-				direction.x = 1;
-			else
-				direction.x = -1;
+			if (mode == chase) {
+				if (isRight)
+					direction.x = 1;
+				else
+					direction.x = -1;
+				speed.x = 1.0f;
+			}
+			else {
+				if (isRight)
+					direction.x = -1;
+				else
+					direction.x = 1;
+				speed.x = 1.3f;
+			}
 
 			trackedPos = playerPosition;
-			speed.x = 1.0f;
 			return true;
 		}
 	}
