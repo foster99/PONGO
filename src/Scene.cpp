@@ -48,7 +48,7 @@ void Scene::init()
 	cam->setCurrentMenu(fixedCamera_01);
 	
 	currentTime = 0.0f;
-	projection	= glm::perspective(75.f / 180.f * PI, float(Game::instance().WINDOW_WIDTH) / float(Game::instance().WINDOW_HEIGHT), 0.1f, 1000.f);
+	projection	= glm::perspective(75.f / 180.f * PI, float(Game::instance().WINDOW_WIDTH) / float(Game::instance().WINDOW_HEIGHT), 0.1f, 100000.f);
 
 	world = new World(defaultShaderProgram);
 	world->setViewMatrix(view);

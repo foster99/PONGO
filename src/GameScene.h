@@ -36,6 +36,7 @@ public:
 	bool onCountDown(int deltaTime);
 	void loadCountDownModels();
 	void renderCountDown();
+	mat4 countDownViewMatrix();
 
 	// Collisions
 	void clearPositionHistories();
@@ -72,6 +73,7 @@ public:
 	// Win Level
 	static constexpr int lastLevel = 5;
 	void winLevel();
+	mat4 winAnimationViewMatrix();
 	void loadNextLevel();
 	void winGame();
 
@@ -120,6 +122,7 @@ private:
 
 	// Win variables
 	bool win;
+	bool teleportSound;
 	int wintime;
 
 	// Death Variables

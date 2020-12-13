@@ -317,6 +317,7 @@ void Game::loadSounds()
 	hitmarkerSound	= new Sound("hitmarker.wav", false);
 	countdownSound	= new Sound("countdown.wav", false);
 	deathSound		= new Sound("death.wav", false);
+	winLevelSound	= new Sound("winLevel.wav", false);
 
 	levelSong[0]	= nullptr;
 	levelSong[1]	= new Sound("levelSong_01.wav", true);
@@ -383,6 +384,11 @@ void Game::playCountdownSound()
 void Game::playDeathSound()
 {
 	deathSound->play();
+}
+
+void Game::playWinLevelSound()
+{
+	winLevelSound->play();
 }
 
 void Game::stopBackgroundSong()

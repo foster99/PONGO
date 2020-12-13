@@ -78,6 +78,7 @@ public:
 	void playHitmarkerSound();
 	void playCountdownSound();
 	void playDeathSound();
+	void playWinLevelSound();
 
 private:
 
@@ -111,6 +112,7 @@ private:
 	Sound* hitmarkerSound;
 	Sound* countdownSound;
 	Sound* deathSound;
+	Sound* winLevelSound;
 
 	void loadSounds();
 	void setUp_playing(int level);

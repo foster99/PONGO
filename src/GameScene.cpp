@@ -154,34 +154,99 @@ void GameScene::loadCountDownModels()
 void GameScene::renderCountDown()
 {
 	Model* model;
+	float zooming;
 
-	     if (countdown > 2000) model = model_3;
-	else if (countdown > 1000) model = model_2;
-	else                       model = model_1;
+	if (countdown > 2000)
+	{
+		model = model_3;
+		zooming = smoothstep(3000.f, 2000.f, float(countdown));
+	}
+	else if (countdown > 1000)
+	{
+		model = model_2;
+		zooming = smoothstep(2000.f, 1000.f, float(countdown));
+	}
+	else
+	{
+		model = model_1;
+		zooming = smoothstep(1000.f, 0.f, float(countdown));
+	}
 
-	float scale_factor = 5.f * float(getLevel()->getTileSize()) / model->getHeight();
+	float scale_factor = zooming * 10.5f * float(getLevel()->getTileSize()) / model->getHeight();
 	
-	vec3 position = getCameraChunkPosition() * vec3(1.f, 1.f, 0.33f);
+	vec3 position	= getCameraChunkPosition() * vec3(1.f, 1.f, 0.33f);
+	mat4 myView		= lookAtCurrentChunk();
 
 	// Compute ModelMatrix
 	mat4 modelMatrix = mat4(1.0f);
 	modelMatrix = translate(modelMatrix, position);
-	modelMatrix = scale(modelMatrix, vec3(scale_factor, scale_factor, scale_factor / 2.f));
+	modelMatrix = scale(modelMatrix, vec3(scale_factor)/ 2.f);
 	modelMatrix = translate(modelMatrix, -model->getCenter());
 
 	// Compute NormalMatrix
-	mat3 normalMatrix = transpose(inverse(mat3(view * modelMatrix)));
+	mat3 normalMatrix = transpose(inverse(mat3(myView * modelMatrix)));
 
 	// Set uniforms
 	numbersShader->use();
 	numbersShader->setUniform1b("bLighting", true);
 	numbersShader->setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
 	numbersShader->setUniformMatrix4f("projection", projection);
-	numbersShader->setUniformMatrix4f("modelview", view * modelMatrix);
+	numbersShader->setUniformMatrix4f("modelview", myView * modelMatrix);
 	numbersShader->setUniformMatrix3f("normalmatrix", normalMatrix);
 
 	model->render(*(numbersShader));
+}
 
+mat4 GameScene::countDownViewMatrix()
+{
+	// Compute chunk displacement
+	vec2 distanceToChunkCentre;
+	distanceToChunkCentre = float(level->getTileSize()) * (vec2(level->getChunkSize()) - vec2(1.f)) / 2.f;
+	distanceToChunkCentre = vec2(1, -1) * distanceToChunkCentre;
+
+	// Compute target Chunks
+	ivec2 mapSizeInChunks = level->getMapSizeInChunks();
+	int startChunk		= currentChunk;
+	int topCenterChunk	= mapSizeInChunks.x / 2;
+	int botCenterChunk	= topCenterChunk + (mapSizeInChunks.y - 1) * mapSizeInChunks.x;
+
+	// Compute Target Chunk Centres
+	vec2 startChunkCentre		= level->getFirstTileOfChunk(startChunk)->coords + distanceToChunkCentre;
+	vec2 topCenterChunkCentre	= level->getFirstTileOfChunk(topCenterChunk)->coords + distanceToChunkCentre;
+	vec2 botCenterChunkCentre	= level->getFirstTileOfChunk(botCenterChunk)->coords + distanceToChunkCentre;
+
+	float zDisplacement1 = float(level->getTileSize()) * (float(glm::min(level->getMapSizeInChunks().x * level->getChunkSize().x, level->getMapSizeInChunks().y * level->getChunkSize().y)) + 1.f) / 2.f;
+
+	if (countdown > 2000)
+	{
+		float extraDisp = 600.f * (1.f - smoothstep(3000.f, 2000.f, float(countdown)));
+		return lookAt(vec3(botCenterChunkCentre, zDisplacement1 + extraDisp), vec3(botCenterChunkCentre, 0.f), vec3(0.f, 1.f, 0.f));
+	}
+
+	if (countdown > 500)
+	{
+		// Compute Distances between Chunks
+		vec2 direction_1	= normalize(topCenterChunkCentre - botCenterChunkCentre);
+		float distance_1	= length(topCenterChunkCentre - botCenterChunkCentre);
+		float pasito_1		= smoothstep(2000.f, 500.f, float(countdown));
+
+		vec2 myCoords = botCenterChunkCentre + (direction_1 * distance_1 * pasito_1);
+
+		return lookAt(vec3(myCoords, zDisplacement1), vec3(myCoords, 0.f), vec3(0.f, 1.f, 0.f));
+	}
+
+
+	vec2 direction_2	= normalize(startChunkCentre - topCenterChunkCentre);
+	float distance_2	= length(startChunkCentre - topCenterChunkCentre);
+	float pasito_2		= smoothstep(500.f, 0.f, float(countdown));
+
+	vec2 myCoords = topCenterChunkCentre + (direction_2 * distance_2 * pasito_2);
+	
+	float zDisplacement2 = float(level->getTileSize()) * (float(glm::max(level->getChunkSize().x, level->getChunkSize().y)) + 1.f) / 2.f;
+	float extraDisp = (zDisplacement1 - zDisplacement2) * (1.f - pasito_2);
+
+
+	return lookAt(vec3(myCoords, zDisplacement2 + extraDisp), vec3(myCoords, 0.f), vec3(0.f, 1.f, 0.f));
 }
 
 void GameScene::clearPositionHistories()
@@ -439,7 +504,9 @@ void GameScene::blockBallsVerticalDirection()
 
 void GameScene::updateViewMatrix()
 {
-	if (cam->isFree())				view = cam->getViewMatrix();
+	if (win && wintime > 0)			view = winAnimationViewMatrix();
+	else if (countdown > 0)			view = countDownViewMatrix();
+	else if (cam->isFree())			view = cam->getViewMatrix();
 	else if (weAreInTransition())	view = transitionMatrix();
 	else							view = lookAtCurrentChunk();
 }
@@ -548,9 +615,43 @@ mat4 GameScene::lookAtCurrentChunk()
 void GameScene::winLevel()
 {
 	Game::instance().stopBackgroundSong();
-	// Play Win sound
+	teleportSound = false;
 	win = true;
 	wintime = 3000;
+}
+
+mat4 GameScene::winAnimationViewMatrix()
+{
+	// Compute Target Chunk Centres
+	vec3 chunkCentre = getCameraChunkPosition();
+	vec3 ballCentre = vec3(ball->getPosition(), chunkCentre.z / 2.f);
+
+	if (wintime < 2500 && !teleportSound)
+	{
+		Game::instance().playWinLevelSound();
+		teleportSound = true;
+	}
+
+	if (wintime > 2000)
+	{
+		// Compute Distances between Chunks
+		vec3 direction_1 = normalize(ballCentre - chunkCentre);
+		float distance_1 = length(ballCentre - chunkCentre);
+		float pasito_1   = smoothstep(3000.f, 2000.f, float(wintime));
+
+		vec3 myCoords = chunkCentre + (direction_1 * distance_1 * pasito_1);
+
+		return lookAt(myCoords, vec3(vec2(myCoords), 0.f), vec3(0.f, 1.f, 0.f));
+	}
+
+
+	float extraDisp = 400.f * smoothstep(2000.f, 0.f, float(wintime));
+
+	vec3 OBS = ballCentre - vec3(0.f, 0.f, extraDisp);
+	vec3 VRP = OBS - vec3(0.f, 0.f, 1.f);
+	vec3 UP  = vec3(0.f, 1.f, 0.f);
+
+	return lookAt(OBS, VRP, UP);
 }
 
 void GameScene::loadNextLevel()
