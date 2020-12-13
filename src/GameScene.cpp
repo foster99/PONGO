@@ -88,6 +88,8 @@ void GameScene::restartLevel()
 	level->setViewMatrix(view);
 	level->setProjMatrix(projection);
 
+	level->finishWallChecks();
+
 	dead = false;
 	win = false;
 	currentChunk = 0;

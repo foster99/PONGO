@@ -13,6 +13,7 @@
 #include "Ball.h"
 #include "Slide.h"
 #include "SpawnCheckpoint.h"
+#include "WallCheckpoint.h"
 #include "Texture.h"
 #include "ShaderProgram.h"
 
@@ -34,9 +35,14 @@ public:
 	static constexpr char blank						= '.';
 	static constexpr char spawnPoint				= 'S';
 
+	static constexpr char wallCheckVR = ')';
+	static constexpr char wallCheckVL = '(';
+	static constexpr char wallCheckHR = '}';
+	static constexpr char wallCheckHL = '{';
+
 	// Constructors
 	Level(GameScene* scene, int id = 1);
-	
+	void finishWallChecks();
 	// Destructors
 	~Level();
 	void free() override;
@@ -57,6 +63,8 @@ public:
 
 	Tile* getTile(ivec2 coords);
 	Tile* getTile(int i, int j);
+
+	Tile* loadTile(char tile, int i, int j);
 
 	// Chunks Info
 	Tile* getFirstTileOfChunk(int k);
@@ -79,7 +87,11 @@ private:
 
 	// TileMap
 	void loadTileMap();
-	Tile* loadTile(char tile, int i, int j);
+	void fillVerticalRight(WallCheckpoint* wall);
+	void fillVerticalLeft(WallCheckpoint* wall);
+	void fillHorizontalRight(WallCheckpoint* wall);
+	void fillHorizontalLeft(WallCheckpoint* wall);
+	//Tile* loadTile(char tile, int i, int j);
 
 	int tileSize;
 	ivec2 chunkSize;
@@ -114,7 +126,7 @@ private:
 	// Entities
 	vector<Slide*> slides;
 	vector<SpawnCheckpoint*> spawns;
-
+	vector<WallCheckpoint*> wallChecks;
 };
 
 

@@ -403,7 +403,31 @@ void Level::loadTileMap()
 
 					break;
 				}
+				case wallCheckVR:
+				case wallCheckVL:
+				case wallCheckHR:
+				case wallCheckHL:
+				{
+					WallCheckpoint* aux = new WallCheckpoint(this,tile);
+					ivec2 pos = ivec2(currentTile->coords / float(tileSize)) * ivec2(1, -1);
 
+					aux->addWall(pos);
+
+					if(tile == wallCheckVL)
+						pos += ivec2(+2, 0);
+					else if(wallCheckVR)
+						pos += ivec2(2, 0);
+					else if (wallCheckHR)
+						pos += ivec2(0, 2);
+					else if (wallCheckHL)
+						pos += ivec2(0, -2);
+
+					aux->addTrigger(pos);
+
+					wallChecks.push_back(aux);
+
+					break;
+				}
 				default: break;
 				}
 			}
@@ -422,6 +446,48 @@ void Level::loadTileMap()
 		throw std::string("Error parsing " + line).c_str();
 
 	fin.close();
+}
+
+void Level::finishWallChecks()
+{
+	for (int k = 0; k < wallChecks.size();++k) {
+		if (wallChecks[k]->getType() == wallCheckVR)
+			fillVerticalRight(wallChecks[k]);
+		else if (wallChecks[k]->getType() == wallCheckVR)
+			fillVerticalLeft(wallChecks[k]);
+		else if (wallChecks[k]->getType() == wallCheckVR)
+			fillHorizontalRight(wallChecks[k]);
+		else if (wallChecks[k]->getType() == wallCheckVR)
+			fillHorizontalLeft(wallChecks[k]);
+	}
+}
+
+void Level::fillVerticalRight(WallCheckpoint* wall)
+{
+	Tile* currTile = getTile(wall->getWall(0));
+	ivec2 pos = scene->toTileCoords(currTile->coords);
+	// j,i
+	while (!currTile->solid) {
+		pos += ivec2(0,1);
+		wall->addWall(pos);
+		wall->addTrigger(pos + ivec2(2, 0));
+		currTile = getTile(pos);
+	}
+}
+
+void Level::fillVerticalLeft(WallCheckpoint* wall)
+{
+
+}
+
+void Level::fillHorizontalRight(WallCheckpoint* wall)
+{
+
+}
+
+void Level::fillHorizontalLeft(WallCheckpoint* wall)
+{
+
 }
 
 Tile* Level::loadTile(char type, int i, int j)

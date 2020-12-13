@@ -27,6 +27,12 @@ public:
 	static constexpr char start		= 'S';
 	static constexpr char winTile	= 'W';
 
+	static constexpr char wallCheckVR = ')';
+	static constexpr char wallCheckVL = '(';
+	static constexpr char wallCheckHR = '}';
+	static constexpr char wallCheckHL = '{';
+
+
 	
 	Tile();
 
