@@ -5,6 +5,8 @@ WallCheckpoint::WallCheckpoint(Level* lev, char t)
 {
 	level = lev;
 	type = t;
+	triggered = false;
+
 }
 
 void WallCheckpoint::addWall(ivec2 tile)
@@ -19,26 +21,32 @@ void WallCheckpoint::addTrigger(ivec2 tile)
 
 bool WallCheckpoint::triggerInRange(ivec2 tile)
 {
-	bool found = false;
-	int i = 0;
-	int size = triggerTiles.size();
-
-	while (!found && i < size) {
-		if (tile == triggerTiles[i])
-			found = true;
-		i += 1;
-	}
-
-	if(!found)
-		return false;
 	
-	size = wallTiles.size();
+	if (!triggered) {
+		
+		bool found = false;
+		int i = 0;
+		int size = triggerTiles.size();
 
-	for (i = 0; i < size; ++i) {
-		level->loadTile('#', wallTiles[i].x, wallTiles[i].y);
+		while (!found && i < size) {
+			if (tile == triggerTiles[i])
+				found = true;
+			i += 1;
+		}
+
+		if (!found)
+			return false;
+
+		size = wallTiles.size();
+
+		for (i = 0; i < size; ++i) {
+			level->loadTile('#', wallTiles[i].x, wallTiles[i].y);
+		}
+
+		triggered = true;
 	}
 
-	return true;
+	return false;
 }
 
 ivec2 WallCheckpoint::getWall(int p)
@@ -70,4 +78,14 @@ int WallCheckpoint::getTriggerSize()
 char WallCheckpoint::getType()
 {
 	return type;
+}
+
+void WallCheckpoint::godTrigger()
+{
+	int size = wallTiles.size();
+
+	for (int i = 0; i < size; ++i) {
+		level->loadTile('#', wallTiles[i].y, wallTiles[i].x);
+	}
+
 }

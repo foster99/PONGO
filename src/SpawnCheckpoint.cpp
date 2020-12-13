@@ -17,6 +17,7 @@ void SpawnCheckpoint::init()
 {
 	this->Entity::init();
 	renderable = true;
+	triggered = false;
 }
 
 void SpawnCheckpoint::update(int deltaTime)
@@ -100,5 +101,8 @@ vec4 SpawnCheckpoint::getBoundingBox()
 
 void SpawnCheckpoint::collided()
 {
-	scene->getLevel()->addSpawnPoint(position);
+	if (!triggered) {
+		scene->getLevel()->addSpawnPoint(position);
+		triggered = true;
+	}
 }

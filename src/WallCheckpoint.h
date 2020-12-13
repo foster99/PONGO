@@ -25,13 +25,16 @@ public:
 
 	int getWallSize();
 	int getTriggerSize();
-
 	char getType();
+
+	// PURE TESTING REMOVE LATER
+	void godTrigger();
 private:
 	
 	Level* level;
 
 	char type;
+	bool triggered;
 
 	vector<ivec2> wallTiles;
 	vector<ivec2> triggerTiles;

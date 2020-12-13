@@ -144,6 +144,16 @@ void Level::renderTileMap() const
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
 
+			case wallCheckVR:
+			case wallCheckVL:
+			case wallCheckHR:
+			case wallCheckHL:
+				shader = cubeShader;
+				model = cubeModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, -tileSize));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
 			default:
 				shader	= nullptr;
 				model	= nullptr;
@@ -255,11 +265,22 @@ void Level::removeSpawnPoint()
 	}
 }
 
+void Level::checkTrigger(ivec2 tilePos)
+{
+	for (auto wallChk : wallChecks) {
+		if (wallChk->triggerInRange(tilePos))
+			return;
+	}
+}
+
 // PURE TESTING REMOVE LATER
 void Level::changeSpawnPoint()
 {
-	if (spawns.size() > 1)
-		spawns[1]->collided();
+	/*if (spawns.size() > 1)
+		spawns[1]->collided();*/
+	for (auto wallChk : wallChecks) {
+		wallChk->godTrigger();
+	}
 }
 
 
@@ -453,11 +474,11 @@ void Level::finishWallChecks()
 	for (int k = 0; k < wallChecks.size();++k) {
 		if (wallChecks[k]->getType() == wallCheckVR)
 			fillVerticalRight(wallChecks[k]);
-		else if (wallChecks[k]->getType() == wallCheckVR)
+		else if (wallChecks[k]->getType() == wallCheckVL)
 			fillVerticalLeft(wallChecks[k]);
-		else if (wallChecks[k]->getType() == wallCheckVR)
+		else if (wallChecks[k]->getType() == wallCheckHR)
 			fillHorizontalRight(wallChecks[k]);
-		else if (wallChecks[k]->getType() == wallCheckVR)
+		else if (wallChecks[k]->getType() == wallCheckHL)
 			fillHorizontalLeft(wallChecks[k]);
 	}
 }
@@ -471,23 +492,52 @@ void Level::fillVerticalRight(WallCheckpoint* wall)
 		pos += ivec2(0,1);
 		wall->addWall(pos);
 		wall->addTrigger(pos + ivec2(2, 0));
+		currTile->type = wallCheckVR;
 		currTile = getTile(pos);
 	}
 }
 
 void Level::fillVerticalLeft(WallCheckpoint* wall)
 {
-
+	Tile* currTile = getTile(wall->getWall(0));
+	ivec2 pos = scene->toTileCoords(currTile->coords);
+	// j,i
+	while (!currTile->solid) {
+		pos += ivec2(0, 1);
+		wall->addWall(pos);
+		wall->addTrigger(pos + ivec2(-2, 0));
+		currTile->type = wallCheckVL;
+		currTile = getTile(pos);
+	}
 }
 
 void Level::fillHorizontalRight(WallCheckpoint* wall)
 {
-
+	Tile* currTile = getTile(wall->getWall(0));
+	ivec2 pos = scene->toTileCoords(currTile->coords);
+	// j,i
+	while (!currTile->solid) {
+		pos += ivec2(1, 0);
+		wall->addWall(pos);
+		wall->addTrigger(pos + ivec2(0, 2));
+		currTile->type = wallCheckHR;
+		currTile = getTile(pos);
+	}
 }
 
 void Level::fillHorizontalLeft(WallCheckpoint* wall)
 {
-
+	
+	Tile* currTile = getTile(wall->getWall(0));
+	ivec2 pos = scene->toTileCoords(currTile->coords);
+	// j,i
+	while (!currTile->solid) {
+		pos += ivec2(1, 0);
+		wall->addWall(pos);
+		wall->addTrigger(pos + ivec2(0, -2));
+		currTile->type = wallCheckHL;
+		currTile = getTile(pos);
+	}
 }
 
 Tile* Level::loadTile(char type, int i, int j)

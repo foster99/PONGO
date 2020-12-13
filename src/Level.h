@@ -77,6 +77,7 @@ public:
 	void checkIfBallCollidedWithACheckpoint();
 	void addSpawnPoint(vec2 pos);
 	void removeSpawnPoint();
+	void checkTrigger(ivec2 tilePos);
 
 	//PURE TESTING REMOVE LATER
 	void changeSpawnPoint();
