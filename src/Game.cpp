@@ -193,6 +193,7 @@ void Game::keyPressed_playing(int key, bool specialKey)
 		case 'g':	toggleGodMode();				break;
 		case ' ':	gameScene.playerPressedSpace(); break;
 		case 'p':	gameScene.changeSpawnPoint();   break; // PURE TESTING REMOVE LATER
+		case '+':   gameScene.winLevel();			break;
 		default:	break;
 		}
 	}
@@ -317,11 +318,12 @@ void Game::loadSounds()
 	countdownSound	= new Sound("countdown.wav", false);
 	deathSound		= new Sound("death.wav", false);
 
-	levelSong[0]	= new Sound("levelSong_01.wav", true);
+	levelSong[0]	= nullptr;
 	levelSong[1]	= new Sound("levelSong_01.wav", true);
-	levelSong[2]	= new Sound("levelSong_01.wav", true);
+	levelSong[2]	= new Sound("backgroundSong.wav", true);
 	levelSong[3]	= new Sound("levelSong_01.wav", true);
 	levelSong[4]	= new Sound("levelSong_01.wav", true);
+	levelSong[5]	= new Sound("levelSong_01.wav", true);
 
 	gotaSound[0]	= new Sound("gota_00.wav", false);
 	gotaSound[1]	= new Sound("gota_01.wav", false);

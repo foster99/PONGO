@@ -6,7 +6,7 @@ void GameScene::init()
 	this->Scene::init();
 
 	levelID = 1;
-	restartLevel(levelID);
+	restartLevel();
 
 	speedDivisor = float(level->getTileSize());
 	
@@ -52,6 +52,19 @@ void GameScene::update(int deltaTime)
 		dead = false;
 	}
 
+	if (win)
+	{
+		Game::instance().stopLevelSong();
+		if (wintime > 0)
+		{
+			wintime -= deltaTime;
+			return;
+		}
+
+		loadNextLevel();
+		return;
+	}
+
 	// Rope blocks
 	ball->restartDirectionBlocks();
 
@@ -67,7 +80,7 @@ void GameScene::update(int deltaTime)
 	clearPositionHistories();
 }
 
-void GameScene::restartLevel(int levelID)
+void GameScene::restartLevel()
 {
 	initBall();
 
@@ -76,6 +89,7 @@ void GameScene::restartLevel(int levelID)
 	level->setProjMatrix(projection);
 
 	dead = false;
+	win = false;
 	currentChunk = 0;
 	transitionR = false;
 	transitionL = false;
@@ -244,19 +258,23 @@ bool GameScene::checkCollision_Ball_World(int tick, int deltaTime)
 
 	for (Tile* tile : ballContourTileList.down)
 	{
-		if (tile->solid) downCount++;
+		if (tile->solid)					downCount++;
+		if (tile->type == Tile::winTile)	winLevel();
 	}
 	for (Tile* tile : ballContourTileList.up)
 	{
-		if (tile->solid) upCount++;
+		if (tile->solid)					upCount++;
+		if (tile->type == Tile::winTile)	winLevel();
 	}
 	for (Tile* tile : ballContourTileList.right)
 	{
-		if (tile->solid) rightCount++;
+		if (tile->solid)					rightCount++;
+		if (tile->type == Tile::winTile)	winLevel();
 	}
 	for (Tile* tile : ballContourTileList.left)
 	{
-		if (tile->solid) leftCount++;
+		if (tile->solid)					leftCount++;
+		if (tile->type == Tile::winTile)	winLevel();
 	}
 
 	
@@ -525,6 +543,33 @@ mat4 GameScene::lookAtCurrentChunk()
 	vec3 currentChunkCenterCoords = getCameraChunkPosition();
 
 	return lookAt(currentChunkCenterCoords, vec3(currentChunkCenterCoords.x, currentChunkCenterCoords.y, 0.f), vec3(0.f, 1.f, 0.f));
+}
+
+void GameScene::winLevel()
+{
+	Game::instance().stopBackgroundSong();
+	// Play Win sound
+	win = true;
+	wintime = 3000;
+}
+
+void GameScene::loadNextLevel()
+{
+	if (levelID == lastLevel)
+	{
+		winGame();
+		return;
+	}
+
+	levelID++;
+	restartLevel();
+}
+
+void GameScene::winGame()
+{
+	// End game
+	// Show thanks
+	// Go to Start Menu
 }
 
 void GameScene::initBall()

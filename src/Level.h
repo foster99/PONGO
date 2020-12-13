@@ -31,9 +31,8 @@ public:
 	static constexpr char horizontalSlideChase		= '_';
 	static constexpr char horizontalSlideEscape		= '-';
 
-	static constexpr char blank				= '.';
-	static constexpr char spawnPoint		= 'S';
-	static constexpr char endPointChar		= 'E';
+	static constexpr char blank						= '.';
+	static constexpr char spawnPoint				= 'S';
 
 	// Constructors
 	Level(GameScene* scene, int id = 1);
@@ -71,6 +70,9 @@ public:
 	void addSpawnPoint(vec2 pos);
 	void removeSpawnPoint();
 
+	// wining
+	void checkIfBallCollidedWithWinPoint();
+
 	//PURE TESTING REMOVE LATER
 	void changeSpawnPoint();
 
@@ -90,7 +92,7 @@ private:
 	vector<Tile*> firstTileOfChunk;
 
 	vec2 startPoint;
-	vec2 endPoint;
+	vec2 winPoint;
 
 	// Game Models
 	void loadModels();

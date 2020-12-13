@@ -104,7 +104,7 @@ private:
 	Sound* backgroundSong;
 	
 	Sound* gotaSound[14];
-	Sound* levelSong[5];
+	Sound* levelSong[6];
 	
 	Sound* buttonSound;
 	Sound* doorSound;

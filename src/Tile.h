@@ -25,7 +25,7 @@ public:
 	static constexpr char ropeV		= '"';
 
 	static constexpr char start		= 'S';
-	static constexpr char end		= 'E';
+	static constexpr char winTile	= 'W';
 
 	
 	Tile();

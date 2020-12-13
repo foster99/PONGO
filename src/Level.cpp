@@ -136,6 +136,14 @@ void Level::renderTileMap() const
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
 
+			case Tile::winTile:
+				shader		= cubeShader;
+				model		= cubeModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+
 			default:
 				shader	= nullptr;
 				model	= nullptr;
@@ -244,6 +252,17 @@ void Level::removeSpawnPoint()
 	if (spawnPositions.size() > 1) {
 		spawnPositions.pop();
 		scene->setSpawnPoint(spawnPositions.top());
+	}
+}
+
+void Level::checkIfBallCollidedWithWinPoint()
+{
+	vec2 ballTileCoords = getTile(scene->toTileCoords(scene->getPlayerPos()))->coords;
+
+	if (ballTileCoords == winPoint)
+	{
+		scene->winLevel();
+		return;
 	}
 }
 
@@ -380,7 +399,7 @@ void Level::loadTileMap()
 					SpawnCheckpoint* aux = new SpawnCheckpoint(scene,slideModel,slideShader);
 					aux->init();
 					
-					startPoint = float(tileSize) * vec2(float(j) + 0.5f, -(float(i) + 0.5f));
+					startPoint = currentTile->coords;
 
 					aux->setPosition(startPoint);
 
@@ -395,11 +414,7 @@ void Level::loadTileMap()
 
 					break;
 				}
-				case endPointChar:
-				{
-					endPoint = currentTile->coords;
-					break;
-				}
+
 				default: break;
 				}
 			}
@@ -448,6 +463,11 @@ Tile* Level::loadTile(char type, int i, int j)
 		tile = Tile(coords, chunk, type, true, true);
 		return &map[i][j];
 	
+	case Tile::winTile:
+		winPoint = coords;
+		tile = Tile(coords, chunk, type, false, false);
+		return &map[i][j];
+
 	default: break;
 	}
 

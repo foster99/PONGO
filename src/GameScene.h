@@ -30,9 +30,9 @@ public:
 	void render() override;
 	void update(int deltaTime) override;
 
-	void restartLevel(int levelID);
+	void restartLevel();
 	
-	// CountDown
+	// Initial CountDown
 	bool onCountDown(int deltaTime);
 	void loadCountDownModels();
 	void renderCountDown();
@@ -68,6 +68,12 @@ public:
 	int getChunkOfCoords(vec2 coords);
 	void updateCurrentChunk();
 	mat4 lookAtCurrentChunk();
+
+	// Win Level
+	static constexpr int lastLevel = 5;
+	void winLevel();
+	void loadNextLevel();
+	void winGame();
 
 	// Ball Control
 	void initBall();
@@ -114,7 +120,7 @@ private:
 
 	// Win variables
 	bool win;
-	int winTime;
+	int wintime;
 
 	// Death Variables
 	bool dead;
