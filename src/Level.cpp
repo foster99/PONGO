@@ -255,17 +255,6 @@ void Level::removeSpawnPoint()
 	}
 }
 
-void Level::checkIfBallCollidedWithWinPoint()
-{
-	vec2 ballTileCoords = getTile(scene->toTileCoords(scene->getPlayerPos()))->coords;
-
-	if (ballTileCoords == winPoint)
-	{
-		scene->winLevel();
-		return;
-	}
-}
-
 // PURE TESTING REMOVE LATER
 void Level::changeSpawnPoint()
 {

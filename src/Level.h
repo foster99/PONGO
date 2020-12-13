@@ -70,9 +70,6 @@ public:
 	void addSpawnPoint(vec2 pos);
 	void removeSpawnPoint();
 
-	// wining
-	void checkIfBallCollidedWithWinPoint();
-
 	//PURE TESTING REMOVE LATER
 	void changeSpawnPoint();
 
