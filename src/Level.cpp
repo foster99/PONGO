@@ -157,7 +157,7 @@ void Level::renderTileMap() const
 				shader		= cubeShader;
 				model		= snakeModel;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
-				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = scale(modelMatrix, vec3(0.5f * float(tileSize) / model->getHeight()));
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
 

@@ -30,7 +30,7 @@ void Trail::commitPositions()
             positions.push_back(pos);
         }
         selectedList = false;
-        future_positions_2 = vector<vec2>(0);
+        future_positions_2.clear();
     }
     else
     {
@@ -39,7 +39,7 @@ void Trail::commitPositions()
             positions.push_back(pos);
         }
         selectedList = true;
-        future_positions_1 = vector<vec2>(0);
+        future_positions_1.clear();
     }
 
     timeToChange = totalTime;
@@ -131,10 +131,11 @@ void Trail::render()
 
 void Trail::clear()
 {
-    timeToChange        = totalTime;
-    positions           = vector<vec2>(0);
-    future_positions_1  = vector<vec2>(0);
-    future_positions_2  = vector<vec2>(0);
+    timeToChange = totalTime;
+
+    positions.clear();
+    future_positions_1.clear();
+    future_positions_2.clear();
 }
 
 bool Trail::ballCollidedWithTrail()
