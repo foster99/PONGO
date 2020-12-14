@@ -2,6 +2,7 @@
 #define _LEVEL_INCLUDE
 
 
+#include <list>
 #include <vector>
 #include <stack>
 #include <string>
@@ -22,6 +23,7 @@
 using namespace std;
 
 class GameScene;
+typedef vector<Tile*> Door;
 
 class Level : public World
 {
@@ -33,6 +35,7 @@ public:
 	// Destructors
 	~Level();
 
+	void init();
 	void free() override;
 	void update(int deltaTime);
 
@@ -48,8 +51,13 @@ public:
 	bool ballIsOnTrail();
 	bool checkIfBallCollidedWithTrail();
 	void addPointToTrail(vec2 pos);
+
+	void closeAllSnakeDoors();
+	void extrudeAllTheSnakeDoors();
+	void addSnakeClosedDoor(Tile* startingTile);
 	void openThisSnakeDoor(Tile* tile);
-	vector<vector<Tile*>> snake_door_list;
+	list<Door*> snake_closed_door_list;
+	list<Door*> snake_opened_door_list;
 
 
 	// TileMap Info
@@ -113,6 +121,8 @@ private:
 	void loadModels();
 	Model* cubeModel;
 	Model* snakeModel;
+	Model* snakeClosedDoorModel;
+	Model* snakeOpenedDoorModel;
 	Model* voidCubeModel;
 	Model* ropeModel;
 	Model* pinchoModel;

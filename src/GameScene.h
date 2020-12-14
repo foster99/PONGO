@@ -98,7 +98,9 @@ public:
 	int getPlayerChunk();
 
 	// Aux Methods
+	// Retorna las coordenadas de la tile en formato (J, I)
 	ivec2 toTileCoords(vec2 coords);
+	// Retorna las coordenadas de la tile en formato (J, -I)
 	ivec2 toTileCoordsNotInverting(vec2 coords);
 
 	//PURE TESTING REMOVE LATER

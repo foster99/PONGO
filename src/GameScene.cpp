@@ -96,8 +96,9 @@ void GameScene::restartLevel()
 	initBall();
 
 	level = new Level(this, levelID);
-	level->setViewMatrix(view);
-	level->setProjMatrix(projection);
+	level->init();
+	//level->setViewMatrix(view);
+	//level->setProjMatrix(projection);
 
 	dead			= false;
 	win				= false;
@@ -108,8 +109,7 @@ void GameScene::restartLevel()
 	transitionD		= false;
 	countdown		= 3000;
 	countdownStarted= false;
-	level->finishWallChecks();
-	// Restart Song
+
 }
 
 ivec2 GameScene::toTileCoords(vec2 coords)
@@ -276,6 +276,7 @@ void GameScene::killBall()
 	dead	 = true;
 	deadtime = 1000.f;
 	level->setTrail(false);
+	level->closeAllSnakeDoors();
 
 	Game::instance().playDeathSound();
 }
@@ -339,22 +340,56 @@ bool GameScene::checkCollision_Ball_World(int tick, int deltaTime)
 
 	for (Tile* tile : ballContourTileList.down)
 	{
-		if (tile->solid)					downCount++;
-		if (tile->type == Tile::winTile)	winLevel();
+		if (tile->solid)
+		{
+			if (level->ballIsOnTrail() && tile->type == Tile::closed_snake_door)
+			{
+				level->openThisSnakeDoor(tile);
+				level->setTrail(false);
+			}
+			else downCount++;
+		}
+
+		if (tile->type == Tile::winTile)
+			winLevel();
 	}
 	for (Tile* tile : ballContourTileList.up)
 	{
-		if (tile->solid)					upCount++;
+		if (tile->solid)
+		{
+			if (level->ballIsOnTrail() && tile->type == Tile::closed_snake_door)
+			{
+				level->openThisSnakeDoor(tile);
+				level->setTrail(false);
+			}
+			else upCount++;
+		}
 		if (tile->type == Tile::winTile)	winLevel();
 	}
 	for (Tile* tile : ballContourTileList.right)
 	{
-		if (tile->solid)					rightCount++;
+		if (tile->solid)
+		{
+			if (level->ballIsOnTrail() && tile->type == Tile::closed_snake_door)
+			{
+				level->openThisSnakeDoor(tile);
+				level->setTrail(false);
+			}
+			else rightCount++;
+		}
 		if (tile->type == Tile::winTile)	winLevel();
 	}
 	for (Tile* tile : ballContourTileList.left)
 	{
-		if (tile->solid)					leftCount++;
+		if (tile->solid)
+		{
+			if (level->ballIsOnTrail() && tile->type == Tile::closed_snake_door)
+			{
+				level->openThisSnakeDoor(tile);
+				level->setTrail(false);
+			}
+			else leftCount++;
+		}
 		if (tile->type == Tile::winTile)	winLevel();
 	}
 
@@ -364,7 +399,7 @@ bool GameScene::checkCollision_Ball_World(int tick, int deltaTime)
 
 		// Trails
 	float tileSize = float(level->getTileSize());
-	if (!level->ballIsOnTrail() && currentBallCenterTile->type == Tile::snake && length(currentBallCenterTile->coords - ball->getPosition()) < tileSize/2.f)
+	if (!level->ballIsOnTrail() && currentBallCenterTile->type == Tile::snake && length(currentBallCenterTile->coords - ball->getPosition()) < 3.f * tileSize/4.f)
 	{
 		level->setTrail(true);
 		ball->setPosition(currentBallCenterTile->coords);
