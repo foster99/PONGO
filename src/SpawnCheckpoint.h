@@ -24,6 +24,7 @@ public:
 
 private:
 	bool renderable;
+	bool triggered;
 };
 
 #endif

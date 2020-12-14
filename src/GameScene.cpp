@@ -108,6 +108,8 @@ void GameScene::restartLevel()
 	transitionD		= false;
 	countdown		= 3000;
 	countdownStarted= false;
+	level->finishWallChecks();
+	// Restart Song
 }
 
 ivec2 GameScene::toTileCoords(vec2 coords)
