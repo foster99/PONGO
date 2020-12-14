@@ -17,6 +17,9 @@ Level::Level(GameScene* scene, int id)
 	loadShaders();
 	loadModels();
 	loadTileMap();
+
+	onTrail = false;
+	trail = new Trail(scene);
 }
 
 Level::~Level()
@@ -34,6 +37,9 @@ void Level::update(int deltaTime)
 	this->setProjMatrix(scene->getProjMatrix());
 	this->setViewMatrix(scene->getViewMatrix());
 
+	if (onTrail)
+		trail->update(deltaTime);
+
 	for (auto* slide : slides)
 		slide->Slide::update(deltaTime);
 }
@@ -45,6 +51,9 @@ void Level::render() const
 	renderTileMap();
 	renderSlides();
 	renderSpawns();
+	
+	if (onTrail)
+		trail->render();
 }
 
 void Level::renderSlides() const
@@ -143,6 +152,14 @@ void Level::renderTileMap() const
 				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
+				
+			case Tile::snake:
+				shader		= cubeShader;
+				model		= snakeModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
 
 			default:
 				shader	= nullptr;
@@ -174,6 +191,28 @@ void Level::renderSpawns() const
 		spawn->setProjMatrix(projMatrix);
 		spawn->SpawnCheckpoint::render();
 	}
+}
+
+void Level::setTrail(bool start)
+{
+	if (!start) trail->clear();
+
+	onTrail = start;
+}
+
+bool Level::ballIsOnTrail()
+{
+	return onTrail;
+}
+
+bool Level::checkIfBallCollidedWithTrail()
+{
+	return trail->ballCollidedWithTrail();
+}
+
+void Level::addPointToTrail(vec2 pos)
+{
+	trail->addPoint(pos);
 }
 
 int Level::getTileSize()
@@ -457,6 +496,10 @@ Tile* Level::loadTile(char type, int i, int j)
 		tile = Tile(coords, chunk, type, false, false);
 		return &map[i][j];
 
+	case Tile::snake:
+		tile = Tile(coords, chunk, type, false, false);
+		return &map[i][j];
+
 	default: break;
 	}
 
@@ -466,6 +509,12 @@ Tile* Level::loadTile(char type, int i, int j)
 
 void Level::loadModels()
 {
+	voidCubeModel = new Model();
+	voidCubeModel->loadFromFile("models/voidCube.obj", *cubeShader);
+
+	snakeModel = new Model();
+	snakeModel->loadFromFile("models/snake.obj", *cubeShader);
+
 	ropeModel = new Model();
 	ropeModel->loadFromFile("models/rope.obj", *ropeShader);
 

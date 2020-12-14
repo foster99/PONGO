@@ -194,6 +194,8 @@ void Game::keyPressed_playing(int key, bool specialKey)
 		case ' ':	gameScene.playerPressedSpace(); break;
 		case 'p':	gameScene.changeSpawnPoint();   break; // PURE TESTING REMOVE LATER
 		case '+':   gameScene.winLevel();			break;
+		case 'n':	gameScene.getLevel()->setTrail(true); break;
+		case 'm':	gameScene.getLevel()->setTrail(false); break;
 		default:	break;
 		}
 	}

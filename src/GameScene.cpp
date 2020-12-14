@@ -76,7 +76,18 @@ void GameScene::update(int deltaTime)
 
 	// Collisions
 	checkCollisionsAndUpdateEntitiesPositions(deltaTime);
+
 	level->checkIfBallCollidedWithACheckpoint();
+	
+	if (level->ballIsOnTrail())
+	{
+		if (level->checkIfBallCollidedWithTrail()) killBall();
+
+		vec2 pos = getPlayerPos();
+
+		level->addPointToTrail(pos);
+	}
+
 	clearPositionHistories();
 }
 
@@ -88,16 +99,15 @@ void GameScene::restartLevel()
 	level->setViewMatrix(view);
 	level->setProjMatrix(projection);
 
-	dead = false;
-	win = false;
-	currentChunk = 0;
-	transitionR = false;
-	transitionL = false;
-	transitionU = false;
-	transitionD = false;
-	countdown = 3000;
-	countdownStarted = false;
-	// Restart Song
+	dead			= false;
+	win				= false;
+	currentChunk	= 0;
+	transitionR		= false;
+	transitionL		= false;
+	transitionU		= false;
+	transitionD		= false;
+	countdown		= 3000;
+	countdownStarted= false;
 }
 
 ivec2 GameScene::toTileCoords(vec2 coords)
@@ -263,6 +273,8 @@ void GameScene::killBall()
 
 	dead	 = true;
 	deadtime = 1000.f;
+	level->setTrail(false);
+
 	Game::instance().playDeathSound();
 }
 
@@ -342,7 +354,11 @@ bool GameScene::checkCollision_Ball_World(int tick, int deltaTime)
 		if (tile->type == Tile::winTile)	winLevel();
 	}
 
-	
+
+	if (level->getTile(toTileCoords(ball->getPosition()))->type == Tile::snake)
+		level->setTrail(true);
+
+
 	if (ball->isOnDeathTiles()) killBall();
 
 

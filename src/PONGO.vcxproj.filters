@@ -64,6 +64,7 @@
     <ClCompile Include="SpawnCheckpoint.cpp">
       <Filter>Source Files\3D\Entity</Filter>
     </ClCompile>
+    <ClCompile Include="Trail.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderProgram.h">
@@ -129,6 +130,7 @@
     <ClInclude Include="SpawnCheckpoint.h">
       <Filter>Header Files\3D\Entity</Filter>
     </ClInclude>
+    <ClInclude Include="Trail.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">

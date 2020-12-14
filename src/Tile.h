@@ -26,6 +26,7 @@ public:
 
 	static constexpr char start		= 'S';
 	static constexpr char winTile	= 'W';
+	static constexpr char snake		= 'X';
 
 	
 	Tile();

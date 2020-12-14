@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "Trail.h"
 #include "Tile.h"
 #include "World.h"
 #include "Ball.h"
@@ -39,8 +40,8 @@ public:
 	
 	// Destructors
 	~Level();
-	void free() override;
 
+	void free() override;
 	void update(int deltaTime);
 
 	// Rendering
@@ -49,8 +50,14 @@ public:
 	void renderTileMap() const;
 	void renderSpawns() const;
 
+	// Trail
+	void setTrail(bool state);
+	bool ballIsOnTrail();
+	bool checkIfBallCollidedWithTrail();
+	void addPointToTrail(vec2 pos);
+
 	// TileMap Info
-	int	getTileSize();
+	int	  getTileSize();
 	ivec2 getChunkSize();
 	ivec2 getMapSizeInTiles();
 	ivec2 getMapSizeInChunks();
@@ -77,6 +84,10 @@ private:
 
 	GameScene* scene;
 
+	// Trail things
+	Trail* trail;
+	bool onTrail;
+
 	// TileMap
 	void loadTileMap();
 	Tile* loadTile(char tile, int i, int j);
@@ -94,6 +105,8 @@ private:
 	// Game Models
 	void loadModels();
 	Model* cubeModel;
+	Model* snakeModel;
+	Model* voidCubeModel;
 	Model* ropeModel;
 	Model* pinchoModel;
 	Model* bolaPinchoModel;
