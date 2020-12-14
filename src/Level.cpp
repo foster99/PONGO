@@ -51,7 +51,7 @@ void Level::render() const
 	renderTileMap();
 	renderSlides();
 	renderSpawns();
-	
+	renderButtons();
 	if (onTrail)
 		trail->render();
 }
@@ -161,14 +161,21 @@ void Level::renderTileMap() const
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
 
-			case wallCheckVR:
-			case wallCheckVL:
-			case wallCheckHR:
-			case wallCheckHL:
+			case Tile::wallCheckVR:
+			case Tile::wallCheckVL:
+			case Tile::wallCheckHR:
+			case Tile::wallCheckHL:
 				shader = cubeShader;
 				model = cubeModel;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, -tileSize));
 				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+			case Tile::switchable:
+				shader = cubeShader;
+				model  =  cubeModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
+				modelMatrix = scale(modelMatrix, vec3(0.5f * float(tileSize) / model->getHeight()));
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
 			default:
@@ -200,6 +207,16 @@ void Level::renderSpawns() const
 		spawn->setViewMatrix(viewMatrix);
 		spawn->setProjMatrix(projMatrix);
 		spawn->SpawnCheckpoint::render();
+	}
+}
+
+void Level::renderButtons() const
+{
+	for (auto* but : buttons)
+	{
+		but->setViewMatrix(viewMatrix);
+		but->setProjMatrix(projMatrix);
+		but->render();
 	}
 }
 
@@ -443,35 +460,35 @@ void Level::loadTileMap()
 			{
 				switch (tile)
 				{
-				case verticalSlideChase:
+				case Tile::verticalSlideChase:
 				{
 					Slide* slide = new Slide(scene, slideModel, slideShader);
 					slide->Slide::init(tileSize, Slide::vertical, currentTile->coords, vec2(0.f, 1.f), vec2(0.f, 0.5f), Slide::chase);
 					slides.push_back(slide);
 					break;
 				}
-				case horizontalSlideChase:
+				case Tile::horizontalSlideChase:
 				{
 					Slide* slide = new Slide(scene, slideModel, slideShader);
 					slide->Slide::init(tileSize, Slide::horizontal, currentTile->coords, vec2(1.f, 0.f), vec2(0.5f, 0.f), Slide::chase);
 					slides.push_back(slide);
 					break;
 				}
-				case verticalSlideEscape:
+				case Tile::verticalSlideEscape:
 				{
 					Slide* slide = new Slide(scene, slideModel, slideShader);
 					slide->Slide::init(tileSize, Slide::vertical, currentTile->coords, vec2(0.f, 1.f), vec2(0.f, 0.5f), Slide::escape);
 					slides.push_back(slide);
 					break;
 				}
-				case horizontalSlideEscape:
+				case Tile::horizontalSlideEscape:
 				{
 					Slide* slide = new Slide(scene, slideModel, slideShader);
 					slide->Slide::init(tileSize, Slide::horizontal, currentTile->coords, vec2(1.f, 0.f), vec2(0.5f, 0.f), Slide::escape);
 					slides.push_back(slide);
 					break;
 				}
-				case spawnPoint:
+				case Tile::spawnPoint:
 				{
 					SpawnCheckpoint* aux = new SpawnCheckpoint(scene,slideModel,slideShader);
 					aux->init();
@@ -491,29 +508,50 @@ void Level::loadTileMap()
 
 					break;
 				}
-				case wallCheckVR:
-				case wallCheckVL:
-				case wallCheckHR:
-				case wallCheckHL:
+				case Tile::wallCheckVR:
+				case Tile::wallCheckVL:
+				case Tile::wallCheckHR:
+				case Tile::wallCheckHL:
 				{
 					WallCheckpoint* aux = new WallCheckpoint(this,tile);
 					ivec2 pos = ivec2(currentTile->coords / float(tileSize)) * ivec2(1, -1);
 
 					aux->addWall(pos);
 
-					if(tile == wallCheckVL)
+					if(tile == Tile::wallCheckVL)
 						pos += ivec2(+2, 0);
-					else if(wallCheckVR)
+					else if(Tile::wallCheckVR)
 						pos += ivec2(2, 0);
-					else if (wallCheckHR)
+					else if (Tile::wallCheckHR)
 						pos += ivec2(0, 2);
-					else if (wallCheckHL)
+					else if (Tile::wallCheckHL)
 						pos += ivec2(0, -2);
 
 					aux->addTrigger(pos);
 
 					wallChecks.push_back(aux);
 
+					break;
+				}
+				case Tile::pressedButton:
+				case Tile::releasedButton:
+				{
+					Button* aux = new Button(this, buttonShader, buttonOFFModel, buttonONModel, tile);
+
+					ivec2 pos = ivec2(currentTile->coords / float(tileSize)) * ivec2(1, -1);
+					aux->setTile(pos);
+					aux->setVector(&modifiablePositions);
+					buttons.push_back(aux);
+
+					modifiablePositions.push_back(pos);
+					
+					break;
+				}
+				case Tile::switchable:
+				{
+					ivec2 pos = ivec2(currentTile->coords / float(tileSize)) * ivec2(1, -1);
+					modifiablePositions.push_back(pos);
+					
 					break;
 				}
 				default: break;
@@ -539,14 +577,24 @@ void Level::loadTileMap()
 void Level::finishWallChecks()
 {
 	for (int k = 0; k < wallChecks.size();++k) {
-		if (wallChecks[k]->getType() == wallCheckVR)
+		if (wallChecks[k]->getType() == Tile::wallCheckVR)
 			fillVerticalRight(wallChecks[k]);
-		else if (wallChecks[k]->getType() == wallCheckVL)
+		else if (wallChecks[k]->getType() == Tile::wallCheckVL)
 			fillVerticalLeft(wallChecks[k]);
-		else if (wallChecks[k]->getType() == wallCheckHR)
+		else if (wallChecks[k]->getType() == Tile::wallCheckHR)
 			fillHorizontalRight(wallChecks[k]);
-		else if (wallChecks[k]->getType() == wallCheckHL)
+		else if (wallChecks[k]->getType() == Tile::wallCheckHL)
 			fillHorizontalLeft(wallChecks[k]);
+	}
+}
+
+void Level::triggerButton(ivec2 pos)
+{
+	for (auto but : buttons) {
+		if (but->getTile() == pos) {
+			but->trigger();
+			return;
+		}
 	}
 }
 
@@ -559,7 +607,7 @@ void Level::fillVerticalRight(WallCheckpoint* wall)
 		pos += ivec2(0,1);
 		wall->addWall(pos);
 		wall->addTrigger(pos + ivec2(2, 0));
-		currTile->type = wallCheckVR;
+		currTile->type = Tile::wallCheckVR;
 		currTile = getTile(pos);
 	}
 }
@@ -573,7 +621,7 @@ void Level::fillVerticalLeft(WallCheckpoint* wall)
 		pos += ivec2(0, 1);
 		wall->addWall(pos);
 		wall->addTrigger(pos + ivec2(-2, 0));
-		currTile->type = wallCheckVL;
+		currTile->type = Tile::wallCheckVL;
 		currTile = getTile(pos);
 	}
 }
@@ -587,7 +635,7 @@ void Level::fillHorizontalRight(WallCheckpoint* wall)
 		pos += ivec2(1, 0);
 		wall->addWall(pos);
 		wall->addTrigger(pos + ivec2(0, 2));
-		currTile->type = wallCheckHR;
+		currTile->type = Tile::wallCheckHR;
 		currTile = getTile(pos);
 	}
 }
@@ -602,7 +650,7 @@ void Level::fillHorizontalLeft(WallCheckpoint* wall)
 		pos += ivec2(1, 0);
 		wall->addWall(pos);
 		wall->addTrigger(pos + ivec2(0, -2));
-		currTile->type = wallCheckHL;
+		currTile->type = Tile::wallCheckHL;
 		currTile = getTile(pos);
 	}
 }
@@ -644,6 +692,10 @@ Tile* Level::loadTile(char type, int i, int j)
 		tile = Tile(coords, chunk, type, false, false);
 		return &map[i][j];
 
+	case Tile::switchable:
+		tile = Tile(coords, chunk, type, false, false);
+		return &map[i][j];
+
 	default: break;
 	}
 
@@ -672,10 +724,10 @@ void Level::loadModels()
 	bolaPinchoModel->loadFromFile("models/UPC.obj", *cubeShader);
 
 	buttonONModel = new Model();
-	buttonONModel->loadFromFile("model/buttonOn.obj", *buttonShader);
+	buttonONModel->loadFromFile("models/button_ON.obj", *buttonShader);
 
 	buttonOFFModel = new Model();
-	buttonOFFModel->loadFromFile("model/buttonOn.obj", *buttonShader);
+	buttonOFFModel->loadFromFile("models/button_OFF.obj", *buttonShader);
 }
 
 #include "Scene.h"
@@ -689,7 +741,7 @@ void Level::loadShaders()
 	Scene::loadShaders("ropeShader", ropeShader);
 
 	buttonShader = new ShaderProgram();
-	Scene::loadShaders("buttonShader", ropeShader);
+	Scene::loadShaders("buttonShader", buttonShader);
 }
 
 
