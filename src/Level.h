@@ -20,8 +20,6 @@
 
 using namespace std;
 
-// ARREGLAR COMPILACION + AJUSTAR CLASE LEVEL A LA HERENCIA
-
 class GameScene;
 
 class Level : public World
@@ -43,7 +41,7 @@ public:
 
 	// Constructors
 	Level(GameScene* scene, int id = 1);
-	void finishWallChecks();
+	
 	// Destructors
 	~Level();
 
@@ -61,6 +59,9 @@ public:
 	bool ballIsOnTrail();
 	bool checkIfBallCollidedWithTrail();
 	void addPointToTrail(vec2 pos);
+	void openThisSnakeDoor(Tile* tile);
+	vector<vector<Tile*>> snake_door_list;
+
 
 	// TileMap Info
 	int	  getTileSize();
@@ -85,6 +86,7 @@ public:
 	void addSpawnPoint(vec2 pos);
 	void removeSpawnPoint();
 	void checkTrigger(ivec2 tilePos);
+	void finishWallChecks();
 
 	//PURE TESTING REMOVE LATER
 	void changeSpawnPoint();

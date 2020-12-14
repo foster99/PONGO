@@ -21,7 +21,6 @@ void WallCheckpoint::addTrigger(ivec2 tile)
 
 bool WallCheckpoint::triggerInRange(ivec2 tile)
 {
-	
 	if (!triggered) {
 		
 		bool found = false;
@@ -40,7 +39,7 @@ bool WallCheckpoint::triggerInRange(ivec2 tile)
 		size = wallTiles.size();
 
 		for (i = 0; i < size; ++i) {
-			level->loadTile('#', wallTiles[i].x, wallTiles[i].y);
+			level->loadTile('#', wallTiles[i].y, wallTiles[i].x);
 		}
 
 		triggered = true;

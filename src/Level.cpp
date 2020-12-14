@@ -225,6 +225,34 @@ void Level::addPointToTrail(vec2 pos)
 	trail->addPoint(pos);
 }
 
+void Level::openThisSnakeDoor(Tile* tile)
+{
+	bool thisIsTheDoor;
+	vector<Tile*>* theDoor;
+
+	for (vector<Tile*>& door : snake_door_list)
+	{
+		thisIsTheDoor = false;
+		for (Tile* doorTile : door)
+		{
+			if (doorTile == tile)
+			{
+				theDoor = &door;
+				thisIsTheDoor = true;
+				break;
+			}
+		}
+		if (thisIsTheDoor) break;
+	}
+
+	if (theDoor == nullptr) return;
+
+	for (Tile* doorTile : *theDoor)
+	{
+		doorTile->type = Tile::undefined;
+	}
+}
+
 int Level::getTileSize()
 {
 	return tileSize;

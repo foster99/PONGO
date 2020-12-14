@@ -331,6 +331,8 @@ bool GameScene::checkCollision_Ball_World(int tick, int deltaTime)
 
 	ball->Ball::setPosition(newBallPosition, tick);
 
+	ivec2 ballTileCoords = toTileCoords(ball->getPosition());
+	Tile* currentBallCenterTile = level->getTile(ballTileCoords);
 	contourTileList ballContourTileList = ball->listOfContourTiles();
 
 	int upCount = 0, downCount = 0, rightCount = 0, leftCount = 0;
@@ -356,11 +358,18 @@ bool GameScene::checkCollision_Ball_World(int tick, int deltaTime)
 		if (tile->type == Tile::winTile)	winLevel();
 	}
 
+	// Wall CheckPoint
+	level->checkTrigger(ballTileCoords);
 
-	if (level->getTile(toTileCoords(ball->getPosition()))->type == Tile::snake)
+	// Trails
+	float tileSize = float(level->getTileSize());
+	if (!level->ballIsOnTrail() && currentBallCenterTile->type == Tile::snake && length(currentBallCenterTile->coords - ball->getPosition()) < tileSize/2.f)
+	{
 		level->setTrail(true);
+		ball->setPosition(currentBallCenterTile->coords);
+	}
 
-
+	// Death
 	if (ball->isOnDeathTiles()) killBall();
 
 
