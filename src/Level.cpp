@@ -4,6 +4,7 @@
 #include <vector>
 #include "Level.h"
 #include "GameScene.h"
+#include "Game.h"
 
 using namespace std;
 using namespace glm;
@@ -59,7 +60,6 @@ void Level::render() const
 	renderTileMap();
 	renderSlides();
 	renderSpawns();
-	renderButtons();
 	if (onTrail)
 		trail->render();
 }
@@ -195,11 +195,82 @@ void Level::renderTileMap() const
 				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
-			case Tile::switchable:
+
+			case Tile::switchable_solid:
 				shader = cubeShader;
-				model  =  cubeModel;
+				model = snakeClosedDoorModel;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
-				modelMatrix = scale(modelMatrix, vec3(0.5f * float(tileSize) / model->getHeight()));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+
+			case Tile::switchable_no_solid:
+				shader = cubeShader;
+				model  = voidCubeModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+
+
+
+			case Tile::buttonR_ON:
+				shader = cubeShader;
+				model = buttonONModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+
+			case Tile::buttonL_ON:
+				shader = cubeShader;
+				model = buttonONModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+			case Tile::buttonU_ON:
+				shader = cubeShader;
+				model = buttonONModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+			case Tile::buttonD_ON:
+				shader = cubeShader;
+				model = buttonONModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+
+
+			case Tile::buttonR_OFF:
+				shader = cubeShader;
+				model = buttonOFFModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+			case Tile::buttonL_OFF:
+				shader = cubeShader;
+				model = buttonOFFModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+			case Tile::buttonU_OFF:
+				shader = cubeShader;
+				model = buttonOFFModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+			case Tile::buttonD_OFF:
+				shader = cubeShader;
+				model = buttonOFFModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
 
@@ -232,16 +303,6 @@ void Level::renderSpawns() const
 		spawn->setViewMatrix(viewMatrix);
 		spawn->setProjMatrix(projMatrix);
 		spawn->SpawnCheckpoint::render();
-	}
-}
-
-void Level::renderButtons() const
-{
-	for (auto* but : buttons)
-	{
-		but->setViewMatrix(viewMatrix);
-		but->setProjMatrix(projMatrix);
-		but->render();
 	}
 }
 
@@ -546,6 +607,16 @@ void Level::loadTileMap()
 				firstTileOfChunk[lastSavedChunk] = currentTile;
 			}
 			
+			if (isAButton(currentTile))
+			{
+				buttons.push_back(currentTile);
+			}
+
+			if (isASwitchableTile(currentTile))
+			{
+				switchableTiles.push_back(ivec2(j, i));
+			}
+
 			if (currentTile->isUndefined()) // Dynamic Tile
 			{
 				switch (tile)
@@ -623,27 +694,7 @@ void Level::loadTileMap()
 
 					break;
 				}
-				case Tile::pressedButton:
-				case Tile::releasedButton:
-				{
-					Button* aux = new Button(this, buttonShader, buttonOFFModel, buttonONModel, tile);
 
-					ivec2 pos = ivec2(currentTile->coords / float(tileSize)) * ivec2(1, -1);
-					aux->setTile(pos);
-					aux->setVector(&modifiablePositions);
-					buttons.push_back(aux);
-
-					modifiablePositions.push_back(pos);
-					
-					break;
-				}
-				case Tile::switchable:
-				{
-					ivec2 pos = ivec2(currentTile->coords / float(tileSize)) * ivec2(1, -1);
-					modifiablePositions.push_back(pos);
-					
-					break;
-				}
 				default: break;
 				}
 			}
@@ -678,14 +729,96 @@ void Level::finishWallChecks()
 	}
 }
 
-void Level::triggerButton(ivec2 pos)
+void Level::toggleButton(Tile* button)
 {
-	for (auto but : buttons) {
-		if (but->getTile() == pos) {
-			but->trigger();
-			return;
+	ivec2 tileCoords = scene->toTileCoords(button->coords);
+
+	char newButtonType;
+
+	switch (button->type)
+	{
+	case Tile::buttonR_ON: newButtonType = Tile::buttonR_OFF; break;
+	case Tile::buttonL_ON: newButtonType = Tile::buttonL_OFF; break;
+	case Tile::buttonU_ON: newButtonType = Tile::buttonU_OFF; break;
+	case Tile::buttonD_ON: newButtonType = Tile::buttonD_OFF; break;
+
+	case Tile::buttonR_OFF: newButtonType = Tile::buttonR_ON; break;
+	case Tile::buttonL_OFF: newButtonType = Tile::buttonL_ON; break;
+	case Tile::buttonU_OFF: newButtonType = Tile::buttonU_ON; break;
+	case Tile::buttonD_OFF: newButtonType = Tile::buttonD_ON; break;
+	}
+
+	loadTile(newButtonType, tileCoords.y, tileCoords.x);
+}
+
+void Level::touchButton(Tile* button)
+{
+	if (buttonIsPressed(button)) return;
+
+	for (Tile* button : buttons)
+		toggleButton(button);
+
+	for (ivec2 tileCoords : switchableTiles)
+	{
+		Tile* switchable = getTile(tileCoords);
+		
+		switch (switchable->type)
+		{
+		case Tile::switchable_no_solid:
+			loadTile(Tile::switchable_solid, tileCoords.y, tileCoords.x);
+			break;
+		case Tile::switchable_solid:
+			loadTile(Tile::switchable_no_solid, tileCoords.y, tileCoords.x);
+			break;
 		}
 	}
+
+	Game::instance().playButtonSound();
+	Game::instance().playDoorSound();
+}
+
+bool Level::isASwitchableTile(Tile* tile)
+{
+	switch (tile->type)
+	{
+	case Tile::switchable_no_solid:
+	case Tile::switchable_solid:
+		return true;
+	}
+
+	return false;
+}
+
+bool Level::isAButton(Tile* tile)
+{
+	switch (tile->type)
+	{
+	case Tile::buttonR_ON:
+	case Tile::buttonL_ON:
+	case Tile::buttonU_ON:
+	case Tile::buttonD_ON:
+	case Tile::buttonR_OFF:
+	case Tile::buttonL_OFF:
+	case Tile::buttonU_OFF:
+	case Tile::buttonD_OFF:
+		return true;
+	}
+
+	return false;
+}
+
+bool Level::buttonIsPressed(Tile* tile)
+{
+	switch (tile->type)
+	{
+	case Tile::buttonR_ON:
+	case Tile::buttonL_ON:
+	case Tile::buttonU_ON:
+	case Tile::buttonD_ON:
+		return true;
+	}
+
+	return false;
 }
 
 void Level::fillVerticalRight(WallCheckpoint* wall)
@@ -790,8 +923,23 @@ Tile* Level::loadTile(char type, int i, int j)
 		tile = Tile(coords, chunk, type, false, false);
 		return &map[i][j];
 
-	case Tile::switchable:
+	case Tile::switchable_no_solid:
 		tile = Tile(coords, chunk, type, false, false);
+		return &map[i][j];
+
+	case Tile::switchable_solid:
+		tile = Tile(coords, chunk, type, true, false);
+		return &map[i][j];
+
+	case Tile::buttonR_ON :
+	case Tile::buttonL_ON :
+	case Tile::buttonU_ON :
+	case Tile::buttonD_ON :
+	case Tile::buttonR_OFF:
+	case Tile::buttonL_OFF:
+	case Tile::buttonU_OFF:
+	case Tile::buttonD_OFF:
+		tile = Tile(coords, chunk, type, true, false);
 		return &map[i][j];
 
 	default: break;
@@ -804,16 +952,16 @@ Tile* Level::loadTile(char type, int i, int j)
 void Level::loadModels()
 {
 	voidCubeModel = new Model();
-	voidCubeModel->loadFromFile("models/voidCube.obj", *cubeShader);
+	voidCubeModel->loadFromFile("models/noSolidCube.obj", *cubeShader);
 
 	snakeModel = new Model();
 	snakeModel->loadFromFile("models/snake.obj", *cubeShader);
 
 	snakeClosedDoorModel = new Model();
-	snakeClosedDoorModel->loadFromFile("models/snake.obj", *cubeShader);
+	snakeClosedDoorModel->loadFromFile("models/snakeDoor.obj", *cubeShader);
 
 	snakeOpenedDoorModel = new Model();
-	snakeOpenedDoorModel->loadFromFile("models/sphere.obj", *cubeShader);
+	snakeOpenedDoorModel->loadFromFile("models/noSolidCube.obj", *cubeShader);
 
 	ropeModel = new Model();
 	ropeModel->loadFromFile("models/rope.obj", *ropeShader);

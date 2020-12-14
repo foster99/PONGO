@@ -14,7 +14,6 @@
 #include "World.h"
 #include "Ball.h"
 #include "Slide.h"
-#include "Button.h"
 #include "SpawnCheckpoint.h"
 #include "WallCheckpoint.h"
 #include "Texture.h"
@@ -44,7 +43,6 @@ public:
 	void renderSlides() const;
 	void renderTileMap() const;
 	void renderSpawns() const;
-	void renderButtons() const;
 
 	// Trail
 	void setTrail(bool state);
@@ -86,8 +84,11 @@ public:
 	void finishWallChecks();
 
 	// Buttons
-	void triggerButton(ivec2 pos);
-
+	void toggleButton(Tile* button);
+	void touchButton(Tile* button);
+	bool isASwitchableTile(Tile* tile);
+	bool isAButton(Tile* tile);
+	bool buttonIsPressed(Tile* tile);
 	//PURE TESTING REMOVE LATER
 	void changeSpawnPoint();
 
@@ -145,9 +146,9 @@ private:
 	vector<Slide*> slides;
 	vector<SpawnCheckpoint*> spawns;
 	vector<WallCheckpoint*> wallChecks;
-	
-	vector<Button*> buttons;
-	vector<ivec2> modifiablePositions;
+
+	vector<Tile*> buttons;
+	vector<ivec2> switchableTiles;
 };
 
 

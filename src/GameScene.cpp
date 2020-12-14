@@ -350,8 +350,8 @@ bool GameScene::checkCollision_Ball_World(int tick, int deltaTime)
 			else downCount++;
 		}
 
-		if (tile->type == Tile::winTile)
-			winLevel();
+		if (level->isAButton(tile)) level->touchButton(tile);
+		if (tile->type == Tile::winTile) winLevel();
 	}
 	for (Tile* tile : ballContourTileList.up)
 	{
@@ -364,6 +364,7 @@ bool GameScene::checkCollision_Ball_World(int tick, int deltaTime)
 			}
 			else upCount++;
 		}
+		if (level->isAButton(tile)) level->touchButton(tile);
 		if (tile->type == Tile::winTile)	winLevel();
 	}
 	for (Tile* tile : ballContourTileList.right)
@@ -377,6 +378,7 @@ bool GameScene::checkCollision_Ball_World(int tick, int deltaTime)
 			}
 			else rightCount++;
 		}
+		if (level->isAButton(tile)) level->touchButton(tile);
 		if (tile->type == Tile::winTile)	winLevel();
 	}
 	for (Tile* tile : ballContourTileList.left)
@@ -390,12 +392,12 @@ bool GameScene::checkCollision_Ball_World(int tick, int deltaTime)
 			}
 			else leftCount++;
 		}
+		if (level->isAButton(tile)) level->touchButton(tile);
 		if (tile->type == Tile::winTile)	winLevel();
 	}
 
 	// Wall CheckPoint
 	level->checkTrigger(ballTileCoords);
-	level->triggerButton(ballTileCoords);
 
 		// Trails
 	float tileSize = float(level->getTileSize());
