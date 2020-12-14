@@ -28,7 +28,7 @@ public:
 	static constexpr char winTile	= 'W';
 
 	static constexpr char snake		= 'X';
-	static constexpr char opened_snake_door = '?';
+	static constexpr char opened_snake_door = ';';
 	static constexpr char closed_snake_door = '@';
 
 	static constexpr char wallCheckVR = ')';
