@@ -27,6 +27,12 @@ Level::~Level()
 	this->World::~World();
 }
 
+void Level::init()
+{
+	finishWallChecks();
+	extrudeAllTheSnakeDoors();
+}
+
 void Level::free()
 {
 	this->World::free();
@@ -39,6 +45,8 @@ void Level::update(int deltaTime)
 
 	if (onTrail)
 		trail->update(deltaTime);
+	else
+		trail->clear();
 
 	for (auto* slide : slides)
 		slide->Slide::update(deltaTime);
@@ -161,16 +169,33 @@ void Level::renderTileMap() const
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
 
-			case wallCheckVR:
-			case wallCheckVL:
-			case wallCheckHR:
-			case wallCheckHL:
+			case Tile::opened_snake_door:
+				shader = cubeShader;
+				model = snakeOpenedDoorModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+
+			case Tile::closed_snake_door:
+				shader = cubeShader;
+				model = snakeClosedDoorModel;
+				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
+				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
+				modelMatrix = translate(modelMatrix, -model->getCenter());
+				break;
+
+			case Tile::wallCheckVR:
+			case Tile::wallCheckVL:
+			case Tile::wallCheckHR:
+			case Tile::wallCheckHL:
 				shader = cubeShader;
 				model = cubeModel;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, -tileSize));
 				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
+
 			default:
 				shader	= nullptr;
 				model	= nullptr;
@@ -225,32 +250,97 @@ void Level::addPointToTrail(vec2 pos)
 	trail->addPoint(pos);
 }
 
+void Level::closeAllSnakeDoors()
+{
+	auto& openedDoor_it = snake_opened_door_list.begin();
+
+	while (!snake_opened_door_list.empty())
+	{
+		Door* closedDoor = *openedDoor_it;
+
+		for (Tile* doorTile : *closedDoor)
+		{
+			ivec2 tileJI = scene->toTileCoords(doorTile->coords);
+			loadTile(Tile::closed_snake_door, tileJI[1], tileJI[0]);
+		}
+
+		snake_closed_door_list.push_back(closedDoor);
+		openedDoor_it = snake_opened_door_list.erase(openedDoor_it);
+	}
+}
+
+void Level::extrudeAllTheSnakeDoors()
+{
+	vector<Tile*> listOfStartingTiles(0);
+
+	for (const vector<Tile>& row : map)
+		for (const Tile& tile : row)
+			if (tile.type == Tile::closed_snake_door)
+				listOfStartingTiles.push_back((Tile*) &tile);
+
+	for (Tile* tile: listOfStartingTiles)
+		addSnakeClosedDoor(tile);
+}
+
+void Level::addSnakeClosedDoor(Tile* startingTile)
+{
+	Door* closed_door = new Door(0);
+
+	Tile* currentTile = startingTile;
+	ivec2 tileCoords  = scene->toTileCoords(startingTile->coords);
+
+	// j,i
+	do
+	{
+		currentTile = loadTile(Tile::closed_snake_door, tileCoords[1], tileCoords[0]);
+		closed_door->push_back(currentTile);
+
+		tileCoords += ivec2(0, 1);
+		currentTile = getTile(tileCoords);
+	} 
+	while (!currentTile->solid);
+
+	snake_closed_door_list.push_back(closed_door);
+}
+
 void Level::openThisSnakeDoor(Tile* tile)
 {
-	bool thisIsTheDoor;
-	vector<Tile*>* theDoor;
+	Door* doorToOpen = nullptr;
 
-	for (vector<Tile*>& door : snake_door_list)
+	for (auto closedDoor_it = snake_closed_door_list.begin(); closedDoor_it != snake_closed_door_list.end(); )
 	{
-		thisIsTheDoor = false;
-		for (Tile* doorTile : door)
+		Door* closedDoor = *closedDoor_it;
+
+		for (Tile* doorTile : *closedDoor)
 		{
 			if (doorTile == tile)
 			{
-				theDoor = &door;
-				thisIsTheDoor = true;
+				doorToOpen = closedDoor;
 				break;
 			}
 		}
-		if (thisIsTheDoor) break;
+
+		if (doorToOpen != nullptr)
+		{
+			// Borramos la puerta a abrir de la lista de puertas cerradas
+			closedDoor_it = snake_closed_door_list.erase(closedDoor_it);
+			break;
+		}
 	}
 
-	if (theDoor == nullptr) return;
+	//  Si la puerta a abrir no existe, retorna;
+	if (doorToOpen == nullptr) return;
 
-	for (Tile* doorTile : *theDoor)
+	// Abrimos todas las tiles de la puerta a abrir
+	for (Tile* doorTile : *doorToOpen)
 	{
-		doorTile->type = Tile::undefined;
+		ivec2 tileJI = scene->toTileCoords(doorTile->coords);
+		loadTile(Tile::opened_snake_door, tileJI[1], tileJI[0]);
 	}
+
+	// Anadimos la futura puerta abierta a la lista de puertas abiertas
+	snake_opened_door_list.push_back(doorToOpen);
+
 }
 
 int Level::getTileSize()
@@ -644,6 +734,14 @@ Tile* Level::loadTile(char type, int i, int j)
 		tile = Tile(coords, chunk, type, false, false);
 		return &map[i][j];
 
+	case Tile::closed_snake_door:
+		tile = Tile(coords, chunk, type, true, false);
+		return &map[i][j];
+
+	case Tile::opened_snake_door:
+		tile = Tile(coords, chunk, type, false, false);
+		return &map[i][j];
+
 	default: break;
 	}
 
@@ -658,6 +756,12 @@ void Level::loadModels()
 
 	snakeModel = new Model();
 	snakeModel->loadFromFile("models/snake.obj", *cubeShader);
+
+	snakeClosedDoorModel = new Model();
+	snakeClosedDoorModel->loadFromFile("models/snake.obj", *cubeShader);
+
+	snakeOpenedDoorModel = new Model();
+	snakeOpenedDoorModel->loadFromFile("models/sphere.obj", *cubeShader);
 
 	ropeModel = new Model();
 	ropeModel->loadFromFile("models/rope.obj", *ropeShader);
