@@ -14,6 +14,7 @@
 #include "World.h"
 #include "Ball.h"
 #include "Slide.h"
+#include "Button.h"
 #include "SpawnCheckpoint.h"
 #include "WallCheckpoint.h"
 #include "Texture.h"
@@ -27,19 +28,6 @@ typedef vector<Tile*> Door;
 class Level : public World
 {
 public:
-
-	static constexpr char verticalSlideChase		= '|';
-	static constexpr char verticalSlideEscape		= '!';
-	static constexpr char horizontalSlideChase		= '_';
-	static constexpr char horizontalSlideEscape		= '-';
-
-	static constexpr char blank						= '.';
-	static constexpr char spawnPoint				= 'S';
-
-	static constexpr char wallCheckVR = ')';
-	static constexpr char wallCheckVL = '(';
-	static constexpr char wallCheckHR = '}';
-	static constexpr char wallCheckHL = '{';
 
 	// Constructors
 	Level(GameScene* scene, int id = 1);
@@ -56,6 +44,7 @@ public:
 	void renderSlides() const;
 	void renderTileMap() const;
 	void renderSpawns() const;
+	void renderButtons() const;
 
 	// Trail
 	void setTrail(bool state);
@@ -95,6 +84,9 @@ public:
 	void removeSpawnPoint();
 	void checkTrigger(ivec2 tilePos);
 	void finishWallChecks();
+
+	// Buttons
+	void triggerButton(ivec2 pos);
 
 	//PURE TESTING REMOVE LATER
 	void changeSpawnPoint();
@@ -153,6 +145,9 @@ private:
 	vector<Slide*> slides;
 	vector<SpawnCheckpoint*> spawns;
 	vector<WallCheckpoint*> wallChecks;
+	
+	vector<Button*> buttons;
+	vector<ivec2> modifiablePositions;
 };
 
 

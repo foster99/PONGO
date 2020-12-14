@@ -14,6 +14,7 @@
     <ClInclude Include="AssimpModel.h" />
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Billboard.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Game.h" />
@@ -39,6 +40,7 @@
     <ClCompile Include="AssimpModel.cpp" />
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Billboard.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />

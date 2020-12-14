@@ -36,8 +36,18 @@ public:
 	static constexpr char wallCheckHR = '}';
 	static constexpr char wallCheckHL = '{';
 
+	static constexpr char verticalSlideChase		= '|';
+	static constexpr char verticalSlideEscape		= '!';
+	static constexpr char horizontalSlideChase		= '_';
+	static constexpr char horizontalSlideEscape		= '-';
 
-	
+	static constexpr char blank						= '.';
+	static constexpr char spawnPoint				= 'S';
+
+	static constexpr char releasedButton = '?';
+	static constexpr char pressedButton = '¿';
+	static constexpr char switchable = '+';
+
 	Tile();
 
 	Tile(	vec2 coords,

@@ -395,8 +395,9 @@ bool GameScene::checkCollision_Ball_World(int tick, int deltaTime)
 
 	// Wall CheckPoint
 	level->checkTrigger(ballTileCoords);
+	level->triggerButton(ballTileCoords);
 
-	// Trails
+		// Trails
 	float tileSize = float(level->getTileSize());
 	if (!level->ballIsOnTrail() && currentBallCenterTile->type == Tile::snake && length(currentBallCenterTile->coords - ball->getPosition()) < 3.f * tileSize/4.f)
 	{
