@@ -14,7 +14,6 @@ void GameScene::init()
 	
 	deathParticles = new ParticleSystem();
 	deathParticles->init(glm::vec2(5.f, 5.f), (*ballShader), "images/particle.png", 0.f);
-
 	loadCountDownModels();
 }
 
