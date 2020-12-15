@@ -38,14 +38,14 @@ void Slide::update(int deltaTime)
 	if (isVertical()) {
 		if (!checkTrackedPos()) {
 			if (scene->ballIsOnVerticalSlideScope(this) || !trackPlayerVertical()) {
-				speed.y = 1.0f;
+				speed.y = 0.50f;
 			}
 		}
 	}
 	else {
 		if (!checkTrackedPos()) {
 			if (scene->ballIsOnHorizontalSlideScope(this) || !trackPlayerHorizontal())
-				speed.x = 1.0f;
+				speed.x = 0.50f;
 		}
 	}
 }
@@ -63,9 +63,9 @@ void Slide::render()
 	modelMatrix = translate(modelMatrix, vec3(position,0));
 
 	if (orientation == horizontal)
-		modelMatrix = glm::scale(modelMatrix, glm::vec3(4, 1, 1));
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(4.f, 1.f, 1.f));
 	else
-		modelMatrix = glm::scale(modelMatrix, glm::vec3(1, 4, 1));
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(1.f, 4.f, 1.f));
 
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(scaleFactor));
 	modelMatrix = glm::translate(modelMatrix, -model->getCenter());
@@ -90,12 +90,12 @@ void Slide::setSize(int ts, int orient)
 	if (orient == vertical) {
 		size = ivec2(1, 4);
 		orientation = vertical;
-		direction = vec2(0, 1);
+		direction = vec2(0.f, 1.f);
 	}
 	else {
 		size = ivec2(4, 1);
 		orientation = horizontal;
-		direction = vec2(1,0);
+		direction = vec2(1.f,0.f);
 	}
 }
 
@@ -122,7 +122,7 @@ void Slide::setDirection(vec2 direction)
 
 void Slide::goBackALittle()
 {
-	position -= direction * 0.05f;
+	setPosition(position - direction * 0.1f, getPreviousTime());
 }
 
 bool Slide::checkTrackedPos()
@@ -222,14 +222,16 @@ bool Slide::trackPlayerVertical()
 					direction.y = 1;
 				else
 					direction.y = -1;
-				speed.y = 1.0f;
+				direction = normalize(direction);
+				speed.y = 0.95f;
 			}
 			else {
 				if (isAbove)
 					direction.y = -1;
 				else
 					direction.y = 1;
-				speed.y = 1.3f;
+				direction = normalize(direction);
+				speed.y = 0.95f;
 			}
 			trackedPos = playerPosition;
 			return true;
@@ -264,14 +266,16 @@ bool Slide::trackPlayerHorizontal()
 					direction.x = 1;
 				else
 					direction.x = -1;
-				speed.x = 1.0f;
+				direction = normalize(direction);
+				speed.x = 0.95f;
 			}
 			else {
 				if (isRight)
 					direction.x = -1;
 				else
 					direction.x = 1;
-				speed.x = 1.3f;
+				direction = normalize(direction);
+				speed.x = 0.95f;
 			}
 
 			trackedPos = playerPosition;

@@ -42,8 +42,8 @@ public:
 	static constexpr int chase = 0;
 	static constexpr int escape = 1;
 
-	static constexpr float minmunTrackDistance = 1.5;
-	static constexpr float distanceError = 0.005;
+	static constexpr float minmunTrackDistance = 2.5f;
+	static constexpr float distanceError = 0.005f;
 
 private:
 
