@@ -5,7 +5,7 @@ void GameScene::init()
 {
 	this->Scene::init();
 
-	levelID = 5;
+	levelID = 1;
 	restartLevel();
 	pressed = false;
 	endOfGame = false;
