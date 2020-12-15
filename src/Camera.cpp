@@ -58,8 +58,11 @@ void Camera::initMenu(int numberOfMenus)
 	freeCameraTarget = menuTargets[0];
 }
 
-void Camera::update()
+void Camera::update(int deltaTime)
 {
+	if (transitionTime > 0)
+		transitionTime -= deltaTime;
+
 	if (freeCamera)
 		updateFreeCamera();
 }
@@ -87,12 +90,18 @@ void Camera::addMouseAngles(float mx, float my)
 
 void Camera::nextMenu()
 {
+	isNext = true;
+	transitionTime = transitionTotalTime;
+	previousMenu = currentMenu;
 	currentMenu++;
 	currentMenu %= menuTargets.size();
 }
 
 void Camera::prevMenu()
 {
+	isNext = false;
+	transitionTime = transitionTotalTime;
+	previousMenu = currentMenu;
 	currentMenu--;
 	currentMenu %= menuTargets.size();
 }
@@ -147,8 +156,17 @@ glm::mat4 Camera::getViewMatrix()
 	if (freeCamera)
 		return glm::lookAt(freeCameraPosition, freeCameraTarget, up);
 
-	//if (playingCamera)
-	//	return glm::lookAt(playingPositions[currentChunk], playingTargets[currentChunk], glm::vec3(0, 1, 0));
+	if (transitionTime > 0)
+	{
+		float step = smoothstep(float(transitionTotalTime), 0.f, float(transitionTime));
+		vec3 direction = normalize(menuTargets[currentMenu] - menuTargets[previousMenu]);
+		float distance = length(menuTargets[currentMenu] - menuTargets[previousMenu]);
+
+		mat4 view = glm::lookAt(menuPosition, menuTargets[previousMenu], glm::vec3(0, 1, 0));
+		if (isNext)		view = rotate(view, step * PI, glm::vec3(0, 1, 0));
+		else			view = rotate(view, step * -PI, glm::vec3(0, 1, 0));
+		return view;
+	}
 	
 	// menu Camera
 	return glm::lookAt(menuPosition, menuTargets[currentMenu], glm::vec3(0, 1, 0));

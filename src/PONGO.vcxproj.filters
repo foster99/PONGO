@@ -70,6 +70,12 @@
     <ClCompile Include="Trail.cpp">
       <Filter>Source Files\3D\Entity</Filter>
     </ClCompile>
+    <ClCompile Include="ExitScene.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="WinScene.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderProgram.h">
@@ -140,6 +146,12 @@
     </ClInclude>
     <ClInclude Include="Trail.h">
       <Filter>Header Files\3D\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="ExitScene.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="WinScene.h">
+      <Filter>Header Files\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

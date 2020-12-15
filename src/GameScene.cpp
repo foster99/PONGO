@@ -7,7 +7,8 @@ void GameScene::init()
 
 	levelID = 1;
 	restartLevel();
-
+	pressed = false;
+	endOfGame = false;
 	speedDivisor = float(level->getTileSize());
 	
 	loadCountDownModels();
@@ -733,9 +734,12 @@ void GameScene::loadNextLevel()
 
 void GameScene::winGame()
 {
-	// End game
-	// Show thanks
-	// Go to Start Menu
+	endOfGame = true;
+}
+
+bool GameScene::gameEnded()
+{
+	return endOfGame;
 }
 
 void GameScene::initBall()
@@ -758,15 +762,25 @@ void GameScene::initBall()
 
 void GameScene::playerPressedSpace()
 {
-	ball->spawnParticles();
+	if (!pressed)
+	{
+		pressed = true;
+		ball->spawnParticles();
 
-	if (ballIsOnHorizontalRope())
-		ball->invertDirectionX();
-	
-	ball->invertDirectionY();
+		if (ballIsOnHorizontalRope())
+			ball->invertDirectionX();
 
-	Game::instance().playGotaSound();
+		ball->invertDirectionY();
+
+		Game::instance().playGotaSound();
+	}
 }
+
+void GameScene::playerReleasedSpace()
+{
+	pressed = false;
+}
+
 
 int GameScene::getLevelID()
 {

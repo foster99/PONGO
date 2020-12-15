@@ -76,11 +76,14 @@ public:
 	mat4 winAnimationViewMatrix();
 	void loadNextLevel();
 	void winGame();
+	bool gameEnded();
 
 	// Ball Control
+	bool pressed;
 	void initBall();
 	void killBall();
 	void playerPressedSpace();
+	void playerReleasedSpace();
 	void setSpawnPoint(vec2 coords);
 	void locateBallInSpawnPoint();
 
@@ -123,6 +126,7 @@ private:
 	int countdown;
 
 	// Win variables
+	bool endOfGame;
 	bool win;
 	bool teleportSound;
 	int wintime;

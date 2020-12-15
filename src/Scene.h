@@ -9,7 +9,6 @@
 #include "Camera.h"
 #include "AssimpModel.h"
 
-
 using namespace std;
 using namespace glm;
 
@@ -32,6 +31,8 @@ public:
 	static constexpr camera fixedCamera_04 = 4;
 	static constexpr camera fixedCamera_05 = 5;
 	static constexpr float  mouseSpeed     = 0.005f;
+	
+
 
 	Scene();
 	~Scene();
