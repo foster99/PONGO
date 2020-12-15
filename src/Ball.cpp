@@ -26,8 +26,6 @@ void Ball::init()
 	billboard = Billboard::createBillboard(glm::vec2(10.f, 10.f), (*program), "images/bee.png");
 	billboard->setType(BILLBOARD_Y_AXIS);
 
-	ParticleSystem::Particle particle;
-	particle.lifetime = 1e10f;
 	particles = new ParticleSystem();
 	particles->init(glm::vec2(1.f,1.f), (*program), "images/particle.png",0);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
