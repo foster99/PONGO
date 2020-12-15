@@ -81,6 +81,11 @@ void SpawnCheckpoint::setDirection(vec2 direction)
 	this->Entity::setDirection(direction);
 }
 
+void SpawnCheckpoint::setSecondModel(Model* mod)
+{
+	secondModel = mod;
+}
+
 vector<vector<ivec2>> SpawnCheckpoint::occupiedTiles()
 {
 	vec4 BB = SpawnCheckpoint::getBoundingBox();
@@ -138,4 +143,9 @@ void SpawnCheckpoint::spawnParticles()
 		particle.speed = -step * vec3(cos(currAngle), 1, sin(currAngle));
 		particles->addParticle(particle);
 	}
+}
+
+void SpawnCheckpoint::noRender()
+{
+	renderable = false;
 }

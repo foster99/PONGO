@@ -132,6 +132,8 @@ private:
 	Model* buttonOFFModel;
 	Model* winCube;
 	Model* switchableModel;
+	Model* spawnModelOff;
+	Model* spawnModelOn;
 
 	void loadShaders();
 	ShaderProgram* cubeShader;
