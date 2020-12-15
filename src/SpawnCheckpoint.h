@@ -17,19 +17,21 @@ public:
 	void setPosition(vec2 position, int time = -1) override;
 	void setSpeed(vec2 speed) override;
 	void setDirection(vec2 direction) override;
+	void setSecondModel(Model* mod);
 
 	vector<vector<ivec2>> occupiedTiles() override;
 	vec4 getBoundingBox() override;	// vec4 -> xmin, xmax, ymin, ymax
 
 	void collided();
-
 	void spawnParticles();
 
+	void noRender();
 private:
 	bool renderable;
 	bool triggered;
 	int currentTime;
 	ParticleSystem* particles;
+	Model* secondModel;
 };
 
 #endif

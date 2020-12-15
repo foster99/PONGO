@@ -663,22 +663,24 @@ void Level::loadTileMap()
 				}
 				case Tile::spawnPoint:
 				{
-					SpawnCheckpoint* aux = new SpawnCheckpoint(scene,cubeModel, spawnShader);
+					SpawnCheckpoint* aux = new SpawnCheckpoint(scene, spawnModelOff, spawnShader);
 					aux->SpawnCheckpoint::init();
-					
+					aux->setSecondModel(spawnModelOn);
 					startPoint = currentTile->coords;
 
 					aux->setPosition(startPoint);
 
-					spawns.push_back(aux);
+					
 
 					if (firstSpawnPoint) {
 						spawnPositions.push(startPoint);
 						scene->setSpawnPoint(spawnPositions.top());
 						scene->locateBallInSpawnPoint();
+						aux->noRender();
 						firstSpawnPoint = false;
 					}
 
+					spawns.push_back(aux);
 					break;
 				}
 				case Tile::wallCheckVR:
@@ -1003,6 +1005,11 @@ void Level::loadModels()
 	buttonOFFModel = new Model();
 	buttonOFFModel->loadFromFile("models/button_OFF.obj", *buttonShader);
 
+	spawnModelOff = new Model();
+	spawnModelOff->loadFromFile("models/checkPoint_OFF.obj", *spawnShader);
+	
+	spawnModelOn = new Model();
+	spawnModelOn->loadFromFile("models/checkPoint_On.obj", *spawnShader);
 }
 
 #include "Scene.h"

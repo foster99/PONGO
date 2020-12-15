@@ -27,6 +27,7 @@ public:
 	int getTriggerSize();
 	char getType();
 
+
 	// PURE TESTING REMOVE LATER
 	void godTrigger();
 private:
