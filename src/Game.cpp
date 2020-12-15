@@ -391,10 +391,10 @@ void Game::loadSounds()
 
 	levelSong[0]	= nullptr;
 	levelSong[1]	= new Sound("levelSong_01.wav", true);
-	levelSong[2]	= new Sound("backgroundSong.wav", true);
-	levelSong[3]	= new Sound("levelSong_01.wav", true);
-	levelSong[4]	= new Sound("levelSong_01.wav", true);
-	levelSong[5]	= new Sound("levelSong_01.wav", true);
+	levelSong[2]	= new Sound("levelSong_02.wav", true);
+	levelSong[3]	= new Sound("levelSong_03.wav", true);
+	levelSong[4]	= new Sound("levelSong_04.wav", true);
+	levelSong[5]	= new Sound("levelSong_05.wav", true);
 
 	gotaSound[0]	= new Sound("gota_00.wav", false);
 	gotaSound[1]	= new Sound("gota_01.wav", false);
