@@ -15,7 +15,7 @@ public:
 	Camera();
 
 	void initMenu(int numberOfMenus);
-	void update();
+	void update(int deltaTime);
 	
 	void toogleFreeCamera();
 	void setFreeCamera(bool b);
@@ -31,7 +31,12 @@ public:
 	bool isFree();
 	mat4 getViewMatrix();
 
+	static constexpr int  transitionTotalTime = 1000;
+
 private:
+
+	bool isNext;
+	int transitionTime;
 
 	// Free Camera
 	bool freeCamera;
@@ -49,6 +54,7 @@ private:
 	vector<vec3> menuTargets;
 	vec3 menuPosition;
 	int currentMenu;
+	int previousMenu;
 
 
 };

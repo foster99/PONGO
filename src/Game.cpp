@@ -16,6 +16,7 @@ void Game::init()
 
 	try {
 		startMenuScene.init();
+		exitScene.init();
 		optionsScene.init();
 		gameScene.init();
 
@@ -31,7 +32,8 @@ bool Game::update(int deltaTime)
 {
 	// get GOD MODE
 
-	updateFreeCamera();
+	if (currMode() != exitGame)
+		updateFreeCamera();
 
 	switch (currMode())
 	{
@@ -45,6 +47,10 @@ bool Game::update(int deltaTime)
 
 	case options:
 		optionsScene.update(deltaTime);
+		break;
+
+	case askExit:
+		exitScene.update(deltaTime);
 		break;
 
 	case exitGame: break;
@@ -69,6 +75,10 @@ void Game::render()
 
 	case options:
 		optionsScene.render();
+		break;
+
+	case askExit:
+		exitScene.render();
 		break;
 
 	case exitGame: break;
@@ -108,6 +118,7 @@ void Game::keyPressed(int key)
 	case startMenu:		keyPressed_StartMenu(key, false);	break;
 	case playing:		keyPressed_playing(key, false);		break;
 	case options:		keyPressed_options(key, false);		break;
+	case askExit:		keyPressed_askExit(key, false);		break;
 	default:												break;
 	}
 
@@ -117,6 +128,9 @@ void Game::keyPressed(int key)
 void Game::keyReleased(int key)
 {
 	keys[key] = false;
+
+	if (currMode() == playing && key == ' ')
+		gameScene.playerReleasedSpace();
 }
 
 void Game::specialKeyPressed(int key)
@@ -126,6 +140,7 @@ void Game::specialKeyPressed(int key)
 	case startMenu:		keyPressed_StartMenu(key, true);	break;
 	case playing:		keyPressed_playing(key, true);		break;
 	case options:		keyPressed_options(key, true);		break;
+	case askExit:		keyPressed_askExit(key, true);		break;
 	default:												break;
 	}
 
@@ -152,6 +167,9 @@ void Game::mousePress(int button)
 
 void Game::mouseRelease(int button)
 {
+	if (playing)
+		if (button == GLUT_LEFT_BUTTON)
+			gameScene.playerReleasedSpace();
 }
 
 
@@ -164,9 +182,7 @@ void Game::keyPressed_StartMenu(int key, bool specialKey)
 	{
 		switch (key)
 		{
-		case ESC:	setMode(options);	break;
-		case 'e':	setMode(exitGame);	break;
-		case ENTER:
+		case ESC:	setMode(askExit);	break;
 		case ' ':	setMode(playing);	break;
 		default:						break;
 		}
@@ -192,12 +208,25 @@ void Game::keyPressed_playing(int key, bool specialKey)
 		case 'G':
 		case 'g':	toggleGodMode();				break;
 		case ' ':	gameScene.playerPressedSpace(); break;
-		case 'p':	gameScene.changeSpawnPoint();   break; // PURE TESTING REMOVE LATER
-		case '+':   gameScene.winLevel();			break;
-		case 'n':	gameScene.getLevel()->setTrail(true); break;
-		case 'm':	gameScene.getLevel()->setTrail(false); break;
 		default:	break;
 		}
+
+		if (gameIsInGodMode)
+		{
+			switch (key)
+			{
+			case ESC:	setMode(options);				break;
+			case 'G':
+			case 'g':	toggleGodMode();				break;
+			case ' ':	gameScene.playerPressedSpace(); break;
+			case 'p':	gameScene.changeSpawnPoint();   break; // PURE TESTING REMOVE LATER
+			case '+':   gameScene.winLevel();			break;
+			case 'n':	gameScene.getLevel()->setTrail(true); break;
+			case 'm':	gameScene.getLevel()->setTrail(false); break;
+			default:	break;
+			}
+		}
+
 	}
 	else if (specialKey)
 	{
@@ -217,17 +246,14 @@ void Game::keyPressed_options(int key, bool specialKey)
 		switch (key)
 		{
 		case ESC:				rollbackMode();		break;
-		case 'e':				setMode(startMenu);	break;
 		case ENTER:
-			//switch (optionsScene.getCurrTex())
-			//{
-			//case 0:	setMode(credits);		break;
-			//case 1:	setMode(instructions);	break;
-			//case 2:	setMode(startMenu);		break;
-			//default:						break;
-			//}
-			//
-			// <Play options sounds>
+
+			switch (optionsScene.getMenu())
+			{
+			case OptionsScene::pauseGame:	break;
+			case OptionsScene::exitGame:	setMode(startMenu);	break;
+			default:						break;
+			}
 			break;
 		default:	break;
 		}
@@ -240,6 +266,23 @@ void Game::keyPressed_options(int key, bool specialKey)
 		case GLUT_KEY_LEFT:		optionsScene.prevMenu();	break;
 		default:											break;
 		}
+	}
+}
+
+void Game::keyPressed_askExit(int key, bool specialKey)
+{
+	if (!specialKey)
+	{
+		switch (key)
+		{
+		case ESC:	rollbackMode();		break;
+		case ENTER: setMode(exitGame);	break;
+		default:						break;
+		}
+	}
+	else if (specialKey)
+	{
+		// No code
 	}
 }
 
@@ -299,6 +342,7 @@ void Game::updateFreeCamera()
 	case startMenu: scene = &startMenuScene;	break;
 	case playing:	scene = &gameScene;			break;
 	case options:	scene = &optionsScene;		break;
+	case askExit:	scene = &exitScene;			break;
 	}
 
 	if (scene->cameraIsFree())
@@ -413,12 +457,22 @@ Mode Game::currMode()
 
 void Game::setMode(Mode newMode)
 {
-	if (currMode() == startMenu && newMode == playing) {}
-		// aqui falta empesar el juego
+	if (currMode() == startMenu && newMode == playing)
+	{
+		gameScene.restartLevel();
+	}
+
+	if (newMode == options)
+	{
+		optionsScene.restartOptions();
+	}
 
 	if (newMode == startMenu)
+	{
+		stopLevelSong();
+		playBackgroundSong();
 		modeHist = {};
-
+	}
 	modeHist.push(newMode);
 }
 

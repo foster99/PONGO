@@ -8,6 +8,7 @@
 
 #include "Sound.h"
 #include "MenuScene.h"
+#include "ExitScene.h"
 #include "GameScene.h"
 #include "OptionsScene.h"
 
@@ -59,6 +60,7 @@ public:
 	void keyPressed_StartMenu(int key, bool specialKey);
 	void keyPressed_playing(int key, bool specialKey);
 	void keyPressed_options(int key, bool specialKey);
+	void keyPressed_askExit(int key, bool specialKey);
 
 	// Key getters
 	bool getKey(int key) const;
@@ -88,6 +90,7 @@ private:
 	static constexpr Mode startMenu = Mode(1);
 	static constexpr Mode playing	= Mode(2);
 	static constexpr Mode options	= Mode(3);
+	static constexpr Mode askExit	= Mode(4);
 
 	static constexpr int ESC = 27;
 	static constexpr int ENTER = 13;
@@ -99,6 +102,7 @@ private:
 	// Scenes
 	GameScene		gameScene;
 	OptionsScene	optionsScene;
+	ExitScene		exitScene;
 	MenuScene		startMenuScene;
 
 	// Sounds
@@ -127,28 +131,7 @@ private:
 
 
 };
-
-
 #endif // _GAME_INCLUDE
-
-/*
- 
-	CODIFICACION DE RAQUETAS:
-
-	3   0123456789
-	4   |       | 
-	5	| ####  |		-->	H: 5 0 8
-		|       |
-		|       |
-
-
-	HORIZONTAL SLIDE:
-	I	J0	J1
-
-	VERTICAL SLIDE:
-	J	I0	I1
-
-*/
 
 
 

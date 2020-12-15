@@ -7,6 +7,7 @@ void GameScene::init()
 
 	levelID = 1;
 	restartLevel();
+	pressed = false;
 
 	speedDivisor = float(level->getTileSize());
 	
@@ -758,15 +759,25 @@ void GameScene::initBall()
 
 void GameScene::playerPressedSpace()
 {
-	ball->spawnParticles();
+	if (!pressed)
+	{
+		pressed = true;
+		ball->spawnParticles();
 
-	if (ballIsOnHorizontalRope())
-		ball->invertDirectionX();
-	
-	ball->invertDirectionY();
+		if (ballIsOnHorizontalRope())
+			ball->invertDirectionX();
 
-	Game::instance().playGotaSound();
+		ball->invertDirectionY();
+
+		Game::instance().playGotaSound();
+	}
 }
+
+void GameScene::playerReleasedSpace()
+{
+	pressed = false;
+}
+
 
 int GameScene::getLevelID()
 {

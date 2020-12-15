@@ -59,7 +59,7 @@ void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
 	world->setCurrentTime(currentTime);
-	cam->update();
+	cam->update(deltaTime);
 }
 
 

@@ -78,9 +78,11 @@ public:
 	void winGame();
 
 	// Ball Control
+	bool pressed;
 	void initBall();
 	void killBall();
 	void playerPressedSpace();
+	void playerReleasedSpace();
 	void setSpawnPoint(vec2 coords);
 	void locateBallInSpawnPoint();
 
