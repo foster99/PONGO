@@ -2,6 +2,7 @@
 #define _SPAWN_INCLUDE
 
 #include "Entity.h"
+#include "ParticleSystem.h"
 
 class SpawnCheckpoint : public Entity
 {
@@ -25,6 +26,7 @@ public:
 private:
 	bool renderable;
 	bool triggered;
+	ParticleSystem* particles;
 };
 
 #endif
