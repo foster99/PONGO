@@ -42,10 +42,11 @@ void SpawnCheckpoint::render()
 			currModel = secondModel;
 
 		float tileSize = scene->getLevel()->getTileSize();
-		float scaleFactor = 4*tileSize / currModel->getHeight();
+		vec3 displacement = vec3(0.f, tileSize*0.45f, 0.f);
+		float scaleFactor = 1.5f*tileSize / currModel->getHeight();
 
 		modelMatrix = glm::mat4(1.0f);
-		modelMatrix = translate(modelMatrix, vec3(position, 0));
+		modelMatrix = translate(modelMatrix, vec3(position + tileSize * 0.05f, 0.f) + displacement);
 		modelMatrix = glm::scale(modelMatrix, glm::vec3(scaleFactor));
 		modelMatrix = glm::translate(modelMatrix, -currModel->getCenter());
 

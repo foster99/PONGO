@@ -498,7 +498,7 @@ void Game::setMode(Mode newMode)
 {
 	if (currMode() == startMenu && newMode == playing)
 	{
-		gameScene.restartLevel();
+		gameScene.init();
 	}
 
 	if (newMode == options)
