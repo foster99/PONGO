@@ -227,6 +227,7 @@ void Level::renderTileMap() const
 				shader = cubeShader;
 				model = buttonONModel;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
+				modelMatrix = rotate(modelMatrix, PI, vec3(0.f, 0.f, 1.f));
 				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
@@ -234,6 +235,7 @@ void Level::renderTileMap() const
 				shader = cubeShader;
 				model = buttonONModel;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
+				modelMatrix = rotate(modelMatrix, PI/2.f, vec3(0.f, 0.f, 1.f));
 				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
@@ -241,6 +243,7 @@ void Level::renderTileMap() const
 				shader = cubeShader;
 				model = buttonONModel;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
+				modelMatrix = rotate(modelMatrix, -PI/2.f, vec3(0.f, 0.f, 1.f));
 				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
@@ -257,6 +260,7 @@ void Level::renderTileMap() const
 				shader = cubeShader;
 				model = buttonOFFModel;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
+				modelMatrix = rotate(modelMatrix, PI, vec3(0.f, 0.f, 1.f));
 				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
@@ -264,6 +268,7 @@ void Level::renderTileMap() const
 				shader = cubeShader;
 				model = buttonOFFModel;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
+				modelMatrix = rotate(modelMatrix, PI / 2.f, vec3(0.f, 0.f, 1.f));
 				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
@@ -271,6 +276,7 @@ void Level::renderTileMap() const
 				shader = cubeShader;
 				model = buttonOFFModel;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
+				modelMatrix = rotate(modelMatrix, -PI / 2.f, vec3(0.f, 0.f, 1.f));
 				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
@@ -651,7 +657,7 @@ void Level::loadTileMap()
 				}
 				case Tile::spawnPoint:
 				{
-					SpawnCheckpoint* aux = new SpawnCheckpoint(scene,slideModel,slideShader);
+					SpawnCheckpoint* aux = new SpawnCheckpoint(scene,cubeModel,cubeShader);
 					aux->init();
 					
 					startPoint = currentTile->coords;
