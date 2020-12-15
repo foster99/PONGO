@@ -12,7 +12,7 @@ Trail::Trail(GameScene* scene)
     Scene::loadShaders("trailShader", trailShader);
 
     trailCube = new Model();
-    trailCube->loadFromFile("models/snake.obj", *trailShader);
+    trailCube->loadFromFile("models/snakeCube.obj", *trailShader);
 }
 
 void Trail::addPoint(vec2 point)

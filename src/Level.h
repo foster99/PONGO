@@ -130,6 +130,8 @@ private:
 	Model* bolaPinchoModel;
 	Model* buttonONModel;
 	Model* buttonOFFModel;
+	Model* winCube;
+	Model* switchableModel;
 
 	void loadShaders();
 	ShaderProgram* cubeShader;
