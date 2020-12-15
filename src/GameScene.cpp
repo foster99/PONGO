@@ -681,6 +681,7 @@ mat4 GameScene::lookAtCurrentChunk()
 void GameScene::winLevel()
 {
 	Game::instance().stopBackgroundSong();
+	Game::instance().playWinTileSound();
 	teleportSound = false;
 	win = true;
 	wintime = 3000;
@@ -692,7 +693,7 @@ mat4 GameScene::winAnimationViewMatrix()
 	vec3 chunkCentre = getCameraChunkPosition();
 	vec3 ballCentre = vec3(ball->getPosition(), chunkCentre.z / 2.f);
 
-	if (wintime < 2500 && !teleportSound)
+	if (wintime < 2000 && !teleportSound)
 	{
 		Game::instance().playWinLevelSound();
 		teleportSound = true;
@@ -740,6 +741,11 @@ void GameScene::winGame()
 bool GameScene::gameEnded()
 {
 	return endOfGame;
+}
+
+bool GameScene::onWinLevelTime()
+{
+	return wintime > 0;
 }
 
 void GameScene::initBall()

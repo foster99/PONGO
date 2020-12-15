@@ -82,6 +82,9 @@ public:
 	void playCountdownSound();
 	void playDeathSound();
 	void playWinLevelSound();
+	void playPistonOutSound();
+	void playCheckpointSound();
+	void playWinTileSound();
 
 private:
 
@@ -120,6 +123,9 @@ private:
 	Sound* countdownSound;
 	Sound* deathSound;
 	Sound* winLevelSound;
+	Sound* pistonOutSound;
+	Sound* checkpointSound;
+	Sound* winTileSound;
 
 	void loadSounds();
 	void setUp_playing(int level);

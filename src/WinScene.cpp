@@ -29,7 +29,7 @@ void WinScene::render()
 
 	// EXIT GAME
 	modelMatrix = glm::mat4(1.0f);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.f, 80.f * displacement, -32.f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.f, 85.f * displacement, -32.f));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(30.0f / youWinModel->getHeight()));
 	modelMatrix = glm::translate(modelMatrix, -youWinModel->getCenter());
 	normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));

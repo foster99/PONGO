@@ -387,6 +387,9 @@ void Game::loadSounds()
 	countdownSound	= new Sound("countdown.wav", false);
 	deathSound		= new Sound("death.wav", false);
 	winLevelSound	= new Sound("winLevel.wav", false);
+	checkpointSound = new Sound("checkpoint.wav", false);
+	pistonOutSound	= new Sound("pistonOut.wav", false);
+	winTileSound	= new Sound("winTile.wav", false);
 
 	levelSong[0]	= nullptr;
 	levelSong[1]	= new Sound("levelSong_01.wav", true);
@@ -458,6 +461,21 @@ void Game::playDeathSound()
 void Game::playWinLevelSound()
 {
 	winLevelSound->play();
+}
+
+void Game::playPistonOutSound()
+{
+	pistonOutSound->play();
+}
+
+void Game::playCheckpointSound()
+{
+	checkpointSound->play();
+}
+
+void Game::playWinTileSound()
+{
+	winTileSound->play();
 }
 
 void Game::stopBackgroundSong()

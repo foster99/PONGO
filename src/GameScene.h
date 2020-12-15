@@ -77,6 +77,7 @@ public:
 	void loadNextLevel();
 	void winGame();
 	bool gameEnded();
+	bool onWinLevelTime();
 
 	// Ball Control
 	bool pressed;

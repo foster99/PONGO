@@ -1,5 +1,6 @@
 #include "WallCheckpoint.h"
 #include "Level.h"
+#include "Game.h"
 
 WallCheckpoint::WallCheckpoint(Level* lev, char t)
 {
@@ -40,9 +41,11 @@ bool WallCheckpoint::triggerInRange(ivec2 tile)
 
 		for (i = 0; i < size; ++i) {
 			level->loadTile('#', wallTiles[i].y, wallTiles[i].x);
+			Game::instance().playPistonOutSound();
 		}
 
 		triggered = true;
+		return true;
 	}
 
 	return false;

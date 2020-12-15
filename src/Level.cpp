@@ -154,6 +154,9 @@ void Level::renderTileMap() const
 				break;
 
 			case Tile::winTile:
+
+				if (scene->onWinLevelTime()) continue;
+
 				shader		= cubeShader;
 				model		= winCube;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
