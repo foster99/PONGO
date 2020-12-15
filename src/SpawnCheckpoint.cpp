@@ -18,11 +18,17 @@ void SpawnCheckpoint::init()
 	this->Entity::init();
 	renderable = true;
 	triggered = false;
+
+	particles = new ParticleSystem();
+	particles->init(glm::vec2(2.f, 2.f), (*program), "images/particle.png", 0.f);
+
+	currentTime = 0;
 }
 
 void SpawnCheckpoint::update(int deltaTime)
 {
-
+	currentTime += deltaTime;
+	particles->update(deltaTime / 1000.f);
 }
 
 void SpawnCheckpoint::render()
@@ -42,13 +48,21 @@ void SpawnCheckpoint::render()
 		normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
 
 		program->use();
-		program->setUniformMatrix4f("projection", projMatrix);
+		program->setUniform1b("bLighting", true);
 		program->setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
+		program->setUniformMatrix4f("projection", projMatrix);
 		program->setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
 		program->setUniformMatrix3f("normalmatrix", normalMatrix);
 
 		// SI FALTA ALGO PER MODIFICAR MODEL ADALT
 		this->Entity::render();
+
+		program->setUniform1b("bLighting", false);
+		modelMatrix = glm::mat4(1.0f);
+		program->setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
+		normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
+		program->setUniformMatrix3f("normalmatrix", normalMatrix);
+		particles->render(scene->getCameraPosition());
 	}
 }
 
@@ -104,5 +118,24 @@ void SpawnCheckpoint::collided()
 	if (!triggered) {
 		scene->getLevel()->addSpawnPoint(position);
 		triggered = true;
+	}
+	spawnParticles();
+}
+
+void SpawnCheckpoint::spawnParticles()
+{
+	int nParticlesToSpawn = 18;
+	ParticleSystem::Particle particle;
+	float angleStep = 360.f / (float)nParticlesToSpawn;
+	float step = 15.f;
+
+	particle.lifetime = 1.4f;
+	for (int i = 0; i < nParticlesToSpawn; i++)
+	{
+		float currAngle = (angleStep * i) * (PI / 180.f);
+		particle.position = vec3(position, 0) + vec3(step,1,step) * vec3(cos(currAngle), -1.75f, sin(currAngle));
+
+		particle.speed = -step * vec3(cos(currAngle), 1, sin(currAngle));
+		particles->addParticle(particle);
 	}
 }

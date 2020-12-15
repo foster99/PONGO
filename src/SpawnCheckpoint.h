@@ -23,9 +23,12 @@ public:
 
 	void collided();
 
+	void spawnParticles();
+
 private:
 	bool renderable;
 	bool triggered;
+	int currentTime;
 	ParticleSystem* particles;
 };
 

@@ -137,6 +137,7 @@ private:
 	ShaderProgram* cubeShader;
 	ShaderProgram* ropeShader;
 	ShaderProgram* buttonShader;
+	ShaderProgram* spawnShader;
 
 	// World stuff
 	int levelID;

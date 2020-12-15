@@ -23,12 +23,11 @@ void Ball::init()
 	setPosition(spawnPoint);
 
 	// INICIALIZAR PARTICULAS EN PELOTA
-	billboard = Billboard::createBillboard(glm::vec2(10.f, 10.f), (*program), "images/bee.png");
-	billboard->setType(BILLBOARD_Y_AXIS);
+	//billboard = Billboard::createBillboard(glm::vec2(10.f, 10.f), (*program), "images/bee.png");
+	//billboard->setType(BILLBOARD_Y_AXIS);
 
 	particles = new ParticleSystem();
 	particles->init(glm::vec2(1.f,1.f), (*program), "images/particle.png",0);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 	currentTime = 0.0f;
 }
