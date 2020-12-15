@@ -43,6 +43,7 @@ public:
 
 	// Camera Methods
 	bool cameraIsFree();
+	int getCameraNumber();
 	void setCamera(camera c);
 	void setMouseAngles(int x, int y);
 

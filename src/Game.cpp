@@ -238,8 +238,6 @@ void Game::keyPressed_playing(int key, bool specialKey)
 			switch (key)
 			{
 			case ESC:	setMode(options);				break;
-			case 'G':
-			case 'g':	toggleGodMode();				break;
 			case ' ':	gameScene.playerPressedSpace(); break;
 			case 'p':	gameScene.changeSpawnPoint();   break; // PURE TESTING REMOVE LATER
 			case '+':   gameScene.winLevel();			break;

@@ -22,6 +22,8 @@ public:
 	void setCurrentMenu(int men);
 	void addMouseAngles(float mx, float my);
 
+	int getCurrentMenu();
+
 	void nextMenu();
 	void prevMenu();
 

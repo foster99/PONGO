@@ -88,6 +88,11 @@ void Camera::addMouseAngles(float mx, float my)
 	alpha += glm::vec2(mx, my);
 }
 
+int Camera::getCurrentMenu()
+{
+	return (int) currentMenu;
+}
+
 void Camera::nextMenu()
 {
 	isNext = true;

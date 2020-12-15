@@ -180,6 +180,7 @@ void Scene::setCamera(camera c)
 		return;
 	}
 	
+	selectedCamera = c;
 	cam->setFreeCamera(false);
 	cam->setCurrentMenu(c);
 }
@@ -187,6 +188,11 @@ void Scene::setCamera(camera c)
 bool Scene::cameraIsFree()
 {
 	return cam->isFree();
+}
+
+int Scene::getCameraNumber()
+{
+	return selectedCamera;
 }
 
 void Scene::setMouseAngles(int x, int y)

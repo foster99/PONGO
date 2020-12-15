@@ -124,7 +124,7 @@ void OptionsScene::restartOptions()
 
 int OptionsScene::getMenu()
 {
-	return menu;
+	return cam->getCurrentMenu();
 }
 
 void OptionsScene::nextMenu()
