@@ -5,10 +5,10 @@ void GameScene::init()
 {
 	this->Scene::init();
 
-	levelID = 1;
+	levelID = 5;
 	restartLevel();
 	pressed = false;
-
+	endOfGame = false;
 	speedDivisor = float(level->getTileSize());
 	
 	loadCountDownModels();
@@ -734,9 +734,12 @@ void GameScene::loadNextLevel()
 
 void GameScene::winGame()
 {
-	// End game
-	// Show thanks
-	// Go to Start Menu
+	endOfGame = true;
+}
+
+bool GameScene::gameEnded()
+{
+	return endOfGame;
 }
 
 void GameScene::initBall()

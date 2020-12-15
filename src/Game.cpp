@@ -17,6 +17,7 @@ void Game::init()
 	try {
 		startMenuScene.init();
 		exitScene.init();
+		winScene.init();
 		optionsScene.init();
 		gameScene.init();
 
@@ -43,10 +44,27 @@ bool Game::update(int deltaTime)
 
 	case playing:
 		gameScene.update(deltaTime);
+		if (gameScene.gameEnded())
+		{
+			playBackgroundSong();
+			stopLevelSong();
+			setMode(winGame);
+			endGameTime = 25000;
+		}
 		break;
 
 	case options:
 		optionsScene.update(deltaTime);
+		break;
+
+	case winGame:
+		if (endGameTime < 0)
+			setMode(startMenu);
+		else
+		{
+			endGameTime -= deltaTime;
+			winScene.update(deltaTime);
+		}
 		break;
 
 	case askExit:
@@ -79,6 +97,10 @@ void Game::render()
 
 	case askExit:
 		exitScene.render();
+		break;
+
+	case winGame:
+		winScene.render();
 		break;
 
 	case exitGame: break;
@@ -342,6 +364,7 @@ void Game::updateFreeCamera()
 	case startMenu: scene = &startMenuScene;	break;
 	case playing:	scene = &gameScene;			break;
 	case options:	scene = &optionsScene;		break;
+	case winGame:	scene = &winScene;			break;
 	case askExit:	scene = &exitScene;			break;
 	}
 

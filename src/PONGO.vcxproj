@@ -34,6 +34,7 @@
     <ClInclude Include="Tile.h" />
     <ClInclude Include="WallCheckpoint.h" />
     <ClInclude Include="Trail.h" />
+    <ClInclude Include="WinScene.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +61,7 @@
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Trail.cpp" />
     <ClCompile Include="WallCheckpoint.cpp" />
+    <ClCompile Include="WinScene.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>

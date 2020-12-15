@@ -76,6 +76,7 @@ public:
 	mat4 winAnimationViewMatrix();
 	void loadNextLevel();
 	void winGame();
+	bool gameEnded();
 
 	// Ball Control
 	bool pressed;
@@ -125,6 +126,7 @@ private:
 	int countdown;
 
 	// Win variables
+	bool endOfGame;
 	bool win;
 	bool teleportSound;
 	int wintime;

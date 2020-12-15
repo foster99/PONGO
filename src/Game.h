@@ -8,6 +8,7 @@
 
 #include "Sound.h"
 #include "MenuScene.h"
+#include "WinScene.h"
 #include "ExitScene.h"
 #include "GameScene.h"
 #include "OptionsScene.h"
@@ -91,6 +92,7 @@ private:
 	static constexpr Mode playing	= Mode(2);
 	static constexpr Mode options	= Mode(3);
 	static constexpr Mode askExit	= Mode(4);
+	static constexpr Mode winGame	= Mode(5);
 
 	static constexpr int ESC = 27;
 	static constexpr int ENTER = 13;
@@ -103,6 +105,7 @@ private:
 	GameScene		gameScene;
 	OptionsScene	optionsScene;
 	ExitScene		exitScene;
+	WinScene		winScene;
 	MenuScene		startMenuScene;
 
 	// Sounds
@@ -128,7 +131,7 @@ private:
 
 	bool keys[256], specialKeys[256]; 
 
-
+	int endGameTime;
 
 };
 #endif // _GAME_INCLUDE
