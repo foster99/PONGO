@@ -2,6 +2,7 @@
 #define _GAMESCENE_INCLUDE
 
 #include "Scene.h"
+#include "ParticleSystem.h"
 
 struct contourPointList
 {
@@ -107,6 +108,8 @@ public:
 	// Retorna las coordenadas de la tile en formato (J, -I)
 	ivec2 toTileCoordsNotInverting(vec2 coords);
 
+	// Particles
+
 	//PURE TESTING REMOVE LATER
 	void changeSpawnPoint();
 
@@ -141,6 +144,7 @@ private:
 	Level* level;
 
 	// BALL THINGS
+	ParticleSystem* deathParticles;
 	ShaderProgram*	ballShader;
 	Model*			ballModel;
 	Ball*			ball;

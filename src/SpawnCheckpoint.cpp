@@ -37,13 +37,17 @@ void SpawnCheckpoint::render()
 		glm::mat4 modelMatrix;
 		glm::mat3 normalMatrix;
 
+		Model* currModel = model;
+		if (triggered)
+			currModel = secondModel;
+
 		float tileSize = scene->getLevel()->getTileSize();
-		float scaleFactor = tileSize / model->getHeight();
+		float scaleFactor = 4*tileSize / currModel->getHeight();
 
 		modelMatrix = glm::mat4(1.0f);
 		modelMatrix = translate(modelMatrix, vec3(position, 0));
 		modelMatrix = glm::scale(modelMatrix, glm::vec3(scaleFactor));
-		modelMatrix = glm::translate(modelMatrix, -model->getCenter());
+		modelMatrix = glm::translate(modelMatrix, -currModel->getCenter());
 
 		normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
 
@@ -55,7 +59,8 @@ void SpawnCheckpoint::render()
 		program->setUniformMatrix3f("normalmatrix", normalMatrix);
 
 		// SI FALTA ALGO PER MODIFICAR MODEL ADALT
-		this->Entity::render();
+		currModel->render((*program));
+		//this->Entity::render();
 
 		program->setUniform1b("bLighting", false);
 		modelMatrix = glm::mat4(1.0f);
