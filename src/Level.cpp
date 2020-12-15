@@ -51,6 +51,9 @@ void Level::update(int deltaTime)
 
 	for (auto* slide : slides)
 		slide->Slide::update(deltaTime);
+
+	for (auto* spawn : spawns)
+		spawn->SpawnCheckpoint::update(deltaTime);
 }
 
 void Level::render() const
@@ -657,8 +660,8 @@ void Level::loadTileMap()
 				}
 				case Tile::spawnPoint:
 				{
-					SpawnCheckpoint* aux = new SpawnCheckpoint(scene,cubeModel,cubeShader);
-					aux->init();
+					SpawnCheckpoint* aux = new SpawnCheckpoint(scene,cubeModel, spawnShader);
+					aux->SpawnCheckpoint::init();
 					
 					startPoint = currentTile->coords;
 
@@ -1011,6 +1014,9 @@ void Level::loadShaders()
 
 	buttonShader = new ShaderProgram();
 	Scene::loadShaders("buttonShader", buttonShader);
+
+	spawnShader = new ShaderProgram();
+	Scene::loadShaders("spawnShader", spawnShader);
 }
 
 
