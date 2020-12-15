@@ -196,5 +196,14 @@
     <Text Include="levels\LEVEL_02.txt">
       <Filter>Levels</Filter>
     </Text>
+    <Text Include="levels\LEVEL_04.txt">
+      <Filter>Levels</Filter>
+    </Text>
+    <Text Include="levels\LEVEL_05.txt">
+      <Filter>Levels</Filter>
+    </Text>
+    <Text Include="levels\LEVEL_03.txt">
+      <Filter>Levels</Filter>
+    </Text>
   </ItemGroup>
 </Project>

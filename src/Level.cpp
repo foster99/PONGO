@@ -155,8 +155,9 @@ void Level::renderTileMap() const
 
 			case Tile::winTile:
 				shader		= cubeShader;
-				model		= cubeModel;
+				model		= winCube;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0.f));
+				modelMatrix = rotate(modelMatrix, 2.f * PI * sin(float(scene->getCurrentTime())/1000.f), vec3(0.f, 1.f, 0.f));
 				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
 				modelMatrix = translate(modelMatrix, -model->getCenter());
 				break;
@@ -198,7 +199,7 @@ void Level::renderTileMap() const
 
 			case Tile::switchable_solid:
 				shader = cubeShader;
-				model = snakeClosedDoorModel;
+				model = switchableModel;
 				modelMatrix = translate(modelMatrix, vec3(tile.coords, 0));
 				modelMatrix = scale(modelMatrix, vec3(float(tileSize) / model->getHeight()));
 				modelMatrix = translate(modelMatrix, -model->getCenter());
@@ -584,9 +585,8 @@ void Level::loadTileMap()
 
 	// LOAD SLIDE MODEL AND SHADER
 	ShaderProgram* slideShader = new ShaderProgram();
-	Model* slideModel = new Model();
+	Model* slideModel = cubeModel;
 	Scene::loadShaders("slideShader", slideShader);
-	slideModel->loadFromFile("models/cubeBlue.obj", (*slideShader));
 
 
 	// INICIALIZAR Y LEER TILE MAP
@@ -957,26 +957,36 @@ Tile* Level::loadTile(char type, int i, int j)
 
 void Level::loadModels()
 {
+	string level_tag;
+	if (levelID < 10)	level_tag = "_0" + to_string(levelID) + ".obj";
+	else				level_tag = "_"  + to_string(levelID) + ".obj";
+
+	cubeModel = new Model();
+	cubeModel->loadFromFile("models/cube" + level_tag, *cubeShader);
+
+	ropeModel = new Model();
+	ropeModel->loadFromFile("models/rope" + level_tag, *ropeShader);
+
+	pinchoModel = new Model();
+	pinchoModel->loadFromFile("models/pincho" + level_tag, *cubeShader);
+
+	winCube = new Model();
+	winCube->loadFromFile("models/winCube" + level_tag, *buttonShader);
+	
+	snakeClosedDoorModel = new Model();
+	snakeClosedDoorModel->loadFromFile("models/snakeDoor" + level_tag, *cubeShader);
+
+	switchableModel = new Model();
+	switchableModel->loadFromFile("models/switchable.obj", *cubeShader);
+
 	voidCubeModel = new Model();
 	voidCubeModel->loadFromFile("models/noSolidCube.obj", *cubeShader);
 
 	snakeModel = new Model();
-	snakeModel->loadFromFile("models/snake.obj", *cubeShader);
-
-	snakeClosedDoorModel = new Model();
-	snakeClosedDoorModel->loadFromFile("models/snakeDoor.obj", *cubeShader);
+	snakeModel->loadFromFile("models/snakeCube.obj", *cubeShader);
 
 	snakeOpenedDoorModel = new Model();
-	snakeOpenedDoorModel->loadFromFile("models/noSolidCube.obj", *cubeShader);
-
-	ropeModel = new Model();
-	ropeModel->loadFromFile("models/rope.obj", *ropeShader);
-
-	cubeModel = new Model();
-	cubeModel->loadFromFile("models/cubeBlue.obj", *cubeShader);
-
-	pinchoModel = new Model();
-	pinchoModel->loadFromFile("models/pincho.obj", *cubeShader);
+	snakeOpenedDoorModel->loadFromFile("models/snakeOpenDoor.obj", *cubeShader);
 	
 	bolaPinchoModel = new Model();
 	bolaPinchoModel->loadFromFile("models/UPC.obj", *cubeShader);
@@ -986,6 +996,7 @@ void Level::loadModels()
 
 	buttonOFFModel = new Model();
 	buttonOFFModel->loadFromFile("models/button_OFF.obj", *buttonShader);
+
 }
 
 #include "Scene.h"
