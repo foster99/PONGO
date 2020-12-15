@@ -1,6 +1,7 @@
 #include "GameScene.h"
 #include "Game.h"
 
+
 void GameScene::init()
 {
 	this->Scene::init();
@@ -11,6 +12,9 @@ void GameScene::init()
 	endOfGame = false;
 	speedDivisor = float(level->getTileSize());
 	
+	deathParticles = new ParticleSystem();
+	deathParticles->init(glm::vec2(5.f, 5.f), (*ballShader), "images/particle.png", 0.f);
+
 	loadCountDownModels();
 }
 
@@ -23,8 +27,25 @@ void GameScene::render()
 
 	level->Level::render();
 
-	if (!dead)
-		ball->Ball::render();
+	if (dead) {
+		ballShader->use();
+
+		ballShader->setUniform1b("bLighting", false);
+		ballShader->setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
+		ballShader->setUniformMatrix4f("projection", projection);
+		
+		mat4 modelMatrix = glm::mat4(1.0f);
+		ballShader->setUniformMatrix4f("modelview", view * modelMatrix);
+		
+		mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(view * modelMatrix)));
+		ballShader->setUniformMatrix3f("normalmatrix", normalMatrix);
+		
+		deathParticles->render(getCameraPosition());
+
+		return;
+	}
+	ball->Ball::render();
+		
 }
 
 void GameScene::update(int deltaTime)
@@ -46,6 +67,7 @@ void GameScene::update(int deltaTime)
 		if (deadtime > 0)
 		{
 			deadtime -= deltaTime;
+			deathParticles->update(deltaTime / 1000.f);
 			return;
 		}
 
@@ -278,6 +300,27 @@ void GameScene::killBall()
 	deadtime = 1000.f;
 	level->setTrail(false);
 	level->closeAllSnakeDoors();
+
+	// INICIALIZAR PARTICULAS
+	int nParticlesToSpawn = 18;
+	ParticleSystem::Particle particle;
+	float angleStep = 360.f / (float)nParticlesToSpawn;
+	float step = 15.f;
+
+	vec2 pos = ball->getPosition();
+
+	particle.lifetime = 1.f;
+	for (int i = 0; i < nParticlesToSpawn; i++)
+	{
+		float currAngle = (angleStep * i) * (PI / 180.f);
+
+		//particle.position = vec3(ball->getPosition(), 0) + vec3(step, 1, step) * vec3(cos(currAngle), 0.f, sin(currAngle));
+		particle.position = vec3(pos, 0) + vec3(1,1,1) * vec3(cos(currAngle), 1.f, sin(currAngle));
+
+		particle.speed = step * vec3(cos(currAngle), 0, sin(currAngle));
+		deathParticles->addParticle(particle);
+	}
+	//
 
 	Game::instance().playDeathSound();
 }
