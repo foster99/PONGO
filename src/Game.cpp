@@ -119,10 +119,6 @@ void Game::keyPressed(int key)
 	{
 	case Scene::fpsCamera:
 	case Scene::fixedCamera_01:
-	case Scene::fixedCamera_02:
-	case Scene::fixedCamera_03:
-	case Scene::fixedCamera_04:
-	case Scene::fixedCamera_05:
 		switch (currMode())
 		{
 		case startMenu:	startMenuScene.setCamera(key - '0');	break;
@@ -237,12 +233,22 @@ void Game::keyPressed_playing(int key, bool specialKey)
 		{
 			switch (key)
 			{
-			case ESC:	setMode(options);				break;
-			case ' ':	gameScene.playerPressedSpace(); break;
-			case 'p':	gameScene.changeSpawnPoint();   break; // PURE TESTING REMOVE LATER
-			case '+':   gameScene.winLevel();			break;
-			case 'n':	gameScene.getLevel()->setTrail(true); break;
-			case 'm':	gameScene.getLevel()->setTrail(false); break;
+			case '+':
+			{
+				stopBackgroundSong();
+				stopLevelSong();
+				countdownSound->drop();
+				gameScene.loadNextLevel();
+				break;
+			}
+			case '-':
+			{
+				stopBackgroundSong();
+				Game::instance().stopLevelSong();
+				countdownSound->drop();
+				gameScene.loadPrevLevel();
+				break;
+			}
 			default:	break;
 			}
 		}
@@ -512,6 +518,7 @@ void Game::setMode(Mode newMode)
 		playBackgroundSong();
 		modeHist = {};
 	}
+
 	modeHist.push(newMode);
 }
 

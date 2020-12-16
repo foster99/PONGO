@@ -76,6 +76,7 @@ public:
 	void winLevel();
 	mat4 winAnimationViewMatrix();
 	void loadNextLevel();
+	void loadPrevLevel();
 	void winGame();
 	bool gameEnded();
 	bool onWinLevelTime();
