@@ -134,12 +134,17 @@ private:
 	Model* switchableModel;
 	Model* spawnModelOff;
 	Model* spawnModelOn;
+	Model* slideChase_OFF;
+	Model* slideChase_ON;
+	Model* slideEscape_OFF;
+	Model* slideEscape_ON;
 
 	void loadShaders();
 	ShaderProgram* cubeShader;
 	ShaderProgram* ropeShader;
 	ShaderProgram* buttonShader;
 	ShaderProgram* spawnShader;
+	ShaderProgram* slideShader;
 
 	// World stuff
 	int levelID;

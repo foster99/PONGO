@@ -135,9 +135,6 @@
     <ClInclude Include="ParticleSystem.h">
       <Filter>Header Files\Painting</Filter>
     </ClInclude>
-    <ClInclude Include="Billboard.h">
-      <Filter>Header Files\Painting</Filter>
-    </ClInclude>
     <ClInclude Include="SpawnCheckpoint.h">
       <Filter>Header Files\3D\Entity</Filter>
     </ClInclude>
@@ -152,6 +149,9 @@
     </ClInclude>
     <ClInclude Include="WinScene.h">
       <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Billboard.h">
+      <Filter>Header Files\3D\Entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

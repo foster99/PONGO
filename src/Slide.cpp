@@ -57,15 +57,15 @@ void Slide::render()
 	glm::mat3 normalMatrix;
 	
 	float tileSize		= scene->getLevel()->getTileSize();
-	float scaleFactor	= tileSize / model->getHeight();
+	float scaleFactor	= 4.f * tileSize / model->getHeight();
 
 	modelMatrix = glm::mat4(1.0f);
 	modelMatrix = translate(modelMatrix, vec3(position,0));
 
 	if (orientation == horizontal)
-		modelMatrix = glm::scale(modelMatrix, glm::vec3(4.f, 1.f, 1.f));
-	else
-		modelMatrix = glm::scale(modelMatrix, glm::vec3(1.f, 4.f, 1.f));
+	{
+		modelMatrix = glm::rotate(modelMatrix, PI/2.f, glm::vec3(0.f,0.f,1.f));
+	}
 
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(scaleFactor));
 	modelMatrix = glm::translate(modelMatrix, -model->getCenter());
@@ -80,8 +80,7 @@ void Slide::render()
 	program->setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
 	program->setUniformMatrix3f("normalmatrix", normalMatrix);
 
-	// SI FALTA ALGO PER MODIFICAR MODEL ADALT
-	this->Entity::render();
+	model->render(*(program));
 }
 
 void Slide::setSize(int ts, int orient)

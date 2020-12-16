@@ -588,13 +588,6 @@ void Level::loadTileMap()
 
 	mapSizeInTiles = mapSizeInChunks * chunkSize;
 
-
-	// LOAD SLIDE MODEL AND SHADER
-	ShaderProgram* slideShader = new ShaderProgram();
-	Model* slideModel = cubeModel;
-	Scene::loadShaders("slideShader", slideShader);
-
-
 	// INICIALIZAR Y LEER TILE MAP
 	char tile;
 	map					= vector<vector<Tile>>(mapSizeInTiles.y, vector<Tile>(mapSizeInTiles.x));
@@ -635,28 +628,28 @@ void Level::loadTileMap()
 				{
 				case Tile::verticalSlideChase:
 				{
-					Slide* slide = new Slide(scene, slideModel, slideShader);
+					Slide* slide = new Slide(scene, slideChase_OFF, slideShader);
 					slide->Slide::init(tileSize, Slide::vertical, currentTile->coords, vec2(0.f, 1.f), vec2(0.f, 0.5f), Slide::chase);
 					slides.push_back(slide);
 					break;
 				}
 				case Tile::horizontalSlideChase:
 				{
-					Slide* slide = new Slide(scene, slideModel, slideShader);
+					Slide* slide = new Slide(scene, slideChase_OFF, slideShader);
 					slide->Slide::init(tileSize, Slide::horizontal, currentTile->coords, vec2(1.f, 0.f), vec2(0.5f, 0.f), Slide::chase);
 					slides.push_back(slide);
 					break;
 				}
 				case Tile::verticalSlideEscape:
 				{
-					Slide* slide = new Slide(scene, slideModel, slideShader);
+					Slide* slide = new Slide(scene, slideEscape_OFF, slideShader);
 					slide->Slide::init(tileSize, Slide::vertical, currentTile->coords, vec2(0.f, 1.f), vec2(0.f, 0.5f), Slide::escape);
 					slides.push_back(slide);
 					break;
 				}
 				case Tile::horizontalSlideEscape:
 				{
-					Slide* slide = new Slide(scene, slideModel, slideShader);
+					Slide* slide = new Slide(scene, slideEscape_OFF, slideShader);
 					slide->Slide::init(tileSize, Slide::horizontal, currentTile->coords, vec2(1.f, 0.f), vec2(0.5f, 0.f), Slide::escape);
 					slides.push_back(slide);
 					break;
@@ -984,6 +977,18 @@ void Level::loadModels()
 	snakeClosedDoorModel = new Model();
 	snakeClosedDoorModel->loadFromFile("models/snakeDoor" + level_tag, *cubeShader);
 
+	slideChase_OFF = new Model();
+	slideChase_OFF->loadFromFile("models/slideChase_OFF" + level_tag, *slideShader);
+
+	slideChase_ON = new Model();
+	slideChase_ON->loadFromFile("models/slideChase_ON" + level_tag, *slideShader);
+	
+	slideEscape_OFF = new Model();
+	slideEscape_OFF->loadFromFile("models/slideEscape_OFF" + level_tag, *slideShader);
+	
+	slideEscape_ON = new Model();
+	slideEscape_ON->loadFromFile("models/slideEscape_ON" + level_tag, *slideShader);
+
 	switchableModel = new Model();
 	switchableModel->loadFromFile("models/switchable.obj", *cubeShader);
 
@@ -1027,6 +1032,9 @@ void Level::loadShaders()
 
 	spawnShader = new ShaderProgram();
 	Scene::loadShaders("spawnShader", spawnShader);
+
+	slideShader = new ShaderProgram();
+	Scene::loadShaders("slideShader", slideShader);
 }
 
 
