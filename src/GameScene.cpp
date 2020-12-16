@@ -176,13 +176,13 @@ void GameScene::loadCountDownModels()
 
 	// Load Models
 	model_1 = new Model();
-	model_1->loadFromFile("models/one.obj", (*ballShader));
+	model_1->loadFromFile("models/one.obj", (*numbersShader));
 
 	model_2 = new Model();
-	model_2->loadFromFile("models/two.obj", (*ballShader));
+	model_2->loadFromFile("models/two.obj", (*numbersShader));
 
 	model_3 = new Model();
-	model_3->loadFromFile("models/three.obj", (*ballShader));
+	model_3->loadFromFile("models/three.obj", (*numbersShader));
 }
 
 void GameScene::renderCountDown()
