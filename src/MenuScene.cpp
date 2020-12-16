@@ -13,7 +13,7 @@ void MenuScene::init()
 	FIB		= new Model();
 
 	cam = new Camera();
-	cam->initMenu(2);
+	cam->initMenu(1);
 	cam->setCurrentMenu(fixedCamera_01);
 	
 	PONGO->loadFromFile("models/PONGO.obj", (*defaultShaderProgram));

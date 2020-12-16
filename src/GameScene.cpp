@@ -775,6 +775,25 @@ void GameScene::loadNextLevel()
 	restartLevel();
 }
 
+void GameScene::loadPrevLevel()
+{
+	levelID--;
+
+	if (levelID <= 0)
+	{
+		levelID = 1;
+	}
+
+	if (levelID == lastLevel)
+	{
+		winGame();
+		return;
+	}
+
+	
+	restartLevel();
+}
+
 void GameScene::winGame()
 {
 	endOfGame = true;
