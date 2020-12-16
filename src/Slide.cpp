@@ -7,9 +7,10 @@ Slide::~Slide()
 	this->Entity::~Entity();
 }
 
-Slide::Slide(GameScene* scene, Model* model, ShaderProgram* prog)
+Slide::Slide(GameScene* scene, Model* model, ShaderProgram* prog, Model* model2)
 {
 	this->Entity::Entity(scene,model,prog);
+	trackModel = model2;
 }
 
 void Slide::init(int tileSize, int orient, vec2 pos, vec2 dir, vec2 speed, int mode)
@@ -56,8 +57,13 @@ void Slide::render()
 	glm::mat4 modelMatrix;
 	glm::mat3 normalMatrix;
 	
+	Model* currModel = model;
+	if (speed.x > 0.5f || speed.y > 0.5f)
+		currModel = trackModel;
+
+
 	float tileSize		= scene->getLevel()->getTileSize();
-	float scaleFactor	= 4.f * tileSize / model->getHeight();
+	float scaleFactor	= 4.f * tileSize / currModel->getHeight();
 
 	modelMatrix = glm::mat4(1.0f);
 	modelMatrix = translate(modelMatrix, vec3(position,0));
@@ -68,7 +74,7 @@ void Slide::render()
 	}
 
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(scaleFactor));
-	modelMatrix = glm::translate(modelMatrix, -model->getCenter());
+	modelMatrix = glm::translate(modelMatrix, -currModel->getCenter());
 
 	// Compute Normal Matrix
 
@@ -80,7 +86,7 @@ void Slide::render()
 	program->setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
 	program->setUniformMatrix3f("normalmatrix", normalMatrix);
 
-	model->render(*(program));
+	currModel->render(*(program));
 }
 
 void Slide::setSize(int ts, int orient)

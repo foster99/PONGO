@@ -10,7 +10,7 @@ class Slide : public Entity
 {
 public:
 	~Slide();
-	Slide(GameScene* scene, Model* model, ShaderProgram* prog);
+	Slide(GameScene* scene, Model* model, ShaderProgram* prog, Model* model2);
 
 	void init(int tileSize, int orient, vec2 pos, vec2 dir, vec2 speed, int mode);
 	void init() override;
@@ -46,7 +46,7 @@ public:
 	static constexpr float distanceError = 0.005f;
 
 private:
-
+	Model* trackModel;
 
 	bool blocked = false;
 

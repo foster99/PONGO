@@ -628,28 +628,28 @@ void Level::loadTileMap()
 				{
 				case Tile::verticalSlideChase:
 				{
-					Slide* slide = new Slide(scene, slideChase_OFF, slideShader);
+					Slide* slide = new Slide(scene, slideChase_OFF, slideShader, slideChase_ON);
 					slide->Slide::init(tileSize, Slide::vertical, currentTile->coords, vec2(0.f, 1.f), vec2(0.f, 0.5f), Slide::chase);
 					slides.push_back(slide);
 					break;
 				}
 				case Tile::horizontalSlideChase:
 				{
-					Slide* slide = new Slide(scene, slideChase_OFF, slideShader);
+					Slide* slide = new Slide(scene, slideChase_OFF, slideShader, slideChase_ON);
 					slide->Slide::init(tileSize, Slide::horizontal, currentTile->coords, vec2(1.f, 0.f), vec2(0.5f, 0.f), Slide::chase);
 					slides.push_back(slide);
 					break;
 				}
 				case Tile::verticalSlideEscape:
 				{
-					Slide* slide = new Slide(scene, slideEscape_OFF, slideShader);
+					Slide* slide = new Slide(scene, slideEscape_OFF, slideShader, slideEscape_ON);
 					slide->Slide::init(tileSize, Slide::vertical, currentTile->coords, vec2(0.f, 1.f), vec2(0.f, 0.5f), Slide::escape);
 					slides.push_back(slide);
 					break;
 				}
 				case Tile::horizontalSlideEscape:
 				{
-					Slide* slide = new Slide(scene, slideEscape_OFF, slideShader);
+					Slide* slide = new Slide(scene, slideEscape_OFF, slideShader, slideEscape_ON);
 					slide->Slide::init(tileSize, Slide::horizontal, currentTile->coords, vec2(1.f, 0.f), vec2(0.5f, 0.f), Slide::escape);
 					slides.push_back(slide);
 					break;
